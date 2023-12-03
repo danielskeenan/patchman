@@ -1,0 +1,55 @@
+/**
+ * @file D192.h
+ *
+ * @author Dan Keenan
+ * @date 12/3/23
+ * @copyright GNU GPLv3
+ */
+
+#ifndef D192_H
+#define D192_H
+
+#include "Rom.h"
+
+namespace patchlib
+{
+
+class D192Rom;
+
+class D192Rack: public Rack
+{
+Q_OBJECT
+    friend D192Rom;
+public:
+    [[nodiscard]] Phase phaseForLug(unsigned int lug) const override;
+
+protected:
+    void initLugAddressMap() override;
+
+private:
+    using Rack::Rack;
+    void fromByteArray(QByteArrayView data);
+    QByteArray toByteArray() const;
+};
+
+/**
+ * Colortran D192 Patch ROM.
+ */
+class D192Rom: public Rom
+{
+Q_OBJECT
+public:
+    using Rom::Rom;
+
+    void loadFromData(QByteArrayView data) override;
+    [[nodiscard]] QByteArray toByteArray() const override;
+
+    Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
+
+private:
+    static bool isD192Rom(QByteArrayView data);
+};
+
+} // patchlib
+
+#endif //D192_H
