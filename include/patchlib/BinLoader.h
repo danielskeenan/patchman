@@ -12,7 +12,7 @@
 #include <QFile>
 #include <QByteArray>
 
-namespace patchlib
+namespace patchman
 {
 
 class BinLoader

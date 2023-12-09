@@ -14,7 +14,7 @@
 #include <ranges>
 #include "Phase.h"
 
-namespace patchlib
+namespace patchman
 {
 
 /**

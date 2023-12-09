@@ -260,7 +260,7 @@ TEST_CASE("Read Intel Hex")
     file.close();
 
     file.open();
-    const auto contents = patchlib::BinLoader::loadFile(file);
+    const auto contents = patchman::BinLoader::loadFile(file);
     REQUIRE(contents.size() == kBinData.size());
     auto actual_it = contents.cbegin();
     auto expected_it = kBinData.cbegin();

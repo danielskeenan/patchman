@@ -16,7 +16,7 @@
 #include <ranges>
 #include "Rack.h"
 
-namespace patchlib
+namespace patchman
 {
 
 /**
@@ -41,6 +41,17 @@ public:
         D192,
         ENR,
     };
+
+    static auto allTypes()
+    {
+        static const auto types = {
+            Type::D192,
+            Type::ENR,
+        };
+        return std::span(types);
+    }
+
+    static QString typeName(Type romType);
 
     /**
      * Create a new empty ROM.
@@ -67,6 +78,7 @@ public:
      * @return
      */
     [[nodiscard]] virtual QByteArray toByteArray() const = 0;
+    void saveToFile(const QString &path) const;
 
     /**
      * Add a rack to the patch.

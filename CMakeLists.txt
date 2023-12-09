@@ -38,6 +38,7 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Svg
         REQUIRED)
 
 add_subdirectory(src)

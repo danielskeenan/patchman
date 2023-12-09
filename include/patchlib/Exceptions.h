@@ -11,7 +11,7 @@
 
 #include <stdexcept>
 
-namespace patchlib {
+namespace patchman {
 
 /**
  * Thrown when a ROM being loaded is invalid in some way.

@@ -11,7 +11,7 @@
 #include <source_location>
 #include <frozen/unordered_map.h>
 
-namespace patchlib
+namespace patchman
 {
 
 /**
@@ -42,7 +42,7 @@ constexpr auto kRomSizes = frozen::make_unordered_map<RomChip, unsigned int>(
     }
 );
 
-Phase patchlib::D192Rack::phaseForLug(unsigned int lug) const
+Phase patchman::D192Rack::phaseForLug(unsigned int lug) const
 {
     if (getRackType() == Rack::Type::D192Rack) {
         if (lug < 64) {
@@ -153,7 +153,7 @@ QByteArray D192Rom::toByteArray() const
                 return romSize;
             }
         }
-        throw patchlib::UnrepresentableException("Cannot store racks in available rom sizes.");
+        throw patchman::UnrepresentableException("Cannot store racks in available rom sizes.");
     }();
 
     QByteArray data;

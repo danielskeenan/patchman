@@ -9,7 +9,7 @@
 #include "patchlib/Rack.h"
 #include <source_location>
 
-namespace patchlib
+namespace patchman
 {
 
 bool operator==(const Rack &lhs, const Rack &rhs)

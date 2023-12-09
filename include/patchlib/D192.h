@@ -11,7 +11,7 @@
 
 #include "Rom.h"
 
-namespace patchlib
+namespace patchman
 {
 
 class D192Rom;

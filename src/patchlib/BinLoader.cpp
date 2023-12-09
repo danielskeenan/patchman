@@ -9,7 +9,7 @@
 #include <QtEndian>
 #include "patchlib/BinLoader.h"
 
-namespace patchlib
+namespace patchman
 {
 
 /**

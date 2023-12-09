@@ -11,7 +11,7 @@
 
 #include <QObject>
 
-namespace patchlib
+namespace patchman
 {
 Q_NAMESPACE
 

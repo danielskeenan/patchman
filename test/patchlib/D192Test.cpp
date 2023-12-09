@@ -309,12 +309,12 @@ static const std::array<unsigned char, 2048> kPatchBin
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     };
 
-static const patchlib::Rom *kTestRom = []()
+static const patchman::Rom *kTestRom = []()
 {
-    patchlib::Rom *rom = patchlib::Rom::create(patchlib::Rom::Type::D192);
+    patchman::Rom *rom = patchman::Rom::create(patchman::Rom::Type::D192);
 
-    patchlib::Rack *rack;
-    rack = rom->addRack(0, patchlib::Rack::Type::D192Rack);
+    patchman::Rack *rack;
+    rack = rom->addRack(0, patchman::Rack::Type::D192Rack);
     rack->setLugAddress(0, 1);
     rack->setLugAddress(1, 2);
     rack->setLugAddress(2, 7);
@@ -510,7 +510,7 @@ static const patchlib::Rom *kTestRom = []()
     rack->setLugAddress(190, 187);
     rack->setLugAddress(191, 0);
 
-    rack = rom->addRack(1, patchlib::Rack::Type::D192Rack);
+    rack = rom->addRack(1, patchman::Rack::Type::D192Rack);
     rack->setLugAddress(0, 193);
     rack->setLugAddress(1, 194);
     rack->setLugAddress(2, 199);
@@ -706,7 +706,7 @@ static const patchlib::Rom *kTestRom = []()
     rack->setLugAddress(190, 383);
     rack->setLugAddress(191, 384);
 
-    rack = rom->addRack(2, patchlib::Rack::Type::D192Rack);
+    rack = rom->addRack(2, patchman::Rack::Type::D192Rack);
     rack->setLugAddress(0, 385);
     rack->setLugAddress(1, 386);
     rack->setLugAddress(2, 391);
@@ -902,7 +902,7 @@ static const patchlib::Rom *kTestRom = []()
     rack->setLugAddress(190, 0);
     rack->setLugAddress(191, 0);
 
-    rack = rom->addRack(3, patchlib::Rack::Type::D192Rack);
+    rack = rom->addRack(3, patchman::Rack::Type::D192Rack);
     rack->setLugAddress(0, 1);
     rack->setLugAddress(1, 2);
     rack->setLugAddress(2, 7);
@@ -1106,16 +1106,16 @@ TEST_CASE("D192 Load")
     const QByteArrayView patch_rom(kPatchBin);
 
     SECTION("Read D192 ROM") {
-        patchlib::Rom *actual = patchlib::Rom::create(patchlib::Rom::Type::D192);
+        patchman::Rom *actual = patchman::Rom::create(patchman::Rom::Type::D192);
         actual->loadFromData(patch_rom);
         REQUIRE(*kTestRom == *actual);
     }
 
     SECTION("Wrong ROM type") {
-        patchlib::Rom *actual = patchlib::Rom::create(patchlib::Rom::Type::D192);
+        patchman::Rom *actual = patchman::Rom::create(patchman::Rom::Type::D192);
 
         const QByteArrayView badPatchRomView({0, 0, 0, 0, 0});
-        REQUIRE_THROWS_AS(actual->loadFromData(badPatchRomView), patchlib::InvalidRomException);
+        REQUIRE_THROWS_AS(actual->loadFromData(badPatchRomView), patchman::InvalidRomException);
     }
 
     SECTION("Bad lug") {
@@ -1123,8 +1123,8 @@ TEST_CASE("D192 Load")
         bad_patch_rom[0x600] = 193; // Invalid lug.
         const QByteArrayView badPatchRomView(bad_patch_rom);
 
-        patchlib::Rom *actual = patchlib::Rom::create(patchlib::Rom::Type::D192);
-        REQUIRE_THROWS_AS(actual->loadFromData(badPatchRomView), patchlib::InvalidRomException);
+        patchman::Rom *actual = patchman::Rom::create(patchman::Rom::Type::D192);
+        REQUIRE_THROWS_AS(actual->loadFromData(badPatchRomView), patchman::InvalidRomException);
     }
 }
 

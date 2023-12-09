@@ -10,7 +10,7 @@
 #include "patchlib/D192.h"
 #include "patchlib/BinLoader.h"
 
-namespace patchlib
+namespace patchman
 {
 
 bool operator==(const Rom &lhs, const Rom &rhs)
@@ -30,6 +30,17 @@ bool operator==(const Rom &lhs, const Rom &rhs)
     return true;
 }
 
+QString Rom::typeName(Rom::Type romType)
+{
+    switch (romType) {
+        case Type::D192:
+            return tr("D192");
+        case Type::ENR:
+            return tr("ENR");
+    }
+    Q_UNREACHABLE();
+}
+
 Rom *Rom::create(Rom::Type romType, QObject *parent)
 {
     Rom *rom;
@@ -46,6 +57,16 @@ void Rom::loadFromFile(const QString &path)
 {
     const auto data = BinLoader::loadFile(path);
     loadFromData(data);
+}
+
+void Rom::saveToFile(const QString &path) const
+{
+    const auto data = toByteArray();
+    QFile file(path);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
+        throw std::runtime_error("Could not open file for writing.");
+    }
+    file.write(data);
 }
 
 void Rom::removeRack(unsigned int rackNum)
