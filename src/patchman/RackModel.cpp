@@ -92,7 +92,23 @@ QVariant RackModel::data(const QModelIndex &index, int role) const
 
 bool RackModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    return false;
+    const auto column = static_cast<Column>(index.column());
+    const auto circuit = index.row();
+    const auto lug = rack_->lugForCircuit(circuit);
+
+    bool success = false;
+    if (role == Qt::EditRole) {
+        if (column == Column::Address) {
+            const auto newAddress = value.toInt();
+            if (newAddress >= 0 && newAddress <= 512) {
+                // Emits dataChanged internally.
+                rack_->setLugAddress(lug, newAddress);
+                success = true;
+            }
+        }
+    }
+
+    return success;
 }
 
 QVariant RackModel::headerData(int section, Qt::Orientation orientation, int role) const

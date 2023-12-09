@@ -436,6 +436,17 @@ constexpr auto kLugToCircuitMap = std::to_array(
     }
 );
 
+D192Rom::D192Rom(QObject *parent)
+    : Rom(parent)
+{
+    const auto racksToAdd = (*std::ranges::min_element(std::views::values(kRomSizes))) / 512;
+    for (unsigned int rackNum = 0; rackNum < racksToAdd; ++rackNum) {
+        auto rack = new D192Rack(rackNum, Rack::Type::D192Rack, this);
+        rack->initLugAddressMap();
+        racks_.push_back(rack);
+    }
+}
+
 Phase patchman::D192Rack::phaseForLug(unsigned int lug) const
 {
     if (getRackType() == Rack::Type::D192Rack) {
@@ -540,7 +551,10 @@ void D192Rom::loadFromData(const QByteArrayView data)
     std::reverse(rackPatchTables.begin(), rackPatchTables.end());
     // Load racks. The *last* entry in the rom is Rack 0, the preceding entry is Rack 1, etc.
     for (unsigned int rackNum = 0; rackNum < storedRackCount; ++rackNum) {
-        auto rack = dynamic_cast<D192Rack *>(addRack(rackNum, Rack::Type::D192Rack));
+        auto rack = dynamic_cast<D192Rack *>(getRack(rackNum));
+        if (rack == nullptr) {
+            rack = dynamic_cast<D192Rack *>(addRack(rackNum, Rack::Type::D192Rack));
+        }
         Q_ASSERT_X(rack != nullptr, std::source_location::current().function_name(), "Failed to create new D192 rack.");
         rack->fromByteArray(rackPatchTables.at(rackNum));
     }

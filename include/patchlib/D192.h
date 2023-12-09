@@ -41,7 +41,7 @@ class D192Rom: public Rom
 {
 Q_OBJECT
 public:
-    using Rom::Rom;
+    explicit D192Rom(QObject *parent = nullptr);
 
     [[nodiscard]] Type type() const override
     {

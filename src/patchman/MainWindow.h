@@ -29,6 +29,7 @@ private:
     RomEditor *editor_ = nullptr;
     struct Actions
     {
+        QMenu *fileNew = nullptr;
         QMenu *fileOpen = nullptr;
         QMenu *fileRecent = nullptr;
         QAction *fileSave = nullptr;
@@ -42,15 +43,17 @@ private:
     void initWidgets();
 
     void saveTo(const QString &path);
-    void open(Rom::Type romType);
     void openFrom(const QString &path, Rom::Type romType);
     void setSaveEnabled();
     void updateRecentDocuments();
+    void replaceOpenRom(Rom* newRom);
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
 
 private Q_SLOTS:
+    void newFile(Rom::Type romType);
+    void open(Rom::Type romType);
     void save();
     void saveAs();
 };

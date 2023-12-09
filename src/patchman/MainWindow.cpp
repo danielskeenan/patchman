@@ -27,6 +27,18 @@ void MainWindow::initMenus()
 {
     // File menu
     QMenu *menuFile = menuBar()->addMenu(tr("&File"));
+    // New
+    actions_.fileNew = new QMenu(tr("&New"), this);
+    actions_.fileNew->setIcon(QIcon::fromTheme("document-new"));
+    for (const auto romType: Rom::allTypes()) {
+        auto newAction = new QAction(Rom::typeName(romType), actions_.fileNew);
+        connect(newAction, &QAction::triggered, [romType, this]()
+        {
+            newFile(romType);
+        });
+        actions_.fileNew->addAction(newAction);
+    }
+    menuFile->addMenu(actions_.fileNew);
     // Open
     actions_.fileOpen = new QMenu(tr("&Open"), this);
     actions_.fileOpen->setIcon(QIcon::fromTheme("document-open"));
@@ -41,7 +53,7 @@ void MainWindow::initMenus()
     menuFile->addMenu(actions_.fileOpen);
     // Recent
     actions_.fileRecent = new QMenu(tr("&Recent"), this);
-    actions_.fileRecent->setIcon(QIcon::fromTheme("folder-recent"));
+    actions_.fileRecent->setIcon(QIcon::fromTheme("folder-open-recent"));
     menuFile->addMenu(actions_.fileRecent);
     // Save
     actions_.fileSave = new QAction(tr("&Save"), this);
@@ -100,24 +112,10 @@ void MainWindow::openFrom(const QString &path, Rom::Type romType)
     try {
         auto newRom = Rom::create(romType, this);
         newRom->loadFromFile(path);
-
-        if (editor_ != nullptr) {
-            editor_->deleteLater();
-        }
-        if (rom_ != nullptr) {
-            rom_->deleteLater();
-        }
-
-        rom_ = newRom;
+        replaceOpenRom(newRom);
         setWindowFilePath(path);
         setWindowModified(false);
         setSaveEnabled();
-
-        editor_ = new RomEditor(rom_, this);
-        connect(editor_, &RomEditor::dataChanged, [this]()
-        { setWindowModified(true); });
-        setCentralWidget(editor_);
-        updateRecentDocuments();
     }
     catch (const InvalidRomException &e) {
         QMessageBox::critical(this,
@@ -179,11 +177,37 @@ void MainWindow::updateRecentDocuments()
     }
 }
 
+void MainWindow::replaceOpenRom(Rom *newRom)
+{
+    if (editor_ != nullptr) {
+        editor_->deleteLater();
+    }
+    if (rom_ != nullptr) {
+        rom_->deleteLater();
+    }
+
+    rom_ = newRom;
+    editor_ = new RomEditor(rom_, this);
+    connect(editor_, &RomEditor::dataChanged, [this]()
+    { setWindowModified(true); });
+    setCentralWidget(editor_);
+    updateRecentDocuments();
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     Settings::SetMainWindowGeometry(saveGeometry());
     Settings::Sync();
     QWidget::closeEvent(event);
+}
+
+void MainWindow::newFile(Rom::Type romType)
+{
+    auto *newRom = Rom::create(romType, this);
+    replaceOpenRom(newRom);
+    setWindowFilePath("");
+    setWindowModified(false);
+    setSaveEnabled();
 }
 
 void MainWindow::open(Rom::Type romType)
