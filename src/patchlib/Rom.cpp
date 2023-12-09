@@ -99,14 +99,11 @@ void Rom::removeRack(unsigned int rackNum)
 
 Rack *Rom::getRack(unsigned int rackNum) const
 {
-    const auto rack = std::find_if(racks_.cbegin(), racks_.cend(), [rackNum](const Rack *check)
-    { return check->getRackNum() == rackNum; });
-    if (rack == racks_.cend()) {
+    if (rackNum > racks_.size()) {
         return nullptr;
     }
     else {
-        return *rack;
-
+        return racks_.at(rackNum);
     }
 }
 

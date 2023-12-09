@@ -47,18 +47,45 @@ public:
     void setRackNum(unsigned int rackNum);
     [[nodiscard]] Type getRackType() const;
     void setRackType(Type rackType);
+    [[nodiscard]] QString getRackName() const;
 
     /**
      * Get phase for the given lug.
      */
-    virtual Phase phaseForLug(unsigned int lug) const = 0;
+    [[nodiscard]] virtual Phase phaseForLug(unsigned int lug) const = 0;
 
     /**
      * Get the DMX address for @p lug.
+     *
+     * DMX address is 1-indexed. Address 0 indicates unpatched.
+     *
      * @param lug
      * @return
      */
     [[nodiscard]] unsigned int getLugAddress(unsigned int lug) const;
+
+    /**
+     * Get the matching circuit number (how the rack is conventionally numbered) for the given lug number (how the rack
+     * things about circuits).
+     *
+     * @param circuit
+     * @return
+     */
+    [[nodiscard]] virtual unsigned int lugForCircuit(unsigned circuit) const
+    {
+        return circuit;
+    };
+
+    /**
+     * Opposite of lugForCircuit().
+     *
+     * @param lug
+     * @return
+     */
+    [[nodiscard]] virtual unsigned int circuitForLug(unsigned lug) const
+    {
+        return lug;
+    };
 
     /**
      * Set the DMX address for @p lug. To unpatch this lug, pass `0`.

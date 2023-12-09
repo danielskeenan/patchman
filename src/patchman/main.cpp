@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
     app.setApplicationDisplayName(patchman::config::kProjectDisplayName);
     app.setApplicationVersion(patchman::config::kProjectVersion);
     //  app.setWindowIcon(QIcon(":/logo.svg"));
-    QIcon::setFallbackSearchPaths({":icons"});
+
+    qRegisterMetaType<patchman::RecentDocument>();
 
     // Clear all settings if program is launched while holding [Shift].
     if (app.queryKeyboardModifiers() == Qt::ShiftModifier) {

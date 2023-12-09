@@ -42,6 +42,8 @@ public:
         ENR,
     };
 
+    Q_ENUM(patchman::Rom::Type)
+
     static auto allTypes()
     {
         static const auto types = {
@@ -69,6 +71,13 @@ public:
     explicit Rom(QObject *parent = nullptr)
         : QObject(parent)
     {}
+
+    /**
+     * The ROM's type.
+     *
+     * @return
+     */
+    [[nodiscard]] virtual Type type() const = 0;
 
     void loadFromFile(const QString &path);
     virtual void loadFromData(const QByteArrayView data) = 0;

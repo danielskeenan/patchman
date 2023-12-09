@@ -4,6 +4,18 @@ add_executable(${PROJECT_NAME}
         MainWindow.h
         MainWindow.cpp
         Settings.h
+        RackEditor.h
+        RackEditor.cpp
+        RackModel.h
+        RackModel.cpp
+        RecentDocument.h
+        RecentDocument.cpp
+        RomEditor.h
+        RomEditor.cpp
+        d192/D192RackModel.h
+        d192/D192PatchModel.cpp
+        d192/D192RackEditor.h
+        d192/D192RackEditor.cpp
 )
 
 include(FetchContent)

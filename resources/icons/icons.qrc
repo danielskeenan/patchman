@@ -4,5 +4,6 @@
         <file>document-open.svg</file>
         <file>document-save.svg</file>
         <file>document-save-as.svg</file>
+        <file>folder-recent.svg</file>
     </qresource>
 </RCC>

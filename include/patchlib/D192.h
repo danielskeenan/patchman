@@ -22,6 +22,8 @@ Q_OBJECT
     friend D192Rom;
 public:
     [[nodiscard]] Phase phaseForLug(unsigned int lug) const override;
+    [[nodiscard]] unsigned int lugForCircuit(unsigned int circuit) const override;
+    [[nodiscard]] unsigned int circuitForLug(unsigned int lug) const override;
 
 protected:
     void initLugAddressMap() override;
@@ -29,7 +31,7 @@ protected:
 private:
     using Rack::Rack;
     void fromByteArray(QByteArrayView data);
-    QByteArray toByteArray() const;
+    [[nodiscard]] QByteArray toByteArray() const;
 };
 
 /**
@@ -40,6 +42,11 @@ class D192Rom: public Rom
 Q_OBJECT
 public:
     using Rom::Rom;
+
+    [[nodiscard]] Type type() const override
+    {
+        return Type::D192;
+    }
 
     void loadFromData(QByteArrayView data) override;
     [[nodiscard]] QByteArray toByteArray() const override;

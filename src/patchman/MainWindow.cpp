@@ -40,9 +40,9 @@ void MainWindow::initMenus()
     }
     menuFile->addMenu(actions_.fileOpen);
     // Recent
-//    actions_.fileRecent = new QMenu(tr("&Recent"), this);
-//    actions_.fileRecent->setIcon(QIcon::fromTheme("folder-recent"));
-//    menuFile->addMenu(actions_.fileRecent);
+    actions_.fileRecent = new QMenu(tr("&Recent"), this);
+    actions_.fileRecent->setIcon(QIcon::fromTheme("folder-recent"));
+    menuFile->addMenu(actions_.fileRecent);
     // Save
     actions_.fileSave = new QAction(tr("&Save"), this);
     actions_.fileSave->setIcon(QIcon::fromTheme("document-save"));
@@ -63,7 +63,7 @@ void MainWindow::initMenus()
     menuFile->addAction(actions_.fileExit);
 
     setSaveEnabled();
-//    updateRecentDocuments();
+    updateRecentDocuments();
 }
 
 void MainWindow::initWidgets()
@@ -83,6 +83,7 @@ void MainWindow::saveTo(const QString &path)
     try {
         rom_->saveToFile(path);
         setWindowModified(false);
+        setWindowFilePath(path);
     }
     catch (const UnrepresentableException &e) {
         QMessageBox::critical(this,
@@ -112,11 +113,11 @@ void MainWindow::openFrom(const QString &path, Rom::Type romType)
         setWindowModified(false);
         setSaveEnabled();
 
-//        editor_ = PatchEditor::Create(rom_, this);
-//        connect(editor_, &PatchEditor::DataChanged, [this]()
-//        { setWindowModified(true); });
-//        setCentralWidget(editor_);
-//        updateRecentDocuments();
+        editor_ = new RomEditor(rom_, this);
+        connect(editor_, &RomEditor::dataChanged, [this]()
+        { setWindowModified(true); });
+        setCentralWidget(editor_);
+        updateRecentDocuments();
     }
     catch (const InvalidRomException &e) {
         QMessageBox::critical(this,
@@ -138,34 +139,45 @@ void MainWindow::setSaveEnabled()
     actions_.fileSaveAs->setEnabled(saveEnabled);
 }
 
-//void MainWindow::updateRecentDocuments()
-//{
-//    // Update the stored paths.
-//    auto recents = Settings::GetRecentDocuments();
-//    if (!windowFilePath().isEmpty()) {
-//        // Include the current path in the list.
-//        recents.prepend(windowFilePath());
-//    }
-//    recents.removeDuplicates();
-//    if (recents.size() > Settings::GetRecentDocumentsMax()) {
-//        recents.resize(Settings::GetRecentDocumentsMax());
-//    }
-//    Settings::SetRecentDocuments(recents);
-//
-//    // Update the menu.
-//    actions_.fileRecent->clear();
-//    actions_.fileRecent->setEnabled(!recents.isEmpty());
-//    for (const auto &path: recents) {
-//        auto recentAction = new QAction(path, actions_.fileRecent);
-//        // Used in the open slot to get the path back.
-//        recentAction->setData(path);
-//        connect(recentAction, &QAction::triggered, [this, path]()
-//        {
-//            openFrom(path);
-//        });
-//        actions_.fileRecent->addAction(recentAction);
-//    }
-//}
+void MainWindow::updateRecentDocuments()
+{
+    // Update the stored paths.
+    auto recents = Settings::GetRecentDocuments();
+    if (!windowFilePath().isEmpty()) {
+        // Include the current path in the list.
+        recents.prepend(RecentDocument(windowFilePath(), rom_->type()));
+    }
+    // Remove duplicates.
+    QSet<QString> paths;
+    paths.reserve(recents.size());
+    for (qsizetype ix = 0; ix < recents.size();) {
+        const auto path = recents.at(ix).getPath();
+        if (!paths.contains(path)) {
+            paths.insert(path);
+            ++ix;
+        }
+        else {
+            recents.remove(ix);
+        }
+    }
+
+    if (recents.size() > Settings::GetRecentDocumentsMax()) {
+        recents.remove(Settings::GetRecentDocumentsMax() - 1, recents.size() - Settings::GetRecentDocumentsMax());
+    }
+    Settings::SetRecentDocuments(recents);
+
+    // Update the menu.
+    actions_.fileRecent->clear();
+    actions_.fileRecent->setEnabled(!recents.isEmpty());
+    for (const auto &recent: recents) {
+        auto recentAction = new QAction(recent.getPath(), actions_.fileRecent);
+        connect(recentAction, &QAction::triggered, [this, recent]()
+        {
+            openFrom(recent.getPath(), recent.getRomType());
+        });
+        actions_.fileRecent->addAction(recentAction);
+    }
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -184,6 +196,9 @@ void MainWindow::open(Rom::Type romType)
         const auto &selectedFiles = fileDialog->selectedFiles();
         const QString path = selectedFiles.front();
         openFrom(path, romType);
+        QDir dir(path);
+        dir.cdUp();
+        Settings::SetLastFileDialogPath(dir.path());
     }
 }
 
@@ -215,6 +230,9 @@ void MainWindow::saveAs()
         const auto &selectedFiles = fileDialog->selectedFiles();
         const QString path = selectedFiles.front();
         saveTo(path);
+        QDir dir(path);
+        dir.cdUp();
+        Settings::SetLastFileDialogPath(dir.path());
     }
 }
 

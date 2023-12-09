@@ -11,6 +11,7 @@
 
 #include <QMainWindow>
 #include <patchlib/Rom.h>
+#include "RomEditor.h"
 
 namespace patchman
 {
@@ -25,11 +26,11 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 private:
-    QWidget *editor_ = nullptr;
+    RomEditor *editor_ = nullptr;
     struct Actions
     {
         QMenu *fileOpen = nullptr;
-//        QMenu *fileRecent = nullptr;
+        QMenu *fileRecent = nullptr;
         QAction *fileSave = nullptr;
         QAction *fileSaveAs = nullptr;
         QAction *fileExit = nullptr;
@@ -44,7 +45,7 @@ private:
     void open(Rom::Type romType);
     void openFrom(const QString &path, Rom::Type romType);
     void setSaveEnabled();
-//    void updateRecentDocuments();
+    void updateRecentDocuments();
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;

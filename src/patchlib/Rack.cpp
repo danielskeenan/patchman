@@ -47,6 +47,11 @@ void Rack::setRackType(Rack::Type rackType)
     Q_EMIT(rackTypeChanged());
 }
 
+QString Rack::getRackName() const
+{
+    return tr("Rack %1").arg(getRackNum());
+}
+
 unsigned int Rack::getLugAddress(unsigned int lug) const
 {
     Q_ASSERT_X(lug < lugAddresses_.size(),
