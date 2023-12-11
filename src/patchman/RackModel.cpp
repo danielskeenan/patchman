@@ -41,11 +41,11 @@ QVariant RackModel::data(const QModelIndex &index, int role) const
 {
     const auto column = static_cast<Column>(index.column());
     const auto circuit = index.row();
-    const auto lug = rack_->lugForCircuit(circuit);
+    const auto lug = rack_->getLugForCircuit(circuit);
 
     if (role == Qt::DisplayRole) {
         if (column == Column::Phase) {
-            const auto phase = rack_->phaseForLug(lug);
+            const auto phase = rack_->getPhaseForLug(lug);
             switch (phase) {
                 case Phase::A:
                     return tr("A");
@@ -57,6 +57,9 @@ QVariant RackModel::data(const QModelIndex &index, int role) const
         }
         else if (column == Column::Circuit) {
             return circuit + 1;
+        }
+        else if (column == Column::Module) {
+            return getModuleNameForLug(lug);
         }
         else if (column == Column::Address) {
             const auto address = rack_->getLugAddress(lug);
@@ -70,7 +73,7 @@ QVariant RackModel::data(const QModelIndex &index, int role) const
     }
     else if (role == Qt::DecorationRole) {
         if (column == Column::Phase) {
-            const auto phase = rack_->phaseForLug(lug);
+            const auto phase = rack_->getPhaseForLug(lug);
             switch (phase) {
                 case Phase::A:
                     return QColorConstants::Black;
@@ -94,7 +97,7 @@ bool RackModel::setData(const QModelIndex &index, const QVariant &value, int rol
 {
     const auto column = static_cast<Column>(index.column());
     const auto circuit = index.row();
-    const auto lug = rack_->lugForCircuit(circuit);
+    const auto lug = rack_->getLugForCircuit(circuit);
 
     bool success = false;
     if (role == Qt::EditRole) {
@@ -120,7 +123,9 @@ QVariant RackModel::headerData(int section, Qt::Orientation orientation, int rol
                 case Column::Phase:
                     return tr("Phase");
                 case Column::Circuit:
-                    return tr("Ckt");
+                    return tr("Circuit");
+                case Column::Module:
+                    return tr("Module");
                 case Column::Address:
                     return tr("Addr");
             }
@@ -137,11 +142,18 @@ Qt::ItemFlags RackModel::flags(const QModelIndex &index) const
     switch (column) {
         case Column::Phase:
         case Column::Circuit:
+        case Column::Module:
             return defaultFlags;
         case Column::Address:
             return defaultFlags | Qt::ItemIsEditable;
     }
     Q_UNREACHABLE();
+}
+
+QString RackModel::getModuleNameForLug(unsigned int lug) const
+{
+    const auto density = rack_->getModuleDensityForLug(lug);
+    return tr("%1 Ckt Module").arg(density);
 }
 
 void RackModel::rackTypeChanged()
@@ -151,10 +163,10 @@ void RackModel::rackTypeChanged()
 
 void RackModel::lugChanged(unsigned int lug)
 {
-    const auto circuit = rack_->circuitForLug(lug);
+    const auto circuit = rack_->getCircuitForLug(lug);
     Q_EMIT(dataChanged(
-        createIndex(circuit, static_cast<int>(Column::Address)),
-        createIndex(circuit, static_cast<int>(Column::Address))
+        createIndex(circuit, 0),
+        createIndex(circuit, columnCount(QModelIndex()) - 1)
     ));
 }
 

@@ -121,7 +121,7 @@ void MainWindow::openFrom(const QString &path, Rom::Type romType)
     catch (const InvalidRomException &e) {
         QMessageBox::critical(this,
                               tr("ROM could not be loaded."),
-                              tr("Either the ROM file is corrupted or is of an unknown type."));
+                              tr("Either the ROM file is corrupted or is of an unknown getType."));
     }
     catch (const std::runtime_error &e) {
         QMessageBox::critical(this,
@@ -144,7 +144,7 @@ void MainWindow::updateRecentDocuments()
     auto recents = Settings::GetRecentDocuments();
     if (!windowFilePath().isEmpty()) {
         // Include the current path in the list.
-        recents.prepend(RecentDocument(windowFilePath(), rom_->type()));
+        recents.prepend(RecentDocument(windowFilePath(), rom_->getType()));
     }
     // Remove duplicates.
     QSet<QString> paths;

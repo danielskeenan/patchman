@@ -36,6 +36,7 @@ private:
 private Q_SLOTS:
     void autonumber();
     void unpatch();
+    void setModuleRowSpans();
 };
 
 } // patchman

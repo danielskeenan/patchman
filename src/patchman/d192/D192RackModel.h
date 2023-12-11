@@ -24,8 +24,13 @@ class D192RackModel: public RackModel
 Q_OBJECT
 public:
     explicit D192RackModel(D192Rack *rack, QObject* parent = nullptr)
-        : RackModel(rack, parent)
+        : RackModel(rack, parent), rack_(rack)
     {}
+
+    QString getModuleNameForLug(unsigned int lug) const override;
+
+private:
+    D192Rack* rack_;
 };
 
 } // patchman

@@ -48,11 +48,14 @@ public:
     [[nodiscard]] Type getRackType() const;
     void setRackType(Type rackType);
     [[nodiscard]] QString getRackName() const;
+    [[nodiscard]] virtual unsigned int getLugCount() const = 0;
+    [[nodiscard]] virtual unsigned int getLugsPerModule() const = 0;
+    [[nodiscard]] virtual unsigned int getModuleDensityForLug(unsigned int lug) const = 0;
 
     /**
      * Get phase for the given lug.
      */
-    [[nodiscard]] virtual Phase phaseForLug(unsigned int lug) const = 0;
+    [[nodiscard]] virtual Phase getPhaseForLug(unsigned int lug) const = 0;
 
     /**
      * Get the DMX address for @p lug.
@@ -71,18 +74,18 @@ public:
      * @param circuit
      * @return
      */
-    [[nodiscard]] virtual unsigned int lugForCircuit(unsigned circuit) const
+    [[nodiscard]] virtual unsigned int getLugForCircuit(unsigned circuit) const
     {
         return circuit;
     };
 
     /**
-     * Opposite of lugForCircuit().
+     * Opposite of getLugForCircuit().
      *
      * @param lug
      * @return
      */
-    [[nodiscard]] virtual unsigned int circuitForLug(unsigned lug) const
+    [[nodiscard]] virtual unsigned int getCircuitForLug(unsigned lug) const
     {
         return lug;
     };

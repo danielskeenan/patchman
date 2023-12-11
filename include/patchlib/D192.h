@@ -21,9 +21,12 @@ class D192Rack: public Rack
 Q_OBJECT
     friend D192Rom;
 public:
-    [[nodiscard]] Phase phaseForLug(unsigned int lug) const override;
-    [[nodiscard]] unsigned int lugForCircuit(unsigned int circuit) const override;
-    [[nodiscard]] unsigned int circuitForLug(unsigned int lug) const override;
+    [[nodiscard]] Phase getPhaseForLug(unsigned int lug) const override;
+    [[nodiscard]] unsigned int getLugForCircuit(unsigned int circuit) const override;
+    [[nodiscard]] unsigned int getCircuitForLug(unsigned int lug) const override;
+    [[nodiscard]] unsigned int getLugCount() const override;
+    [[nodiscard]] unsigned int getLugsPerModule() const override;
+    [[nodiscard]] unsigned int getModuleDensityForLug(unsigned int lug) const override;
 
 protected:
     void initLugAddressMap() override;
@@ -43,7 +46,7 @@ Q_OBJECT
 public:
     explicit D192Rom(QObject *parent = nullptr);
 
-    [[nodiscard]] Type type() const override
+    [[nodiscard]] Type getType() const override
     {
         return Type::D192;
     }

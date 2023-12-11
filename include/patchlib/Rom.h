@@ -73,11 +73,11 @@ public:
     {}
 
     /**
-     * The ROM's type.
+     * The ROM's getType.
      *
      * @return
      */
-    [[nodiscard]] virtual Type type() const = 0;
+    [[nodiscard]] virtual Type getType() const = 0;
 
     void loadFromFile(const QString &path);
     virtual void loadFromData(const QByteArrayView data) = 0;

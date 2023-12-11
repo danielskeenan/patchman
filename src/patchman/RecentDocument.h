@@ -17,7 +17,7 @@ namespace patchman
 {
 
 /**
- * Holds a path and rom type pair for use in storing recently-opened documents.
+ * Holds a path and rom getType pair for use in storing recently-opened documents.
  */
 class RecentDocument
 {

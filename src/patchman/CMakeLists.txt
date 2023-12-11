@@ -15,7 +15,7 @@ add_executable(${PROJECT_NAME}
         RomEditor.h
         RomEditor.cpp
         d192/D192RackModel.h
-        d192/D192PatchModel.cpp
+        d192/D192RackModel.cpp
         d192/D192RackEditor.h
         d192/D192RackEditor.cpp
 )

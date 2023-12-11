@@ -15,7 +15,7 @@ namespace patchman
 {
 
 /**
- * The number of lugs in each rack type.
+ * The number of lugs in each rack getType.
  */
 constexpr auto kLugCounts = frozen::make_unordered_map<Rack::Type, unsigned int>(
     {
@@ -447,7 +447,7 @@ D192Rom::D192Rom(QObject *parent)
     }
 }
 
-Phase patchman::D192Rack::phaseForLug(unsigned int lug) const
+Phase patchman::D192Rack::getPhaseForLug(unsigned int lug) const
 {
     if (getRackType() == Rack::Type::D192Rack) {
         if (lug < 64) {
@@ -463,12 +463,12 @@ Phase patchman::D192Rack::phaseForLug(unsigned int lug) const
     Q_UNREACHABLE();
 }
 
-unsigned int D192Rack::lugForCircuit(unsigned int circuit) const
+unsigned int D192Rack::getLugForCircuit(unsigned int circuit) const
 {
     return kCircuitToLugMap.at(circuit);
 }
 
-unsigned int D192Rack::circuitForLug(unsigned int lug) const
+unsigned int D192Rack::getCircuitForLug(unsigned int lug) const
 {
     return kLugToCircuitMap.at(lug);
 }
@@ -517,6 +517,44 @@ QByteArray D192Rack::toByteArray() const
     }
 
     return data;
+}
+
+unsigned int D192Rack::getLugCount() const
+{
+    return kLugToCircuitMap.size();
+}
+
+unsigned int D192Rack::getLugsPerModule() const
+{
+    return 2;
+}
+
+unsigned int D192Rack::getModuleDensityForLug(unsigned int lug) const
+{
+    // Get the lugs in this slot.
+    unsigned int lugA, lugB;
+    if (lug % 2 == 0) {
+        lugA = lug;
+        lugB = lug + 1;
+    }
+    else {
+        lugA = lug - 1;
+        lugB = lug;
+    }
+
+    const auto lugAAddr = getLugAddress(lugA);
+    const auto lugBAddr = getLugAddress(lugB);
+
+    if (lugAAddr == 0 && lugBAddr == 0) {
+        // Blank module
+        return 0;
+    }
+    else if (lugAAddr != 0 && lugBAddr != 0) {
+        return 2;
+    }
+    else {
+        return 1;
+    }
 }
 
 bool D192Rom::isD192Rom(QByteArrayView data)

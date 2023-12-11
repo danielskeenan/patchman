@@ -32,12 +32,12 @@ D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
     buttonsLayout->addStretch();
 
     layout->addWidget(table_);
-    table_->setSelectionBehavior(QTableView::SelectRows);
     table_->setModel(model_);
     connect(model_, &D192RackModel::dataChanged, [this]()
     {
         Q_EMIT(dataChanged());
     });
+    setModuleRowSpans();
 }
 
 QList<unsigned int> D192RackEditor::getSelectedCircuits() const
@@ -72,7 +72,7 @@ void D192RackEditor::autonumber()
     unsigned int nextAddress = options.start;
     for (auto circuitIt = circuits.begin(); circuitIt != circuits.end(); circuitIt += options.offset) {
         const auto circuit = *circuitIt;
-        const auto lug = rack_->lugForCircuit(circuit);
+        const auto lug = rack_->getLugForCircuit(circuit);
         rack_->setLugAddress(lug, nextAddress);
         nextAddress += options.increment;
     }
@@ -82,8 +82,22 @@ void D192RackEditor::unpatch()
 {
     const auto circuits = getSelectedCircuits();
     for (const auto circuit: circuits) {
-        const auto lug = rack_->lugForCircuit(circuit);
+        const auto lug = rack_->getLugForCircuit(circuit);
         rack_->setLugAddress(lug, 0);
+    }
+}
+
+void D192RackEditor::setModuleRowSpans()
+{
+    const auto rowCount = model_->rowCount(QModelIndex());
+    const auto lugsPerModule = rack_->getLugsPerModule();
+    for (unsigned int row = 0; row < rowCount; row += lugsPerModule) {
+        table_->setSpan(
+            row,
+            static_cast<std::underlying_type_t<D192RackModel::Column>>(D192RackModel::Column::Module),
+            lugsPerModule,
+            1
+        );
     }
 }
 
