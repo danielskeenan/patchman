@@ -45,9 +45,9 @@ qt_standard_project_setup()
 add_subdirectory(src)
 
 option(BUILD_PACKAGE "Build packages/installers usable on this platform." OFF)
-#if (BUILD_PACKAGE)
-#    add_subdirectory(install)
-#endif ()
+if (BUILD_PACKAGE)
+    add_subdirectory(install)
+endif ()
 
 include(CTest)
 if (BUILD_TESTING)
