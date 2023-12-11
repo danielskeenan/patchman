@@ -1,4 +1,4 @@
-add_executable(patchlib_test
+add_executable(patchlib_test EXCLUDE_FROM_ALL
         BinLoaderTest.cpp
         D192Test.cpp
         Formatters.cpp

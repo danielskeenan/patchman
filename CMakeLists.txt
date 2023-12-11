@@ -40,6 +40,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         Svg
         REQUIRED)
+qt_standard_project_setup()
 
 add_subdirectory(src)
 

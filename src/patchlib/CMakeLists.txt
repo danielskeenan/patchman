@@ -1,4 +1,4 @@
-add_library(patchlib
+qt_add_library(patchlib STATIC
         ${PROJECT_SOURCE_DIR}/include/patchlib/D192.h
         D192.cpp
         ${PROJECT_SOURCE_DIR}/include/patchlib/Exceptions.h

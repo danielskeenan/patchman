@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME}
+qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ${PROJECT_SOURCE_DIR}/resources/icons/icons.qrc
         AutoNumberDialog.h
         AutoNumberDialog.cpp
@@ -37,3 +37,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt::Widgets
         Qt::Svg
 )
+
+install(TARGETS ${PROJECT_NAME}
+        BUNDLE  DESTINATION .
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+qt_generate_deploy_app_script(
+    TARGET ${PROJECT_NAME}
+    OUTPUT_SCRIPT DEPLOY_SCRIPT
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${DEPLOY_SCRIPT})
