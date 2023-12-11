@@ -30,6 +30,7 @@ RomEditor::RomEditor(Rom *rom, QWidget *parent)
 void RomEditor::addTabForRack(Rack *rack)
 {
     auto *page = RackEditor::create(rack, this);
+    connect(page, &RackEditor::dataChanged, this, &RomEditor::dataChanged);
     tabs_->addTab(page, rack->getRackName());
 }
 

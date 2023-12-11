@@ -1,5 +1,7 @@
 add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/resources/icons/icons.qrc
+        AutoNumberDialog.h
+        AutoNumberDialog.cpp
         main.cpp
         MainWindow.h
         MainWindow.cpp

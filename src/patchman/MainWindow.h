@@ -47,6 +47,7 @@ private:
     void setSaveEnabled();
     void updateRecentDocuments();
     void replaceOpenRom(Rom* newRom);
+    bool maybeSave();
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
@@ -56,6 +57,7 @@ private Q_SLOTS:
     void open(Rom::Type romType);
     void save();
     void saveAs();
+    void dataChanged();
 };
 
 } // patchman

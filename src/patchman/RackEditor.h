@@ -27,6 +27,9 @@ public:
     {}
 
     static RackEditor *create(Rack *rack, QWidget *parent);
+
+Q_SIGNALS:
+    void dataChanged();
 };
 
 } // patchman

@@ -12,6 +12,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QCloseEvent>
 
 namespace patchman
 {
@@ -188,14 +189,41 @@ void MainWindow::replaceOpenRom(Rom *newRom)
 
     rom_ = newRom;
     editor_ = new RomEditor(rom_, this);
-    connect(editor_, &RomEditor::dataChanged, [this]()
-    { setWindowModified(true); });
+    connect(editor_, &RomEditor::dataChanged, this, &MainWindow::dataChanged);
     setCentralWidget(editor_);
     updateRecentDocuments();
 }
 
+bool MainWindow::maybeSave()
+{
+    if (!isWindowModified()) {
+        return true;
+    }
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Data modified"));
+    msgBox.setText(tr("The file has been modified. Do you want to save?"));
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    const auto result = msgBox.exec();
+
+    if (result == QMessageBox::Cancel) {
+        return false;
+    }
+    else {
+        if (result == QMessageBox::Save) {
+            save();
+        }
+        return true;
+    }
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if (!maybeSave()) {
+        event->ignore();
+        return;
+    }
     Settings::SetMainWindowGeometry(saveGeometry());
     Settings::Sync();
     QWidget::closeEvent(event);
@@ -203,6 +231,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::newFile(Rom::Type romType)
 {
+    if (!maybeSave()) {
+        return;
+    }
     auto *newRom = Rom::create(romType, this);
     replaceOpenRom(newRom);
     setWindowFilePath("");
@@ -212,6 +243,9 @@ void MainWindow::newFile(Rom::Type romType)
 
 void MainWindow::open(Rom::Type romType)
 {
+    if (!maybeSave()) {
+        return;
+    }
     auto *fileDialog = new QFileDialog(this);
     fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
     fileDialog->setFileMode(QFileDialog::ExistingFile);
@@ -258,6 +292,11 @@ void MainWindow::saveAs()
         dir.cdUp();
         Settings::SetLastFileDialogPath(dir.path());
     }
+}
+
+void MainWindow::dataChanged()
+{
+    setWindowModified(true);
 }
 
 } // patchman

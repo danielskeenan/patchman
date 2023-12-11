@@ -27,9 +27,15 @@ public:
     explicit D192RackEditor(D192Rack *rack, QWidget *parent);
 
 private:
-    D192Rack* rack_;
-    QTableView* table_;
-    D192RackModel* model_;
+    D192Rack *rack_;
+    QTableView *table_;
+    D192RackModel *model_;
+
+    QList<unsigned int> getSelectedCircuits() const;
+
+private Q_SLOTS:
+    void autonumber();
+    void unpatch();
 };
 
 } // patchman
