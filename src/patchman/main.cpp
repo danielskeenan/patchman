@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QStyleFactory>
 #include "patchman_config.h"
 #include "Settings.h"
 #include "MainWindow.h"
@@ -41,6 +42,16 @@ int main(int argc, char *argv[])
     //  app.setWindowIcon(QIcon(":/logo.svg"));
 
     qRegisterMetaType<patchman::RecentDocument>();
+
+    QIcon::setFallbackSearchPaths({":/icons"});
+
+#ifdef PLATFORM_WINDOWS
+    // Using fusion style enables dark-mode detection on Windows.
+    auto *style = QStyleFactory::create("fusion");
+    if (style != nullptr) {
+        app.setStyle(style);
+    }
+#endif
 
     // Clear all settings if program is launched while holding [Shift].
     if (app.queryKeyboardModifiers() == Qt::ShiftModifier) {
