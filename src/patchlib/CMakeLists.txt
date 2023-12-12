@@ -1,6 +1,9 @@
 qt_add_library(patchlib STATIC
+        ${PROJECT_SOURCE_DIR}/resources/bin/bin.qrc
         ${PROJECT_SOURCE_DIR}/include/patchlib/D192.h
         D192.cpp
+        ${PROJECT_SOURCE_DIR}/include/patchlib/Enr.h
+        Enr.cpp
         ${PROJECT_SOURCE_DIR}/include/patchlib/Exceptions.h
         ${PROJECT_SOURCE_DIR}/include/patchlib/BinLoader.h
         BinLoader.cpp

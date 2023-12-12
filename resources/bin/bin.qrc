@@ -1,0 +1,12 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="bin">
+        <file>./enr/enr_rack_220.bin</file>
+        <file>./enr/enr_rack_230.bin</file>
+        <file>./enr/enr_rack_254.bin</file>
+        <file>./enr/enr_rack_260.bin</file>
+        <file>./enr/enr_rack_272.bin</file>
+        <file>./enr/enr_rack_274.bin</file>
+        <file>./enr/enr_rack_294.bin</file>
+    </qresource>
+</RCC>

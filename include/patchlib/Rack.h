@@ -38,9 +38,6 @@ public:
     {
         D192Rack,
         Enr96,
-        Enr48,
-        Enr24,
-        Enr12,
     };
 
     [[nodiscard]] unsigned int getRackNum() const;

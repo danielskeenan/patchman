@@ -21,9 +21,6 @@ RackEditor *RackEditor::create(Rack *rack, QWidget *parent)
         case Rack::Type::D192Rack:
             return new D192RackEditor(dynamic_cast<D192Rack *>(rack), parent);
         case Rack::Type::Enr96:
-        case Rack::Type::Enr48:
-        case Rack::Type::Enr24:
-        case Rack::Type::Enr12:
             return nullptr;
     }
     Q_UNREACHABLE();
