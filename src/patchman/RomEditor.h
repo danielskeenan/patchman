@@ -17,7 +17,7 @@ namespace patchman
 {
 
 /**
- * Base class for ROM editors.
+ * Rom Editor.
  */
 class RomEditor: public QWidget
 {

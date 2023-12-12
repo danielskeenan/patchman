@@ -39,12 +39,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 install(TARGETS ${PROJECT_NAME}
-        BUNDLE  DESTINATION .
+        BUNDLE DESTINATION .
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-qt_generate_deploy_app_script(
-    TARGET ${PROJECT_NAME}
-    OUTPUT_SCRIPT DEPLOY_SCRIPT
-    NO_UNSUPPORTED_PLATFORM_ERROR
-)
-install(SCRIPT ${DEPLOY_SCRIPT})
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    qt_generate_deploy_app_script(
+            TARGET ${PROJECT_NAME}
+            OUTPUT_SCRIPT DEPLOY_SCRIPT
+            NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT ${DEPLOY_SCRIPT})
+endif ()

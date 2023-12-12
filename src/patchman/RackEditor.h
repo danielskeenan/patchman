@@ -22,14 +22,37 @@ class RackEditor: public QWidget
 {
 Q_OBJECT
 public:
-    explicit RackEditor(Rack *rack, QWidget *parent)
+    explicit RackEditor(Rack *rack, QWidget *parent = nullptr)
         : QWidget(parent)
     {}
 
-    static RackEditor *create(Rack *rack, QWidget *parent);
+    static RackEditor *create(Rack *rack, QWidget *parent = nullptr);
+
+    [[nodiscard]] virtual QList<unsigned int> getSelectedCircuits() const = 0;
 
 Q_SIGNALS:
     void dataChanged();
+};
+
+/**
+ * Contains a RackEditor widget, adding tool buttons around the widget.
+ */
+class RackEditorContainer: public QWidget
+{
+Q_OBJECT
+public:
+    explicit RackEditorContainer(Rack *rack, QWidget *parent = nullptr);
+
+Q_SIGNALS:
+    void dataChanged();
+
+private:
+    Rack *rack_;
+    RackEditor *editor_;
+
+private Q_SLOTS:
+    void autonumber();
+    void unpatch();
 };
 
 } // patchman

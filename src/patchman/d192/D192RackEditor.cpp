@@ -6,7 +6,6 @@
  * @copyright GNU GPLv3
  */
 
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include "D192RackEditor.h"
@@ -17,19 +16,7 @@ namespace patchman
 D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
     : RackEditor(rack, parent), rack_(rack), table_(new QTableView(this)), model_(new D192RackModel(rack_, this))
 {
-    auto *layout = new QVBoxLayout(this);
-
-    auto *buttonsLayout = new QHBoxLayout;
-    layout->addLayout(buttonsLayout);
-
-    auto *autonumber = new QPushButton(tr("Autonumber"), this);
-    connect(autonumber, &QPushButton::clicked, this, &D192RackEditor::autonumber);
-    buttonsLayout->addWidget(autonumber);
-
-    auto *unpatch = new QPushButton(tr("Unpatch"), this);
-    connect(unpatch, &QPushButton::clicked, this, &D192RackEditor::unpatch);
-    buttonsLayout->addWidget(unpatch);
-    buttonsLayout->addStretch();
+    auto *layout = new QHBoxLayout(this);
 
     layout->addWidget(table_);
     table_->setModel(model_);

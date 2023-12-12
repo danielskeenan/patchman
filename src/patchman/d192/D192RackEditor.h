@@ -26,12 +26,12 @@ Q_OBJECT
 public:
     explicit D192RackEditor(D192Rack *rack, QWidget *parent);
 
+    [[nodiscard]] QList<unsigned int> getSelectedCircuits() const override;
+
 private:
     D192Rack *rack_;
     QTableView *table_;
     D192RackModel *model_;
-
-    QList<unsigned int> getSelectedCircuits() const;
 
 private Q_SLOTS:
     void autonumber();
