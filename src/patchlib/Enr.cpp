@@ -166,6 +166,21 @@ QByteArray EnrRack::toByteArray() const
     return data;
 }
 
+const QMap<EnrRom::Version, QString> & EnrRom::getVersionNames()
+{
+    static const QMap<Version, QString> versions{
+        {Version::EnrRack220, tr("2.20")},
+        {Version::EnrRack230, tr("2.30")},
+        {Version::EnrRack254, tr("2.54")},
+        {Version::EnrRack260, tr("2.60")},
+        {Version::EnrRack272, tr("2.72")},
+        {Version::EnrRack274, tr("2.74")},
+        {Version::EnrRack294, tr("2.94")},
+    };
+
+    return versions;
+}
+
 EnrRom::EnrRom(QObject *parent)
     : Rom(parent)
 {

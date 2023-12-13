@@ -65,6 +65,8 @@ public:
         EnrRack294,
     };
 
+    [[nodiscard]] static const QMap<EnrRom::Version, QString> &getVersionNames();
+
     explicit EnrRom(QObject *parent = nullptr);
 
     [[nodiscard]] Type getType() const override
