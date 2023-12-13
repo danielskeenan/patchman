@@ -121,7 +121,7 @@ void MainWindow::openFrom(const QString &path, Rom::Type romType)
     catch (const InvalidRomException &e) {
         QMessageBox::critical(this,
                               tr("ROM could not be loaded."),
-                              tr("Either the ROM file is corrupted or is of an unknown getType."));
+                              tr("Either the ROM file is corrupted or is of an unknown type."));
     }
     catch (const std::runtime_error &e) {
         QMessageBox::critical(this,

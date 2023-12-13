@@ -9,67 +9,12 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include "D192RackEditor.h"
-#include "../AutoNumberDialog.h"
 
 namespace patchman
 {
 
-D192RackModuleMimic::D192RackModuleMimic(D192Rack *rack, unsigned int firstLug, QWidget *parent)
-    : QWidget(parent), rack_(rack), firstLug_(firstLug), label_(new QLabel(this))
-{
-    for (unsigned int slotLug = 0; slotLug < addresses_.size(); ++slotLug) {
-        addresses_[slotLug] = rack_->getLugAddress(firstLug_ + slotLug);
-    }
-    updateLabel();
-}
-
-void D192RackModuleMimic::setAddress(unsigned int lug, unsigned int address)
-{
-    if (lug < firstLug_ || lug >= firstLug_ + addresses_.size()) {
-        qWarning() << "Tried to set lug address on widget that does not contain that lug.";
-        return;
-    }
-    addresses_[firstLug_ - lug] = address;
-    updateLabel();
-}
-
-void D192RackModuleMimic::updateLabel()
-{
-    const auto density = rack_->getModuleDensityForLug(firstLug_);
-    if (density == 0) {
-        label_->clear();
-    }
-    else if (density == 1) {
-        label_->setText(tr("%1").arg(addresses_.front()));
-    }
-    else {
-        label_->setText(tr("%1 / %2").arg(addresses_.front()).arg(addresses_.back()));
-    }
-}
-
-D192RackMimic::D192RackMimic(D192Rack *rack, QWidget *parent)
-    : QWidget(parent), rack_(rack)
-{
-    auto *layout = new QGridLayout(this);
-    for (int lug = 0; lug < 192; lug += 2) {
-        auto *widget = new D192RackModuleMimic(rack_, lug, this);
-        slots_.push_back(widget);
-        const auto slotNum = lug / 2;
-        const auto [col, row] = std::div(slotNum, 32);
-        layout->addWidget(widget, row, col, Qt::AlignCenter);
-    }
-    connect(rack_, &D192Rack::lugChanged, this, &D192RackMimic::lugChanged);
-}
-
-void D192RackMimic::lugChanged(unsigned int lug)
-{
-    const auto slotNum = lug / 2;
-    slots_.at(slotNum)->setAddress(lug, rack_->getLugAddress(lug));
-}
-
 D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
-    : RackEditor(rack, parent), rack_(rack), table_(new QTableView(this)), model_(new D192RackModel(rack_, this)),
-      mimic_(new D192RackMimic(rack_, this))
+    : RackEditor(rack, parent), rack_(rack), table_(new QTableView(this)), model_(new D192RackModel(rack_, this))
 {
     auto *layout = new QHBoxLayout(this);
 
@@ -80,8 +25,6 @@ D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
         Q_EMIT(dataChanged());
     });
     setModuleRowSpans();
-
-//    layout->addWidget(mimic_, Qt::AlignCenter);
 }
 
 QList<unsigned int> D192RackEditor::getSelectedCircuits() const
