@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<patchman::RecentDocument>();
 
+    Q_INIT_RESOURCE(bin);
+
     QIcon::setFallbackSearchPaths({":/icons"});
 
 #ifdef PLATFORM_WINDOWS

@@ -9,6 +9,7 @@
 #include "patchlib/Rom.h"
 #include "patchlib/D192.h"
 #include "patchlib/BinLoader.h"
+#include "patchlib/Enr.h"
 
 namespace patchman
 {
@@ -48,7 +49,7 @@ Rom *Rom::create(Rom::Type romType, QObject *parent)
         case Rom::Type::D192:
             return new D192Rom(parent);
         case Rom::Type::ENR:
-            return nullptr;
+            return new EnrRom(parent);
     }
     Q_UNREACHABLE();
 }

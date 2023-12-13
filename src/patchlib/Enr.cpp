@@ -138,6 +138,7 @@ void EnrRack::fromByteArray(QByteArrayView data)
                    "Tried to load lug patch beyond end of rack");
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
         const auto address = lugData & 0x01FFu;
+        // 9-bit unsigned int maxes out at 511.
         const auto flags = (lugData & 0xFE00u) >> 1;
         lugAddresses_[lug] = address;
         lugFlags_[lug] = flags;
@@ -173,6 +174,15 @@ EnrRom::EnrRom(QObject *parent)
         rack->initLugAddressMap();
         racks_.push_back(rack);
     }
+}
+
+bool operator==(const EnrRom &lhs, const EnrRom &rhs)
+{
+    if (lhs.version_ != rhs.version_) {
+        return false;
+    }
+
+    return static_cast<const Rom &>(lhs) == static_cast<const Rom &>(rhs);
 }
 
 void EnrRom::setVersion(EnrRom::Version version)
@@ -242,10 +252,15 @@ QByteArray EnrRom::toByteArray() const
 
 Rack *EnrRom::addRack(unsigned int rackNum, Rack::Type rackType)
 {
-    auto *rack = new EnrRack(rackNum, rackType, this);
-    rack->initLugAddressMap();
-    racks_.push_back(rack);
-    sortRacks();
+    auto *rack = dynamic_cast<EnrRack *>(getRack(rackNum));
+    if (rack == nullptr) {
+        rack = new EnrRack(rackNum, rackType, this);
+        racks_.push_back(rack);
+        sortRacks();
+    }
+    else {
+        rack->initLugAddressMap();
+    }
     return rack;
 }
 

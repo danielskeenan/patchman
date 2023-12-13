@@ -50,6 +50,8 @@ private:
 class EnrRom: public Rom
 {
 Q_OBJECT
+    friend bool operator==(const EnrRom &lhs, const EnrRom &rhs);
+
 public:
     enum class Version
     {

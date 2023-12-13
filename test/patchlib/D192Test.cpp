@@ -1111,7 +1111,7 @@ TEST_CASE("D192 Load")
         REQUIRE(*kTestRom == *actual);
     }
 
-    SECTION("Wrong ROM getType") {
+    SECTION("Wrong ROM type") {
         patchman::Rom *actual = patchman::Rom::create(patchman::Rom::Type::D192);
 
         const QByteArrayView badPatchRomView({0, 0, 0, 0, 0});
