@@ -258,9 +258,7 @@ Rack *EnrRom::addRack(unsigned int rackNum, Rack::Type rackType)
         racks_.push_back(rack);
         sortRacks();
     }
-    else {
-        rack->initLugAddressMap();
-    }
+    rack->initLugAddressMap();
     return rack;
 }
 

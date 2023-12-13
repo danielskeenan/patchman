@@ -480,10 +480,13 @@ void D192Rack::initLugAddressMap()
 
 Rack *D192Rom::addRack(unsigned int rackNum, Rack::Type rackType)
 {
-    auto *rack = new D192Rack(rackNum, rackType, this);
+    auto *rack = dynamic_cast<D192Rack *>(getRack(rackNum));
+    if (rack == nullptr) {
+        rack = new D192Rack(rackNum, rackType, this);
+        racks_.push_back(rack);
+        sortRacks();
+    }
     rack->initLugAddressMap();
-    racks_.push_back(rack);
-    sortRacks();
     return rack;
 }
 
