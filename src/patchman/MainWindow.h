@@ -11,6 +11,7 @@
 
 #include <QMainWindow>
 #include <patchlib/Rom.h>
+#include <QLabel>
 #include "RomEditor.h"
 
 namespace patchman
@@ -37,6 +38,10 @@ private:
         QAction *fileExit = nullptr;
     };
     Actions actions_;
+    struct Widgets {
+        QLabel* romTitle = nullptr;
+    };
+    Widgets widgets;
     Rom *rom_ = nullptr;
 
     void initMenus();
@@ -58,6 +63,7 @@ private Q_SLOTS:
     void save();
     void saveAs();
     void dataChanged();
+    void romTitleChanged();
 };
 
 } // patchman

@@ -74,6 +74,8 @@ public:
         return Type::ENR;
     }
 
+    [[nodiscard]] QString getTitle() const override;
+
     void loadFromData(QByteArrayView data) override;
     [[nodiscard]] QByteArray toByteArray() const override;
 

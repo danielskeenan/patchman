@@ -79,6 +79,13 @@ public:
      */
     [[nodiscard]] virtual Type getType() const = 0;
 
+    /**
+     * Get a descriptive title for this ROM.
+     *
+     * @return
+     */
+    [[nodiscard]] virtual QString getTitle() const;
+
     void loadFromFile(const QString &path);
     virtual void loadFromData(const QByteArrayView data) = 0;
 
@@ -124,6 +131,7 @@ public:
 Q_SIGNALS:
     void rackAdded(Rack *rack);
     void rackRemoved(unsigned int rackNum);
+    void titleChanged();
 
 protected:
     QList<Rack *> racks_;

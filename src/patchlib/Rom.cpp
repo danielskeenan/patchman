@@ -42,6 +42,11 @@ QString Rom::typeName(Rom::Type romType)
     Q_UNREACHABLE();
 }
 
+QString Rom::getTitle() const
+{
+    return tr("%1 ROM").arg(typeName(getType()));
+}
+
 Rom *Rom::create(Rom::Type romType, QObject *parent)
 {
     Rom *rom;

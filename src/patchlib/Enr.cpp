@@ -166,9 +166,10 @@ QByteArray EnrRack::toByteArray() const
     return data;
 }
 
-const QMap<EnrRom::Version, QString> & EnrRom::getVersionNames()
+const QMap<EnrRom::Version, QString> &EnrRom::getVersionNames()
 {
     static const QMap<Version, QString> versions{
+        {Version::Unknown, tr("Unknown")},
         {Version::EnrRack220, tr("2.20")},
         {Version::EnrRack230, tr("2.30")},
         {Version::EnrRack254, tr("2.54")},
@@ -184,6 +185,9 @@ const QMap<EnrRom::Version, QString> & EnrRom::getVersionNames()
 EnrRom::EnrRom(QObject *parent)
     : Rom(parent)
 {
+    // Load default software.
+    setVersion(Version::EnrRack294);
+
     for (unsigned int rackNum = 0; rackNum < kPatchTableCount; ++rackNum) {
         auto rack = new EnrRack(rackNum, Rack::Type::Enr96, this);
         rack->initLugAddressMap();
@@ -213,6 +217,8 @@ void EnrRom::setVersion(EnrRom::Version version)
                std::source_location::current().function_name(),
                "Failed to open software version from internal resource.");
     software_ = file.readAll();
+    Q_EMIT(versionChanged(version_));
+    Q_EMIT(titleChanged());
 }
 
 void EnrRom::loadFromData(QByteArrayView data)
@@ -226,6 +232,7 @@ void EnrRom::loadFromData(QByteArrayView data)
     QCryptographicHash hasher(QCryptographicHash::Sha256);
     hasher.addData(software);
     const auto swChecksum = hasher.result();
+    version_ = Version::Unknown;
     for (const auto &[version, checksum]: kSoftwareChecksums) {
         if (checksum == swChecksum) {
             version_ = version;
@@ -287,6 +294,11 @@ bool EnrRom::isEnrRom(QByteArrayView data)
     }
 
     return true;
+}
+
+QString EnrRom::getTitle() const
+{
+    return tr("ENR Rack v%1").arg(getVersionNames().value(version_));
 }
 
 };

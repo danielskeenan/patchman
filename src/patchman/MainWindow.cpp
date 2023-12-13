@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QStatusBar>
 
 namespace patchman
 {
@@ -85,6 +86,9 @@ void MainWindow::initWidgets()
         resize(1024, 768);
         Settings::SetMainWindowGeometry(saveGeometry());
     }
+
+    widgets.romTitle = new QLabel(this);
+    statusBar()->addPermanentWidget(widgets.romTitle);
 }
 
 void MainWindow::saveTo(const QString &path)
@@ -189,7 +193,9 @@ void MainWindow::replaceOpenRom(Rom *newRom)
 
     rom_ = newRom;
     editor_ = new RomEditor(rom_, this);
+    romTitleChanged();
     connect(editor_, &RomEditor::dataChanged, this, &MainWindow::dataChanged);
+    connect(rom_, &Rom::titleChanged, this, &MainWindow::romTitleChanged);
     setCentralWidget(editor_);
     updateRecentDocuments();
 }
@@ -297,6 +303,11 @@ void MainWindow::saveAs()
 void MainWindow::dataChanged()
 {
     setWindowModified(true);
+}
+
+void MainWindow::romTitleChanged()
+{
+    widgets.romTitle->setText(rom_->getTitle());
 }
 
 } // patchman
