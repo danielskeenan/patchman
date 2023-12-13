@@ -42,17 +42,11 @@ void MainWindow::initMenus()
     }
     menuFile->addMenu(actions_.fileNew);
     // Open
-    actions_.fileOpen = new QMenu(tr("&Open"), this);
+    actions_.fileOpen = new QAction(tr("&Open"), this);
     actions_.fileOpen->setIcon(QIcon::fromTheme("document-open"));
-    for (const auto romType: Rom::allTypes()) {
-        auto openAction = new QAction(Rom::typeName(romType), actions_.fileOpen);
-        connect(openAction, &QAction::triggered, [romType, this]()
-        {
-            open(romType);
-        });
-        actions_.fileOpen->addAction(openAction);
-    }
-    menuFile->addMenu(actions_.fileOpen);
+    actions_.fileOpen->setShortcut(QKeySequence::StandardKey::Open);
+    connect(actions_.fileOpen, &QAction::triggered, this, &MainWindow::open);
+    menuFile->addAction(actions_.fileOpen);
     // Recent
     actions_.fileRecent = new QMenu(tr("&Recent"), this);
     actions_.fileRecent->setIcon(QIcon::fromTheme("folder-open-recent"));
@@ -112,14 +106,15 @@ void MainWindow::saveTo(const QString &path)
     }
 }
 
-void MainWindow::openFrom(const QString &path, Rom::Type romType)
+void MainWindow::openFrom(const QString &path)
 {
     try {
+        auto romType = Rom::guessType(path);
         auto newRom = Rom::create(romType, this);
         newRom->loadFromFile(path);
-        replaceOpenRom(newRom);
         setWindowFilePath(path);
         setWindowModified(false);
+        replaceOpenRom(newRom);
         setSaveEnabled();
     }
     catch (const InvalidRomException &e) {
@@ -148,24 +143,13 @@ void MainWindow::updateRecentDocuments()
     auto recents = Settings::GetRecentDocuments();
     if (!windowFilePath().isEmpty()) {
         // Include the current path in the list.
-        recents.prepend(RecentDocument(windowFilePath(), rom_->getType()));
+        recents.prepend(windowFilePath());
     }
     // Remove duplicates.
-    QSet<QString> paths;
-    paths.reserve(recents.size());
-    for (qsizetype ix = 0; ix < recents.size();) {
-        const auto path = recents.at(ix).getPath();
-        if (!paths.contains(path)) {
-            paths.insert(path);
-            ++ix;
-        }
-        else {
-            recents.remove(ix);
-        }
-    }
+    recents.removeDuplicates();
 
     if (recents.size() > Settings::GetRecentDocumentsMax()) {
-        recents.remove(Settings::GetRecentDocumentsMax() - 1, recents.size() - Settings::GetRecentDocumentsMax());
+        recents.resize(Settings::GetRecentDocumentsMax());
     }
     Settings::SetRecentDocuments(recents);
 
@@ -173,10 +157,10 @@ void MainWindow::updateRecentDocuments()
     actions_.fileRecent->clear();
     actions_.fileRecent->setEnabled(!recents.isEmpty());
     for (const auto &recent: recents) {
-        auto recentAction = new QAction(recent.getPath(), actions_.fileRecent);
+        auto recentAction = new QAction(recent, actions_.fileRecent);
         connect(recentAction, &QAction::triggered, [this, recent]()
         {
-            openFrom(recent.getPath(), recent.getRomType());
+            openFrom(recent);
         });
         actions_.fileRecent->addAction(recentAction);
     }
@@ -247,7 +231,7 @@ void MainWindow::newFile(Rom::Type romType)
     setSaveEnabled();
 }
 
-void MainWindow::open(Rom::Type romType)
+void MainWindow::open()
 {
     if (!maybeSave()) {
         return;
@@ -259,7 +243,7 @@ void MainWindow::open(Rom::Type romType)
     if (fileDialog->exec() == QFileDialog::Accepted) {
         const auto &selectedFiles = fileDialog->selectedFiles();
         const QString path = selectedFiles.front();
-        openFrom(path, romType);
+        openFrom(path);
         QDir dir(path);
         dir.cdUp();
         Settings::SetLastFileDialogPath(dir.path());

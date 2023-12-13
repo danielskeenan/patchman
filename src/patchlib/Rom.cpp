@@ -10,9 +10,16 @@
 #include "patchlib/D192.h"
 #include "patchlib/BinLoader.h"
 #include "patchlib/Enr.h"
+#include "patchlib/Exceptions.h"
+#include <frozen/map.h>
 
 namespace patchman
 {
+
+static const std::map<Rom::Type, std::function<bool(QByteArrayView)>> kRomTypeGuessers{
+    {Rom::Type::D192, &D192Rom::isD192Rom},
+    {Rom::Type::ENR, &EnrRom::isEnrRom},
+};
 
 bool operator==(const Rom &lhs, const Rom &rhs)
 {
@@ -57,6 +64,17 @@ Rom *Rom::create(Rom::Type romType, QObject *parent)
             return new EnrRom(parent);
     }
     Q_UNREACHABLE();
+}
+
+Rom::Type Rom::guessType(const QString &path)
+{
+    const auto data = BinLoader::loadFile(path);
+    for (const auto &[romType, guesser]: kRomTypeGuessers) {
+        if (guesser(data)) {
+            return romType;
+        }
+    }
+    throw InvalidRomException("Not a valid ROM file.");
 }
 
 void Rom::loadFromFile(const QString &path)

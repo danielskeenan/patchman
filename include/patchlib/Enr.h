@@ -67,6 +67,8 @@ public:
 
     [[nodiscard]] static const QMap<EnrRom::Version, QString> &getVersionNames();
 
+    static bool isEnrRom(QByteArrayView data);
+
     explicit EnrRom(QObject *parent = nullptr);
 
     [[nodiscard]] Type getType() const override
@@ -94,8 +96,6 @@ Q_SIGNALS:
 private:
     Version version_ = Version::Unknown;
     QByteArray software_;
-
-    static bool isEnrRom(QByteArrayView data);
 };
 
 } // patchman

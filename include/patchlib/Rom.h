@@ -65,6 +65,13 @@ public:
     static Rom *create(Rom::Type romType, QObject *parent = nullptr);
 
     /**
+     * Guess the ROM type.
+     * @param path
+     * @return
+     */
+    static Type guessType(const QString &path);
+
+    /**
      * Rom constructor. Do not use directly. Use createRom() instead.
      * @param parent
      */

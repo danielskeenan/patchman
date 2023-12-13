@@ -11,7 +11,6 @@
 
 #include <dragoonboots/qsettingscontainer/QSettingsContainer.h>
 #include <QStandardPaths>
-#include "RecentDocument.h"
 
 namespace patchman
 {
@@ -26,7 +25,7 @@ public:
     DGSETTINGS_SETTING(QString, LastFileDialogPath, QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation))
 
     /** Recent documents list */
-    DGSETTINGS_SETTING(QList<RecentDocument>, RecentDocuments, {})
+    DGSETTINGS_SETTING(QStringList, RecentDocuments, {})
 
     /** Max number of recent documents to track */
     DGSETTINGS_SETTING(unsigned int, RecentDocumentsMax, 8)

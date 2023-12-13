@@ -10,8 +10,6 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         RackEditor.cpp
         RackModel.h
         RackModel.cpp
-        RecentDocument.h
-        RecentDocument.cpp
         RomEditor.h
         RomEditor.cpp
         d192/D192RackModel.h

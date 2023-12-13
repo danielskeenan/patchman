@@ -31,15 +31,16 @@ private:
     struct Actions
     {
         QMenu *fileNew = nullptr;
-        QMenu *fileOpen = nullptr;
+        QAction *fileOpen = nullptr;
         QMenu *fileRecent = nullptr;
         QAction *fileSave = nullptr;
         QAction *fileSaveAs = nullptr;
         QAction *fileExit = nullptr;
     };
     Actions actions_;
-    struct Widgets {
-        QLabel* romTitle = nullptr;
+    struct Widgets
+    {
+        QLabel *romTitle = nullptr;
     };
     Widgets widgets;
     Rom *rom_ = nullptr;
@@ -48,10 +49,10 @@ private:
     void initWidgets();
 
     void saveTo(const QString &path);
-    void openFrom(const QString &path, Rom::Type romType);
+    void openFrom(const QString &path);
     void setSaveEnabled();
     void updateRecentDocuments();
-    void replaceOpenRom(Rom* newRom);
+    void replaceOpenRom(Rom *newRom);
     bool maybeSave();
 
 protected Q_SLOTS:
@@ -59,7 +60,7 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     void newFile(Rom::Type romType);
-    void open(Rom::Type romType);
+    void open();
     void save();
     void saveAs();
     void dataChanged();

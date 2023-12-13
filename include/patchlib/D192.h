@@ -44,6 +44,8 @@ class D192Rom: public Rom
 {
 Q_OBJECT
 public:
+    static bool isD192Rom(QByteArrayView data);
+
     explicit D192Rom(QObject *parent = nullptr);
 
     [[nodiscard]] Type getType() const override
@@ -55,9 +57,6 @@ public:
     [[nodiscard]] QByteArray toByteArray() const override;
 
     Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
-
-private:
-    static bool isD192Rom(QByteArrayView data);
 };
 
 } // patchlib

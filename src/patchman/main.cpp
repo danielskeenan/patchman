@@ -41,8 +41,6 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(patchman::config::kProjectVersion);
     //  app.setWindowIcon(QIcon(":/logo.svg"));
 
-    qRegisterMetaType<patchman::RecentDocument>();
-
     Q_INIT_RESOURCE(bin);
 
     QIcon::setFallbackSearchPaths({":/icons"});
