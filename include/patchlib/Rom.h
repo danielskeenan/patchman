@@ -73,7 +73,7 @@ public:
     {}
 
     /**
-     * The ROM's getType.
+     * The ROM's type.
      *
      * @return
      */
