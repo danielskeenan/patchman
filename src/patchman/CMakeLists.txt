@@ -18,6 +18,10 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         d192/D192RackModel.cpp
         d192/D192RackEditor.h
         d192/D192RackEditor.cpp
+        enr/EnrRackEditor.h
+        enr/EnrRackEditor.cpp
+        enr/EnrRackModel.h
+        enr/EnrRackModel.cpp
 )
 
 include(FetchContent)
