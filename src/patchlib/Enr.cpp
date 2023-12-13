@@ -15,6 +15,7 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+#include <iostream>
 
 namespace patchman
 {
@@ -55,8 +56,7 @@ static const auto kSoftwareChecksums = frozen::make_unordered_map<EnrRom::Versio
     }
 );
 
-constexpr auto kSoftwareFilepaths = frozen::make_unordered_map<EnrRom::Version, frozen::string>(
-    {
+static const QHash<EnrRom::Version, QString> kSoftwareFilepaths{
         {EnrRom::Version::EnrRack220, ":/bin/enr/enr_rack_220.bin"},
         {EnrRom::Version::EnrRack230, ":/bin/enr/enr_rack_230.bin"},
         {EnrRom::Version::EnrRack254, ":/bin/enr/enr_rack_254.bin"},
@@ -64,8 +64,7 @@ constexpr auto kSoftwareFilepaths = frozen::make_unordered_map<EnrRom::Version, 
         {EnrRom::Version::EnrRack272, ":/bin/enr/enr_rack_272.bin"},
         {EnrRom::Version::EnrRack274, ":/bin/enr/enr_rack_274.bin"},
         {EnrRom::Version::EnrRack294, ":/bin/enr/enr_rack_294.bin"},
-    }
-);
+};
 
 unsigned int EnrRack::getLugCount() const
 {
@@ -211,12 +210,16 @@ void EnrRom::setVersion(EnrRom::Version version)
     }
     version_ = version;
 
-    const auto path = kSoftwareFilepaths.at(version);
-    QFile file(QString::fromLatin1(path.data(), path.size()));
-    Q_ASSERT_X(file.open(QFile::ReadOnly),
+    const auto path = kSoftwareFilepaths.value(version);
+    QFile file(path);
+    file.open(QFile::ReadOnly);
+    Q_ASSERT_X(file.isOpen(),
                std::source_location::current().function_name(),
                "Failed to open software version from internal resource.");
+    std::cerr << "file.isOpen " << file.isOpen() << std::endl;
+    std::cerr << "software_size: " << software_.size() << std::endl;
     software_ = file.readAll();
+    std::cerr << "software_size: " << software_.size() << std::endl;
     Q_EMIT(versionChanged(version_));
     Q_EMIT(titleChanged());
 }
