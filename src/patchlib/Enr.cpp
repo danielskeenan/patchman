@@ -257,6 +257,22 @@ void EnrRom::loadFromData(QByteArrayView data)
         const auto rackPatchTable = allRackPatchTables.sliced(rackNum * (kLugCounts.at(Rack::Type::Enr96) * 2));
         rack->fromByteArray(rackPatchTable);
     }
+
+    // Sanity check the racks. If all racks have all lugs set to address 511, then this is a stock 1-1 patch and
+    // should not be edited.
+    const auto is1to1 = [](const Rack *rack)
+    {
+        for (const auto lugAddress : rack->getLugAddressesView()) {
+            if (lugAddress.second != 511) {
+                return false;
+            }
+        }
+        return true;
+    };
+    if (std::all_of(racks_.cbegin(), racks_.cend(), is1to1)) {
+        throw InvalidRomException(tr("ENR 1-1 Patch detected."),
+                                  tr("ENR 1-1 patch ROMs are special and are not editable. To modify an ENR 1-1 patch, create a new patch ROM and autonumber each rack."));
+    }
 }
 
 QByteArray EnrRom::toByteArray() const
