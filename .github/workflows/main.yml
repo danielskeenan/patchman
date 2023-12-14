@@ -21,6 +21,9 @@ jobs:
         os:
           - windows-2022
     runs-on: ${{matrix.os}}
+    env:
+      # See https://learn.microsoft.com/en-us/vcpkg/consume/binary-caching-github-actions-cache
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     steps:
       - name: Get number of CPU cores
         uses: SimenB/github-actions-cpu-cores@v1
@@ -29,6 +32,13 @@ jobs:
         run: |
           echo "CMAKE_BUILD_PARALLEL_LEVEL=${{ steps.cpu-cores.outputs.count }}" >> ${GITHUB_ENV}
           echo "CTEST_PARALLEL_LEVEL=1" >> ${GITHUB_ENV}
+      # See # See https://learn.microsoft.com/en-us/vcpkg/consume/binary-caching-github-actions-cache
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       #######################
       # BUILD
       #######################
