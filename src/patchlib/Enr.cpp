@@ -229,10 +229,7 @@ void EnrRom::setVersion(EnrRom::Version version)
     Q_ASSERT_X(file.isOpen(),
                std::source_location::current().function_name(),
                "Failed to open software version from internal resource.");
-    std::cerr << "file.isOpen " << file.isOpen() << std::endl;
-    std::cerr << "software_size: " << software_.size() << std::endl;
     software_ = file.readAll();
-    std::cerr << "software_size: " << software_.size() << std::endl;
     Q_EMIT(versionChanged(version_));
     Q_EMIT(titleChanged());
 }
