@@ -74,7 +74,7 @@ Rom::Type Rom::guessType(const QString &path)
             return romType;
         }
     }
-    throw InvalidRomException("Not a valid ROM file.");
+    throw InvalidRomException(tr("This is not a patch ROM file."));
 }
 
 void Rom::loadFromFile(const QString &path)

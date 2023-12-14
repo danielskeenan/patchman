@@ -9,6 +9,7 @@
 #include "MainWindow.h"
 #include "Settings.h"
 #include "patchlib/Exceptions.h"
+#include "util.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -97,9 +98,7 @@ void MainWindow::saveTo(const QString &path)
         setWindowFilePath(path);
     }
     catch (const UnrepresentableException &e) {
-        QMessageBox::critical(this,
-                              tr("Error saving ROM"),
-                              tr("This patch cannot be saved in this format. Correct errors and try again."));
+        showExceptionMessageBox(e);
     }
     catch (const std::runtime_error &e) {
         QMessageBox::critical(this, tr("Error saving ROM"), tr("An unknown error occurred saving the file."));
@@ -118,9 +117,7 @@ void MainWindow::openFrom(const QString &path)
         setSaveEnabled();
     }
     catch (const InvalidRomException &e) {
-        QMessageBox::critical(this,
-                              tr("ROM could not be loaded."),
-                              tr("Either the ROM file is corrupted or is of an unknown type."));
+        showExceptionMessageBox(e);
     }
     catch (const std::runtime_error &e) {
         QMessageBox::critical(this,

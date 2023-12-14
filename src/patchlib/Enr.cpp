@@ -227,7 +227,7 @@ void EnrRom::setVersion(EnrRom::Version version)
 void EnrRom::loadFromData(QByteArrayView data)
 {
     if (!isEnrRom(data)) {
-        throw InvalidRomException("Not an ENR ROM");
+        throw InvalidRomException(tr("This is not an ENR ROM."));
     }
 
     // Guess software version

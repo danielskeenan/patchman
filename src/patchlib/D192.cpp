@@ -500,7 +500,8 @@ void D192Rack::fromByteArray(QByteArrayView data)
         const uint8_t lug = data.at(address - 1);
         if (lug != 0xFF) {
             if (lug >= kLugCounts.at(getRackType())) {
-                throw InvalidRomException("Lug number out of range.");
+                throw InvalidRomException(tr("Lug number out of range."),
+                                          tr("Either this is not a D192 ROM or the file is corrupt."));
             }
             lugAddresses_[lug] = address;
         }
@@ -576,7 +577,7 @@ bool D192Rom::isD192Rom(QByteArrayView data)
 void D192Rom::loadFromData(const QByteArrayView data)
 {
     if (!isD192Rom(data)) {
-        throw InvalidRomException("Not a D192 ROM");
+        throw InvalidRomException(tr("This is not a D192 ROM."));
     }
 
     // Patch is stored as a list of 512 byte chunks, one chunk for each rack in the ROM.
@@ -612,7 +613,7 @@ QByteArray D192Rom::toByteArray() const
                 return romSize;
             }
         }
-        throw patchman::UnrepresentableException("Cannot store racks in available rom sizes.");
+        throw UnrepresentableException(tr("Cannot store racks in available ROM sizes."), tr("Remove some racks and try again."));
     }();
 
     QByteArray data;
