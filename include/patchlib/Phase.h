@@ -20,9 +20,9 @@ Q_NAMESPACE
  */
 enum class Phase
 {
-    A,
-    B,
-    C
+    A=1,
+    B=2,
+    C=3
 };
 
 Q_ENUM_NS(Phase)

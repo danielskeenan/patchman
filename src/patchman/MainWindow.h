@@ -35,6 +35,7 @@ private:
         QMenu *fileRecent = nullptr;
         QAction *fileSave = nullptr;
         QAction *fileSaveAs = nullptr;
+        QAction *fileCreateReport = nullptr;
         QAction *fileExit = nullptr;
     };
     Actions actions_;
@@ -65,6 +66,7 @@ private Q_SLOTS:
     void open();
     void save();
     void saveAs();
+    void createReport();
     void dataChanged();
     void romTitleChanged();
 };

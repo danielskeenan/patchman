@@ -31,6 +31,7 @@ public:
     [[nodiscard]] unsigned int getLugCount() const override;
     [[nodiscard]] unsigned int getLugsPerModule() const override;
     [[nodiscard]] unsigned int getModuleDensityForLug(unsigned int lug) const override;
+    [[nodiscard]] QString getModuleNameForLug(unsigned int lug) const override;
     [[nodiscard]] Phase getPhaseForLug(unsigned int lug) const override;
 protected:
     void initLugAddressMap() override;

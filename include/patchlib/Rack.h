@@ -48,6 +48,7 @@ public:
     [[nodiscard]] virtual unsigned int getLugCount() const = 0;
     [[nodiscard]] virtual unsigned int getLugsPerModule() const = 0;
     [[nodiscard]] virtual unsigned int getModuleDensityForLug(unsigned int lug) const = 0;
+    [[nodiscard]] virtual QString getModuleNameForLug(unsigned int lug) const;
 
     /**
      * Get phase for the given lug.

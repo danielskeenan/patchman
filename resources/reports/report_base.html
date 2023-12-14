@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        {{ embed("bootstrap.min.css") }}
+    </style>
+    <style>
+        h2 {
+            break-after: avoid;
+        }
+        .phase-1, tr.phase-1 > th, tr.phase-1 > td {
+            color: black !important;
+        }
+        .phase-2, tr.phase-2 > th, tr.phase-2 > td {
+            color: red !important;
+        }
+        .phase-3, tr.phase-3 > th, tr.phase-3 > td {
+            color: blue !important;
+        }
+        .report-addresslist{
+            width: fit-content;
+            break-inside: avoid-page;
+        }
+        .report-addresslist .report-module {
+            vertical-align: middle;
+        }
+    </style>
+    <title>{% block title %}{% endblock %} - Patch ROM Report</title>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="report-header">
+                {% block report_header %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div class="row">
+        <div class="col">
+            <div class="report-footer">
+                {% block report_footer %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

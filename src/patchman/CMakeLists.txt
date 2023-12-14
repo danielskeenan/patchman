@@ -1,26 +1,31 @@
 qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ${PROJECT_SOURCE_DIR}/resources/icons/icons.qrc
-        AutoNumberDialog.h
+        ${PROJECT_SOURCE_DIR}/resources/reports/reports.qrc
         AutoNumberDialog.cpp
-        main.cpp
-        MainWindow.h
+        AutoNumberDialog.h
         MainWindow.cpp
-        Settings.h
-        RackEditor.h
+        MainWindow.h
         RackEditor.cpp
-        RackModel.h
+        RackEditor.h
         RackModel.cpp
-        RomEditor.h
+        RackModel.h
+        ReportBuilder.cpp
+        ReportBuilder.h
         RomEditor.cpp
+        RomEditor.h
+        Settings.h
+        main.cpp
         util.h
-        d192/D192RackModel.h
-        d192/D192RackModel.cpp
-        d192/D192RackEditor.h
         d192/D192RackEditor.cpp
-        enr/EnrRackEditor.h
+        d192/D192RackEditor.h
+        d192/D192RackModel.cpp
+        d192/D192RackModel.h
+        d192/D192ReportBuilder.cpp
+        d192/D192ReportBuilder.h
         enr/EnrRackEditor.cpp
-        enr/EnrRackModel.h
+        enr/EnrRackEditor.h
         enr/EnrRackModel.cpp
+        enr/EnrRackModel.h
 )
 
 include(FetchContent)
@@ -34,8 +39,10 @@ if (NOT qsettingscontainer_POPULATED)
     add_subdirectory(${qsettingscontainer_SOURCE_DIR} ${qsettingscontainer_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif ()
 
+find_package(inja CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE
         patchlib
+        pantor::inja
         QSettingsContainer
         Qt::Widgets
         Qt::Svg

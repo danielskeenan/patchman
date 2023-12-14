@@ -109,6 +109,19 @@ unsigned int EnrRack::getModuleDensityForLug(unsigned int lug) const
     }
 }
 
+QString EnrRack::getModuleNameForLug(unsigned int lug) const
+{
+    const auto density = getModuleDensityForLug(lug);
+
+    switch (density) {
+        case 0:return tr("Blank");
+        case 1:return tr("6 kW");
+        case 2:return tr("1.8/2.4 kW");
+        default:return Rack::getModuleNameForLug(lug);
+    }
+    Q_UNREACHABLE();
+}
+
 Phase EnrRack::getPhaseForLug(unsigned int lug) const
 {
     const auto phase = lug / (getLugCount() / 3);

@@ -1,0 +1,10 @@
+{% extends "report_base.html" %}
+
+{% block title %}D192 Racks{% endblock %}
+
+{% block content %}
+{% for rack in racks %}
+<h2>Rack {{ rack.num }}</h2>
+{% include "address_table.html" %}
+{% endfor %}
+{% endblock %}

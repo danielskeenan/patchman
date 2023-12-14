@@ -52,6 +52,12 @@ QString Rack::getRackName() const
     return tr("Rack %1").arg(getRackNum());
 }
 
+QString Rack::getModuleNameForLug(unsigned int lug) const
+{
+    const auto density = getModuleDensityForLug(lug);
+    return tr("%1 Ckt Module").arg(density);
+}
+
 unsigned int Rack::getLugAddress(unsigned int lug) const
 {
     Q_ASSERT_X(lug < lugAddresses_.size(),

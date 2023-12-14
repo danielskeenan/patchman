@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="reports">
+    <file>address_table.html</file>
+    <file>bootstrap.min.css</file>
+    <file>d192.html</file>
+    <file>report_base.html</file>
+  </qresource>
+</RCC>

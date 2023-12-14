@@ -1,0 +1,24 @@
+<div class="row">
+    {% for circuitBatch in batch(rack.circuits, 24) %}
+    <div class="col">
+        <table class="table table-sm report-addresslist">
+            <thead>
+            <th scope="col">Ckt</th>
+            <th scope="col">Mod</th>
+            <th scope="col">Addr</th>
+            </thead>
+            <tbody>
+            {% for cktInfo in circuitBatch %}
+            <tr class="phase-{{ cktInfo.phase }}">
+                <th scope="row" class="report-circuit">{{ cktInfo.circuit }}</th>
+                {% if not divisibleBy(loop.index1, 2) %}
+                <td rowspan="2" class="report-module">{{ cktInfo.module }}</td>
+                {% endif %}
+                <td class="report-address">{% if cktInfo.address == 0 %}-{% else %}{{ cktInfo.address }}{% endif %}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>

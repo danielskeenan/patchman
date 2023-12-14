@@ -560,6 +560,18 @@ unsigned int D192Rack::getModuleDensityForLug(unsigned int lug) const
         return 1;
     }
 }
+QString D192Rack::getModuleNameForLug(unsigned int lug) const
+{
+    const auto density = getModuleDensityForLug(lug);
+
+    switch (density) {
+        case 0:return tr("Blank");
+        case 1:return tr("6 kW");
+        case 2:return tr("1.2/2.4 kW");
+        default:return Rack::getModuleNameForLug(lug);
+    }
+    Q_UNREACHABLE();
+}
 
 bool D192Rom::isD192Rom(QByteArrayView data)
 {

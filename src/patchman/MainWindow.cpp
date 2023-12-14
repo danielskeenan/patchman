@@ -10,11 +10,13 @@
 #include "Settings.h"
 #include "patchlib/Exceptions.h"
 #include "util.h"
+#include "ReportBuilder.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
 #include <QStatusBar>
+#include <QDesktopServices>
 
 namespace patchman
 {
@@ -64,6 +66,11 @@ void MainWindow::initMenus()
     actions_.fileSaveAs->setShortcut(QKeySequence::StandardKey::SaveAs);
     connect(actions_.fileSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
     menuFile->addAction(actions_.fileSaveAs);
+    // Create Report
+    actions_.fileCreateReport = new QAction(tr("Create &Report"), this);
+    actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
+    connect(actions_.fileCreateReport, &QAction::triggered, this, &MainWindow::createReport);
+    menuFile->addAction(actions_.fileCreateReport);
     // Exit
     actions_.fileExit = new QAction(tr("E&xit"), this);
     actions_.fileExit->setIcon(QIcon::fromTheme("application-exit"));
@@ -135,6 +142,7 @@ void MainWindow::setSaveEnabled()
 
     actions_.fileSave->setEnabled(saveEnabled);
     actions_.fileSaveAs->setEnabled(saveEnabled);
+    actions_.fileCreateReport->setEnabled(saveEnabled);
 }
 
 void MainWindow::updateRecentDocuments()
@@ -293,6 +301,17 @@ void MainWindow::saveAs()
         dir.cdUp();
         Settings::SetLastFileDialogPath(dir.path());
     }
+}
+
+void MainWindow::createReport()
+{
+    if (rom_ == nullptr) {
+        return;
+    }
+
+    ReportBuilder *builder = ReportBuilder::create(rom_, this);
+    const auto reportPath = builder->createReport();
+    QDesktopServices::openUrl(QUrl(QString("file:///%1").arg(reportPath), QUrl::TolerantMode));
 }
 
 void MainWindow::dataChanged()

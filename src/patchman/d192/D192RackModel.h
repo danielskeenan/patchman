@@ -27,8 +27,6 @@ public:
         : RackModel(rack, parent), rack_(rack)
     {}
 
-    QString getModuleNameForLug(unsigned int lug) const override;
-
 private:
     D192Rack* rack_;
 };

@@ -59,7 +59,7 @@ QVariant RackModel::data(const QModelIndex &index, int role) const
             return circuit + 1;
         }
         else if (column == Column::Module) {
-            return getModuleNameForLug(lug);
+            return rack_->getModuleNameForLug(lug);
         }
         else if (column == Column::Address) {
             const auto address = rack_->getLugAddress(lug);
@@ -148,12 +148,6 @@ Qt::ItemFlags RackModel::flags(const QModelIndex &index) const
             return defaultFlags | Qt::ItemIsEditable;
     }
     Q_UNREACHABLE();
-}
-
-QString RackModel::getModuleNameForLug(unsigned int lug) const
-{
-    const auto density = rack_->getModuleDensityForLug(lug);
-    return tr("%1 Ckt Module").arg(density);
 }
 
 void RackModel::rackTypeChanged()

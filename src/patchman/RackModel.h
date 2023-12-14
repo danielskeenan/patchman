@@ -38,7 +38,6 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const override;
-    [[nodiscard]] virtual QString getModuleNameForLug(unsigned int lug) const;
 
 private:
     Rack *rack_;
