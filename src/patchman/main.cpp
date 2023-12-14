@@ -11,6 +11,8 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QStyleFactory>
+#include <QTranslator>
+#include <QLibraryInfo>
 #include "patchman_config.h"
 #include "Settings.h"
 #include "MainWindow.h"
@@ -44,6 +46,15 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(bin);
 
     QIcon::setFallbackSearchPaths({":/icons"});
+
+    QTranslator qtTranslator;
+    if (qtTranslator.load(QLocale(), "qtbase", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+        app.installTranslator(&qtTranslator);
+    }
+    QTranslator translator;
+    if (translator.load(QLocale(), "patchman", "_", ":/i18n")) {
+        app.installTranslator(&translator);
+    }
 
 #ifdef PLATFORM_WINDOWS
     // Using fusion style enables dark-mode detection on Windows.

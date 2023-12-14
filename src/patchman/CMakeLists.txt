@@ -30,6 +30,10 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         enr/EnrReportBuilder.h
 )
 
+qt_add_translations(${PROJECT_NAME}
+        TS_FILES ${PROJECT_SOURCE_DIR}/translations/patchman_en.ts
+)
+
 include(FetchContent)
 FetchContent_Declare(qsettingscontainer
         GIT_REPOSITORY "https://github.com/danielskeenan/QSettingsContainer.git"

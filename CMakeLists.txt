@@ -37,8 +37,9 @@ endif ()
 find_package(Qt6 COMPONENTS
         Core
         Gui
-        Widgets
+        LinguistTools
         Svg
+        Widgets
         REQUIRED)
 qt_standard_project_setup()
 

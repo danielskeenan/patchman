@@ -223,7 +223,8 @@ void MainWindow::updatePatchedRacksCount()
         widgets.patchedRacksCount->setText("");
     }
     else {
-        widgets.patchedRacksCount->setText(tr("%1 racks patched").arg(rom_->countPatchedRacks()));
+        const auto patchedRackCount = rom_->countPatchedRacks();
+        widgets.patchedRacksCount->setText(tr("%n rack(s) patched", "", patchedRackCount));
     }
 }
 
