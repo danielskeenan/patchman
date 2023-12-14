@@ -309,7 +309,7 @@ static const std::array<unsigned char, 2048> kPatchBin
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     };
 
-static const patchman::Rom *kTestRom = []()
+patchman::Rom *getTestRom()
 {
     patchman::Rom *rom = patchman::Rom::create(patchman::Rom::Type::D192);
 
@@ -1099,16 +1099,18 @@ static const patchman::Rom *kTestRom = []()
     rack->setLugAddress(191, 192);
 
     return rom;
-}();
+};
 
 TEST_CASE("D192 Load")
 {
     const QByteArrayView patch_rom(kPatchBin);
 
     SECTION("Read D192 ROM") {
+        const auto *testRom = getTestRom();
         patchman::Rom *actual = patchman::Rom::create(patchman::Rom::Type::D192);
         actual->loadFromData(patch_rom);
-        REQUIRE(*kTestRom == *actual);
+
+        REQUIRE(*testRom == *actual);
     }
 
     SECTION("Wrong ROM type") {
@@ -1128,9 +1130,26 @@ TEST_CASE("D192 Load")
     }
 }
 
+TEST_CASE("D192 Count Racks")
+{
+    auto *testRom = getTestRom();
+
+    SECTION("Full ROM") {
+        REQUIRE(testRom->countPatchedRacks() == 4);
+    }
+
+    SECTION("Unpatched rack") {
+        auto *rack3 = testRom->getRack(3);
+        for (unsigned int lug = 0; lug < rack3->getLugCount(); ++lug) {
+            rack3->setLugAddress(lug, 0);
+        }
+        REQUIRE(testRom->countPatchedRacks() == 3);
+    }
+}
+
 TEST_CASE("D192 Save")
 {
-    const auto actual = kTestRom->toByteArray();
+    const auto actual = getTestRom()->toByteArray();
     REQUIRE(kPatchBin.size() == actual.size());
     for (std::size_t ix = 0; ix < kPatchBin.size() && ix < actual.size(); ++ix) {
         if (static_cast<uint8_t>(kPatchBin[ix]) != static_cast<uint8_t>(actual[ix])) {

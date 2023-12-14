@@ -645,6 +645,11 @@ TEST_CASE_METHOD(EnrFixture, "ENR Load")
     }
 }
 
+TEST_CASE_METHOD(EnrFixture, "ENR Count Racks")
+{
+    REQUIRE(rom_->countPatchedRacks() == 6);
+}
+
 TEST_CASE_METHOD(EnrFixture, "ENR Save")
 {
     const auto actual = rom_->toByteArray();
