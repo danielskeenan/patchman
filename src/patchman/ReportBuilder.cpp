@@ -8,6 +8,7 @@
 
 #include "ReportBuilder.h"
 #include "d192/D192ReportBuilder.h"
+#include "enr/EnrReportBuilder.h"
 #include <QFile>
 #include <QTemporaryFile>
 #include <QDebug>
@@ -19,7 +20,7 @@ ReportBuilder *ReportBuilder::create(const Rom *rom, QObject *parent)
 {
     switch (rom->getType()) {
         case Rom::Type::D192:return new D192ReportBuilder(dynamic_cast<const D192Rom *>(rom), parent);
-        case Rom::Type::ENR:return nullptr;
+        case Rom::Type::ENR:return new EnrReportBuilder(dynamic_cast<const EnrRom *>(rom), parent);
     }
     Q_UNREACHABLE();
 }

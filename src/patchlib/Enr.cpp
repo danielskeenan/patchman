@@ -125,7 +125,7 @@ QString EnrRack::getModuleNameForLug(unsigned int lug) const
 Phase EnrRack::getPhaseForLug(unsigned int lug) const
 {
     const auto phase = lug / (getLugCount() / 3);
-    return static_cast<Phase>(phase);
+    return static_cast<Phase>(phase + 1);
 }
 
 void EnrRack::initLugAddressMap()
