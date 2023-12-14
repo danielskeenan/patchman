@@ -69,4 +69,11 @@ void Rack::setLugAddress(unsigned int lug, unsigned int address)
     Q_EMIT(lugChanged(lug));
 }
 
+bool Rack::isPatched() const
+{
+    return std::any_of(lugAddresses_.cbegin(), lugAddresses_.cend(),
+                       [](unsigned int addr)
+                       { return addr > 0; });
+}
+
 } // patchlib

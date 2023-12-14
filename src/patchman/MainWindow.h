@@ -41,6 +41,7 @@ private:
     struct Widgets
     {
         QLabel *romTitle = nullptr;
+        QLabel *patchedRacksCount = nullptr;
     };
     Widgets widgets;
     Rom *rom_ = nullptr;
@@ -54,6 +55,7 @@ private:
     void updateRecentDocuments();
     void replaceOpenRom(Rom *newRom);
     bool maybeSave();
+    void updatePatchedRacksCount();
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;

@@ -135,6 +135,13 @@ public:
         return std::views::all(racks_);
     }
 
+    /**
+     * The number of patched racks.
+     *
+     * @return
+     */
+    unsigned int countPatchedRacks() const;
+
 Q_SIGNALS:
     void rackAdded(Rack *rack);
     void rackRemoved(unsigned int rackNum);

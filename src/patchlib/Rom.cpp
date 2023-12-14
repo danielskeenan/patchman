@@ -140,4 +140,11 @@ void Rom::sortRacks()
     }
 }
 
+unsigned int Rom::countPatchedRacks() const
+{
+    return std::count_if(racks_.cbegin(), racks_.cend(),
+                         [](const Rack *rack)
+                         { return rack->isPatched(); });
+}
+
 } // patchlib

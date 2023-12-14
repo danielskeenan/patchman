@@ -102,6 +102,15 @@ public:
         return std::ranges::views::transform(lugAddresses_, LugAddressRangeTransformer());
     }
 
+    /**
+     * Does this rack contain patched lugs?
+     *
+     * Returns TRUE if any lugs are patched. FALSE if all lugs are unpatched.
+     *
+     * @return
+     */
+    [[nodiscard]] bool isPatched() const;
+
 Q_SIGNALS:
     void rackNumChanged();
     void rackTypeChanged();
