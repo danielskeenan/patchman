@@ -1,6 +1,8 @@
 qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ${PROJECT_SOURCE_DIR}/resources/icons/icons.qrc
         ${PROJECT_SOURCE_DIR}/resources/reports/reports.qrc
+        AboutDialog.cpp
+        AboutDialog.h
         AutoNumberDialog.cpp
         AutoNumberDialog.h
         MainWindow.cpp

@@ -11,6 +11,8 @@
 #include "patchlib/Exceptions.h"
 #include "util.h"
 #include "ReportBuilder.h"
+#include "AboutDialog.h"
+#include "patchman_config.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -67,7 +69,7 @@ void MainWindow::initMenus()
     connect(actions_.fileSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
     menuFile->addAction(actions_.fileSaveAs);
     // Create Report
-    actions_.fileCreateReport = new QAction(tr("Create &Report"), this);
+    actions_.fileCreateReport = new QAction(tr("&Create Report"), this);
     actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
     connect(actions_.fileCreateReport, &QAction::triggered, this, &MainWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
@@ -77,6 +79,19 @@ void MainWindow::initMenus()
     actions_.fileExit->setShortcut(QKeySequence::StandardKey::Quit);
     connect(actions_.fileExit, &QAction::triggered, this, &MainWindow::close);
     menuFile->addAction(actions_.fileExit);
+
+    // Help menu
+    QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
+    // About
+    actions_.helpAbout = new QAction(tr("&About"), this);
+    actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
+    connect(actions_.helpAbout, &QAction::triggered, this, &MainWindow::about);
+    menuHelp->addAction(actions_.helpAbout);
+    // Homepage
+    actions_.helpHomepage = new QAction(tr("&Homepage"), this);
+    actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
+    connect(actions_.helpHomepage, &QAction::triggered, this, &MainWindow::homepage);
+    menuHelp->addAction(actions_.helpHomepage);
 
     setSaveEnabled();
     updateRecentDocuments();
@@ -313,6 +328,17 @@ void MainWindow::createReport()
     ReportBuilder *builder = ReportBuilder::create(rom_, this);
     const auto reportPath = builder->createReport();
     QDesktopServices::openUrl(QUrl(QString("file:///%1").arg(reportPath), QUrl::TolerantMode));
+}
+
+void MainWindow::about()
+{
+    AboutDialog dialog(this);
+    dialog.exec();
+}
+
+void MainWindow::homepage()
+{
+    QDesktopServices::openUrl(QUrl(config::kProjectHomepageUrl));
 }
 
 void MainWindow::dataChanged()

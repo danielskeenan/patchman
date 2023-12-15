@@ -37,6 +37,8 @@ private:
         QAction *fileSaveAs = nullptr;
         QAction *fileCreateReport = nullptr;
         QAction *fileExit = nullptr;
+        QAction* helpAbout = nullptr;
+        QAction* helpHomepage = nullptr;
     };
     Actions actions_;
     struct Widgets
@@ -67,6 +69,8 @@ private Q_SLOTS:
     void save();
     void saveAs();
     void createReport();
+    void about();
+    void homepage();
     void dataChanged();
     void romTitleChanged();
 };

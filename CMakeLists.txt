@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.26)
 project(patchman
-        VERSION 0.1.0
+        VERSION 0.1.1
         DESCRIPTION "A tool for editing patch ROM files."
+        HOMEPAGE_URL "https://github.com/danielskeenan/patchman"
 )
 set(PROJECT_DISPLAY_NAME "Patchman")
 set(PROJECT_AUTHOR "Dan Keenan")
@@ -9,11 +10,16 @@ set(PROJECT_ORGANIZATION_NAME "dankeenan")
 set(PROJECT_ORGANIZATION_DOMAIN "dankeenan.org")
 string(TIMESTAMP PROJECT_BUILD_TIMESTAMP "%s" UTC)
 find_package(Git REQUIRED)
-#execute_process(COMMAND "${GIT_EXECUTABLE}" log -n1 --format=%H
-#    OUTPUT_VARIABLE PROJECT_COMMIT_SHA
-#    COMMAND_ERROR_IS_FATAL ANY
-#    )
+execute_process(COMMAND "${GIT_EXECUTABLE}" log -n1 --format=%H
+    OUTPUT_VARIABLE PROJECT_COMMIT_SHA
+    COMMAND_ERROR_IS_FATAL ANY
+    )
 string(STRIP "${PROJECT_COMMIT_SHA}" PROJECT_COMMIT_SHA)
+execute_process(COMMAND "${GIT_EXECUTABLE}" tag --points-at=HEAD
+    OUTPUT_VARIABLE PROJECT_COMMIT_TAG
+    COMMAND_ERROR_IS_FATAL ANY
+    )
+string(STRIP "${PROJECT_COMMIT_TAG}" PROJECT_COMMIT_TAG)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
