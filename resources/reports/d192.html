@@ -1,10 +1,65 @@
 {% extends "report_base.html" %}
 
+{% block head %}
+<style>
+    table.report-d192-layout {
+        table-layout: fixed;
+        width: 15em;
+        text-align: center;
+        break-inside: avoid-page;
+    }
+    table.report-d192-layout td {
+        border: black 1px solid;
+    }
+    table.report-d192-layout thead, table.report-d192-layout tfoot {
+        height: 3em;
+    }
+
+</style>
+{% endblock %}
+
 {% block title %}D192 Racks{% endblock %}
 
 {% block content %}
+{# Address Table #}
 {% for rack in racks %}
 <h2>Rack {{ rack.num }}</h2>
 {% include "address_table.html" %}
 {% endfor %}
+
+{# Rack Layout #}
+<div class="row">
+    {% for rack in racks %}
+    <div class="col">
+                <table class="report-d192-layout">
+            <thead>
+            <tr>
+                <td colspan="3"><h2>Rack {{ rack.num }}</h2></td>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for circuitBatch in batch(rack.circuits, 6) %}
+            <tr>
+                {% for cktPairInfo in batch(circuitBatch, 2) %}
+                <td class="phase-{{ cktPairInfo.0.phase }}">
+                    {{ format_address(cktPairInfo.0.address) }}
+                    {% if cktPairInfo.1.address > 0 %}
+                    / {{ format_address(cktPairInfo.1.address) }}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="3"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

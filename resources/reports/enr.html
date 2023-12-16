@@ -1,10 +1,95 @@
 {% extends "report_base.html" %}
 
+{% block head %}
+<style>
+    table.report-enr-layout {
+        width: 10em;
+        text-align: center;
+        break-inside: avoid-page;
+    }
+
+    table.report-enr-layout td {
+        border: black 1px solid;
+    }
+
+    table.report-enr-layout.enr-tophalf > tbody > tr:last-child > td {
+        border-bottom-style: dashed;
+    }
+
+    table.report-enr-layout.enr-bottomhalf > tbody > tr:first-child > td {
+        border-top-style: dashed;
+    }
+
+    table.report-enr-layout thead, table.report-enr-layout tfoot {
+        height: 3em;
+    }
+
+    table.report-enr-layout > tbody > tr > td:first-child {
+        width: 3em;
+    }
+
+</style>
+{% endblock %}
+
 {% block title %}ENR Racks{% endblock %}
 
 {% block content %}
+{# Address Table #}
 {% for rack in racks %}
 <h2>Rack {{ rack.num }}</h2>
 {% include "address_table.html" %}
 {% endfor %}
+
+{# Rack Layout #}
+<div class="row">
+    {% for rack in racks %}
+    <div class="col">
+        <h2 class="text-center">Rack {{ rack.num }}</h2>
+        <div class="d-flex flex-row">
+            <table class="report-enr-layout enr-tophalf me-3">
+                <thead>
+                <tr>
+                    <td colspan="2"></td>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for cktPairInfo in batch(slice(rack.circuits, 0, 48), 2) %}
+                <tr>
+                    <td></td>
+                    <td class="phase-{{ cktPairInfo.0.phase }}">
+                        {{ format_address(cktPairInfo.0.address) }}
+                        {% if cktPairInfo.1.address > 0 %}
+                        / {{ format_address(cktPairInfo.1.address) }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <table class="report-enr-layout enr-bottomhalf">
+                <tbody>
+                {% for cktPairInfo in batch(slice(rack.circuits, 48, 48), 2) %}
+                <tr>
+                    <td></td>
+                    <td class="phase-{{ cktPairInfo.0.phase }}">
+                        {{ format_address(cktPairInfo.0.address) }}
+                        {% if cktPairInfo.1.address > 0 %}
+                        / {{ format_address(cktPairInfo.1.address) }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+
+                <tfoot>
+                <tr>
+                    <td colspan="2"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

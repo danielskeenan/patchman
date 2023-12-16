@@ -14,7 +14,7 @@
                 {% if not divisibleBy(loop.index1, 2) %}
                 <td rowspan="2" class="report-module">{{ cktInfo.module }}</td>
                 {% endif %}
-                <td class="report-address">{% if cktInfo.address == 0 %}-{% else %}{{ cktInfo.address }}{% endif %}</td>
+                <td class="report-address">{{ format_address(cktInfo.address) }}</td>
             </tr>
             {% endfor %}
             </tbody>

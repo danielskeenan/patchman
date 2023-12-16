@@ -67,6 +67,31 @@ ReportBuilder::ReportBuilder(QObject *parent)
 
         return result;
     });
+
+    // Slice lists
+    inja_.add_callback("slice", 3, [](inja::Arguments &args)
+    {
+        const auto &list = args.at(0);
+        const auto start = args.at(1)->get<std::size_t>();
+        const auto len = args.at(2)->get<std::size_t>();
+        inja::json slice;
+        for (const auto &item: std::ranges::views::counted(list->begin() + start, len)) {
+            slice.push_back(item);
+        }
+        return slice;
+    });
+
+    // Format address
+    inja_.add_callback("format_address", 1, [](inja::Arguments &args)
+    {
+        const auto address = args.at(0)->get<unsigned int>();
+        if (address == 0) {
+            return inja::json("-");
+        }
+        else {
+            return inja::json(address);
+        }
+    });
 }
 
 QString ReportBuilder::createReport()
@@ -115,16 +140,24 @@ inja::json ReportBuilder::buildAddressTableData(const Rom *rom)
         for (const auto [lug, address] : rack->getLugAddressesView()) {
             auto &cktInfo = circuits.emplace_back();
             cktInfo["phase"] = rack->getPhaseForLug(lug);
+            cktInfo["lug"] = lug + 1;
             cktInfo["circuit"] = rack->getCircuitForLug(lug) + 1;
             cktInfo["module"] = rack->getModuleNameForLug(lug).toStdString();
             cktInfo["address"] = address;
         }
+        std::vector<inja::json> lugs = circuits;
+        std::sort(lugs.begin(), lugs.end(), [](const inja::json &a, const inja::json &b)
+        {
+            return a["lug"].get<unsigned int>() < b["lug"].get<unsigned int>();
+        });
         std::sort(circuits.begin(), circuits.end(), [](const inja::json &a, const inja::json &b)
         {
             return a["circuit"].get<unsigned int>() < b["circuit"].get<unsigned int>();
         });
+
         data["racks"][rack->getRackNum()]["num"] = rack->getRackNum();
         data["racks"][rack->getRackNum()]["circuits"] = circuits;
+        data["racks"][rack->getRackNum()]["lugs"] = lugs;
     }
 
     return data;
