@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QTemporaryFile>
 #include <QDebug>
+#include <QDir>
 
 namespace patchman
 {
@@ -98,7 +99,7 @@ QString ReportBuilder::createReport()
 {
     const auto report = render();
 
-    QTemporaryFile reportFile("patchreport-XXXXXX.html", this);
+    QTemporaryFile reportFile(QDir::temp().filePath("patchreport-XXXXXX.html"), this);
     reportFile.setAutoRemove(false);
     reportFile.open();
     qInfo() << "Writing report to" << reportFile.fileName();
