@@ -140,7 +140,14 @@ public:
      *
      * @return
      */
-    unsigned int countPatchedRacks() const;
+    [[nodiscard]] unsigned int countPatchedRacks() const;
+
+    /**
+     * Get the ROM checksum, as printed on the ROM chip.
+     *
+     * @return
+     */
+    [[nodiscard]] virtual QString getChecksum() const;
 
 Q_SIGNALS:
     void rackAdded(Rack *rack);

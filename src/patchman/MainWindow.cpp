@@ -109,6 +109,9 @@ void MainWindow::initWidgets()
 
     widgets.patchedRacksCount = new QLabel(this);
     statusBar()->addPermanentWidget(widgets.patchedRacksCount);
+
+    widgets.checksum = new QLabel(this);
+    statusBar()->addPermanentWidget(widgets.checksum);
 }
 
 void MainWindow::saveTo(const QString &path)
@@ -200,12 +203,13 @@ void MainWindow::replaceOpenRom(Rom *newRom)
 
     rom_ = newRom;
     editor_ = new RomEditor(rom_, this);
-    romTitleChanged();
     connect(editor_, &RomEditor::dataChanged, this, &MainWindow::dataChanged);
     connect(rom_, &Rom::titleChanged, this, &MainWindow::romTitleChanged);
     setCentralWidget(editor_);
+    romTitleChanged();
     updateRecentDocuments();
     updatePatchedRacksCount();
+    updateChecksum();
 }
 
 bool MainWindow::maybeSave()
@@ -235,11 +239,22 @@ bool MainWindow::maybeSave()
 void MainWindow::updatePatchedRacksCount()
 {
     if (rom_ == nullptr) {
-        widgets.patchedRacksCount->setText("");
+        widgets.patchedRacksCount->clear();
     }
     else {
         const auto patchedRackCount = rom_->countPatchedRacks();
         widgets.patchedRacksCount->setText(tr("%n rack(s) patched", "", patchedRackCount));
+    }
+}
+
+void MainWindow::updateChecksum()
+{
+    if (rom_ == nullptr) {
+        widgets.checksum->clear();
+    }
+    else {
+        const auto checksum = rom_->getChecksum();
+        widgets.checksum->setText(tr("Checksum: %1").arg(checksum));
     }
 }
 

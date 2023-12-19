@@ -12,6 +12,7 @@
 #include "patchlib/Enr.h"
 #include "patchlib/Exceptions.h"
 #include <frozen/map.h>
+#include <QtEndian>
 
 namespace patchman
 {
@@ -145,6 +146,18 @@ unsigned int Rom::countPatchedRacks() const
     return std::count_if(racks_.cbegin(), racks_.cend(),
                          [](const Rack *rack)
                          { return rack->isPatched(); });
+}
+
+QString Rom::getChecksum() const
+{
+    // This is a terrible checksum algorithm, but appears to be the one commonly in use.
+    const auto data = toByteArray();
+    uint32_t checksum = 0;
+    for (const uint8_t byte : data) {
+        checksum += byte;
+    }
+
+    return QString::fromStdString(std::format("{:08X}", checksum));
 }
 
 } // patchlib
