@@ -41,6 +41,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif ()
 
 find_package(Qt6 COMPONENTS
+        Concurrent
         Core
         Gui
         LinguistTools

@@ -58,6 +58,8 @@ public:
     [[nodiscard]] QByteArray toByteArray() const override;
 
     Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
+
+    [[nodiscard]] RomInfo createRomInfo() const override;
 };
 
 } // patchlib

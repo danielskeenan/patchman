@@ -15,6 +15,7 @@
 #include <QString>
 #include <ranges>
 #include "Rack.h"
+#include "patchlib/library/RomInfo.h"
 
 namespace patchman
 {
@@ -38,8 +39,8 @@ public:
      */
     enum class Type
     {
-        D192,
-        ENR,
+        D192 = 1,
+        ENR = 2,
     };
 
     Q_ENUM(patchman::Rom::Type)
@@ -148,6 +149,15 @@ public:
      * @return
      */
     [[nodiscard]] virtual QString getChecksum() const;
+
+    /**
+     * Create the RomInfo object for storage in the database.
+     *
+     * All fields will be filled, except for file path and modification time.
+     *
+     * @return
+     */
+    [[nodiscard]] virtual RomInfo createRomInfo() const = 0;
 
 Q_SIGNALS:
     void rackAdded(Rack *rack);

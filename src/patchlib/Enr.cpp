@@ -230,6 +230,7 @@ void EnrRom::setVersion(EnrRom::Version version)
                std::source_location::current().function_name(),
                "Failed to open software version from internal resource.");
     software_ = file.readAll();
+    software_hash_ = QCryptographicHash::hash(software_, QCryptographicHash::Algorithm::Sha256);
     Q_EMIT(versionChanged(version_));
     Q_EMIT(titleChanged());
 }
@@ -242,9 +243,7 @@ void EnrRom::loadFromData(QByteArrayView data)
 
     // Guess software version
     const auto software = data.sliced(0, kPatchTableStart).toByteArray();
-    QCryptographicHash hasher(QCryptographicHash::Sha256);
-    hasher.addData(software);
-    const auto swChecksum = hasher.result();
+    const auto swChecksum = QCryptographicHash::hash(software, QCryptographicHash::Algorithm::Sha256);
     version_ = Version::Unknown;
     for (const auto &[version, checksum]: kSoftwareChecksums) {
         if (checksum == swChecksum) {
@@ -254,6 +253,7 @@ void EnrRom::loadFromData(QByteArrayView data)
     }
     // Hold on to the rom file, the patch table will be spliced in at the end.
     software_ = software;
+    software_hash_ = swChecksum;
 
     // Patch tables starts as 0x0300. 16 tables total, 192 bytes per table. Each circuit is 2 bytes little-endian.
     // Address is 9 bits, flags remaining 7 bits.
@@ -328,6 +328,20 @@ bool EnrRom::isEnrRom(QByteArrayView data)
 QString EnrRom::getTitle() const
 {
     return tr("ENR Rack v%1").arg(getVersionNames().value(version_));
+}
+
+RomInfo EnrRom::createRomInfo() const
+{
+    RomInfo romInfo;
+    romInfo.setRomType(static_cast<int>(getType()));
+    romInfo.setRackCount(countPatchedRacks());
+
+    const auto hashAlgo = QCryptographicHash::Algorithm::Sha256;
+    romInfo.setHashAlgo(hashAlgo);
+    romInfo.setSoftwareHash(software_hash_);
+    romInfo.setPatchHash(QCryptographicHash::hash(toByteArray(), hashAlgo));
+
+    return romInfo;
 }
 
 };

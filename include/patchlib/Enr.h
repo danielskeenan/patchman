@@ -91,12 +91,15 @@ public:
 
     void setVersion(Version version);
 
+    [[nodiscard]] RomInfo createRomInfo() const override;
+
 Q_SIGNALS:
     void versionChanged(Version newVersion);
 
 private:
     Version version_ = Version::Unknown;
     QByteArray software_;
+    QByteArray software_hash_;
 };
 
 } // patchman
