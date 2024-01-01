@@ -1,5 +1,9 @@
 qt_add_library(patchlib STATIC
         ${PROJECT_SOURCE_DIR}/resources/bin/bin.qrc
+        ${PROJECT_SOURCE_DIR}/include/patchlib/library/RomLibrary.h
+        library/RomLibrary.cpp
+        ${PROJECT_SOURCE_DIR}/include/patchlib/library/RomInfo.h
+        library/RomInfo.cpp
         ${PROJECT_SOURCE_DIR}/include/patchlib/D192.h
         D192.cpp
         ${PROJECT_SOURCE_DIR}/include/patchlib/Enr.h
@@ -19,6 +23,7 @@ target_link_libraries(patchlib PRIVATE
         frozen::frozen
 )
 target_link_libraries(patchlib PUBLIC
+        Qt::Concurrent
         Qt::Core
         TinyOrm::TinyOrm
 )
