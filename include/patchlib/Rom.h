@@ -151,13 +151,11 @@ public:
     [[nodiscard]] virtual QString getChecksum() const;
 
     /**
-     * Create the RomInfo object for storage in the database.
+     * Update the RomInfo object for storage in the database.
      *
      * All fields will be filled, except for file path and modification time.
-     *
-     * @return
      */
-    [[nodiscard]] virtual RomInfo createRomInfo() const = 0;
+    virtual void updateRomInfo(RomInfo& romInfo) const = 0;
 
 Q_SIGNALS:
     void rackAdded(Rack *rack);

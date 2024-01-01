@@ -330,9 +330,8 @@ QString EnrRom::getTitle() const
     return tr("ENR Rack v%1").arg(getVersionNames().value(version_));
 }
 
-RomInfo EnrRom::createRomInfo() const
+void EnrRom::updateRomInfo(RomInfo &romInfo) const
 {
-    RomInfo romInfo;
     romInfo.setRomType(static_cast<int>(getType()));
     romInfo.setRackCount(countPatchedRacks());
 
@@ -340,8 +339,6 @@ RomInfo EnrRom::createRomInfo() const
     romInfo.setHashAlgo(hashAlgo);
     romInfo.setSoftwareHash(software_hash_);
     romInfo.setPatchHash(QCryptographicHash::hash(toByteArray(), hashAlgo));
-
-    return romInfo;
 }
 
 };

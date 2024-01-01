@@ -23,15 +23,15 @@ class RomInfo final: public Model<RomInfo>
     using Model::Model;
 
 public:
-    [[nodiscard]] static QString getDDL();
+    [[nodiscard]] static QStringList getDDL();
 
-PATCHMAN_ORM_COL(QString, FilePath, "file_path")
-PATCHMAN_ORM_COL(QDateTime, FileMTime, "file_mtime")
-PATCHMAN_ORM_COL_INTEGRAL(int, HashAlgo, "hash_algo")
-PATCHMAN_ORM_COL(QString, SoftwareHash, "sw_hash")
-PATCHMAN_ORM_COL(QString, PatchHash, "patch_hash")
-PATCHMAN_ORM_COL_INTEGRAL(int, RomType, "rom_type")
-PATCHMAN_ORM_COL_INTEGRAL(unsigned int, RackCount, "rack_count")
+    PATCHMAN_ORM_COL(QString, FilePath, "file_path")
+    PATCHMAN_ORM_COL(QDateTime, FileMTime, "file_mtime")
+    PATCHMAN_ORM_COL_INTEGRAL(int, HashAlgo, "hash_algo")
+    PATCHMAN_ORM_COL(QString, SoftwareHash, "sw_hash")
+    PATCHMAN_ORM_COL(QString, PatchHash, "patch_hash")
+    PATCHMAN_ORM_COL_INTEGRAL(int, RomType, "rom_type")
+    PATCHMAN_ORM_COL_INTEGRAL(unsigned int, RackCount, "rack_count")
 
     bool u_timestamps = false;
     inline static const QStringList u_dates{kColFileMTime};
