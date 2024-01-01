@@ -19,10 +19,10 @@
 #define PATCHMAN_ORM_GETSET_INTEGRAL(type, name, column) PATCHMAN_ORM_GETTER(type, name, column) PATCHMAN_ORM_SETTER_INTEGRAL(type, name, column)
 
 // Define column name constant.
-#define PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) private: inline static const auto kCol##name{column};
+#define PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) inline static const auto kCol##name{column};
 
 // Helpers for general-purpose columns.
-#define PATCHMAN_ORM_COL(type, name, column) PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) public: PATCHMAN_ORM_GETSET(type, name, kCol##name)
-#define PATCHMAN_ORM_COL_INTEGRAL(type, name, column) PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) public: PATCHMAN_ORM_GETSET_INTEGRAL(type, name, kCol##name)
+#define PATCHMAN_ORM_COL(type, name, column) PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) PATCHMAN_ORM_GETSET(type, name, kCol##name)
+#define PATCHMAN_ORM_COL_INTEGRAL(type, name, column) PATCHMAN_ORM_COL_NAME_CONSTANT(name, column) PATCHMAN_ORM_GETSET_INTEGRAL(type, name, kCol##name)
 
 #endif //ORMUTILS_H

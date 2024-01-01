@@ -59,7 +59,7 @@ public:
 
     Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
 
-    [[nodiscard]] RomInfo createRomInfo() const override;
+    void updateRomInfo(RomInfo& romInfo) const override;
 };
 
 } // patchlib

@@ -91,7 +91,7 @@ public:
 
     void setVersion(Version version);
 
-    [[nodiscard]] RomInfo createRomInfo() const override;
+    void updateRomInfo(RomInfo& romInfo) const override;
 
 Q_SIGNALS:
     void versionChanged(Version newVersion);

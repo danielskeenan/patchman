@@ -12,6 +12,7 @@
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(bin);
+    setenv("PATCHMAN_DB_PATH", ":memory:", false);
 
     return Catch::Session().run(argc, argv);
 }

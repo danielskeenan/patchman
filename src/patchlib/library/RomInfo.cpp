@@ -11,10 +11,11 @@
 namespace patchman
 {
 
-QString RomInfo::getDDL()
+QStringList RomInfo::getDDL()
 {
-    return QString(R"(
-create table if not exists "rom_info"
+    return {
+        R"(
+create table if not exists rom_info
 (
     id         integer
         primary key,
@@ -23,12 +24,17 @@ create table if not exists "rom_info"
             unique,
     file_mtime text,
     hash_algo  integer,
-    sw_hash    blob,
-    patch_hash blob,
+    sw_hash    BLOB,
+    patch_hash BLOB,
     rom_type   integer,
     rack_count integer
 );
-)");
+)",
+        R"(
+create unique index if not exists rom_info_file_path_uindex
+    on rom_info (file_path);
+)"
+    };
 }
 
 } // patchman

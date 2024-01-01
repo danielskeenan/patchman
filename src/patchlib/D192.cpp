@@ -643,9 +643,8 @@ QByteArray D192Rom::toByteArray() const
     return data;
 }
 
-RomInfo D192Rom::createRomInfo() const
+void D192Rom::updateRomInfo(RomInfo& romInfo) const
 {
-    RomInfo romInfo;
     romInfo.setRomType(static_cast<int>(getType()));
     romInfo.setRackCount(countPatchedRacks());
 
@@ -653,8 +652,6 @@ RomInfo D192Rom::createRomInfo() const
     romInfo.setHashAlgo(hashAlgo);
     romInfo.setSoftwareHash(QCryptographicHash::hash({}, hashAlgo));
     romInfo.setPatchHash(QCryptographicHash::hash(toByteArray(), hashAlgo));
-
-    return romInfo;
 }
 
 } // patchlib

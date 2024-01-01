@@ -11,6 +11,7 @@
 
 #include <QObject>
 #include <QFuture>
+#include "RomInfo.h"
 
 namespace Orm
 {
@@ -31,6 +32,13 @@ class RomLibrary: public QObject
 Q_OBJECT
 public:
     static RomLibrary *get();
+
+    /**
+     * Update library with contents from paths.
+     *
+     * @param searchPaths
+     */
+    QFuture<QList<RomInfo>> getAllRoms(const QStringList &searchPaths);
 
 private:
     QThreadPool *pool_;
