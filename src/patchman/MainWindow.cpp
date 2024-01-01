@@ -360,6 +360,7 @@ void MainWindow::dataChanged()
 {
     setWindowModified(true);
     updatePatchedRacksCount();
+    updateChecksum();
 }
 
 void MainWindow::romTitleChanged()
