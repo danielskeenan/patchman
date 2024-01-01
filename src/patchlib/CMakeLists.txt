@@ -14,10 +14,12 @@ qt_add_library(patchlib STATIC
 )
 
 find_package(frozen REQUIRED)
+find_package(TinyOrm REQUIRED)
 target_link_libraries(patchlib PRIVATE
         frozen::frozen
 )
 target_link_libraries(patchlib PUBLIC
         Qt::Core
+        TinyOrm::TinyOrm
 )
 target_compile_definitions(patchlib PUBLIC QT_NO_KEYWORDS)
