@@ -1,13 +1,13 @@
 /**
- * @file MainWindow.h
+ * @file EditorWindow.h
  *
  * @author Dan Keenan
  * @date 12/9/23
  * @copyright GNU GPLv3
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef EDITORWINDOW_H
+#define EDITORWINDOW_H
 
 #include <QMainWindow>
 #include <patchlib/Rom.h>
@@ -18,13 +18,13 @@ namespace patchman
 {
 
 /**
- * Main Window
+ * ROM Editor window.
  */
-class MainWindow: public QMainWindow
+class EditorWindow: public QMainWindow
 {
 Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit EditorWindow(QWidget *parent = nullptr);
 
 private:
     RomEditor *editor_ = nullptr;
@@ -79,4 +79,4 @@ private Q_SLOTS:
 
 } // patchman
 
-#endif //MAINWINDOW_H
+#endif //EDITORWINDOW_H
