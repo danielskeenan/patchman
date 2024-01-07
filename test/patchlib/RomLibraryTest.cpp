@@ -68,4 +68,5 @@ TEST_CASE_METHOD(RomLibraryFixture, "Find All ROMs")
               == QByteArray::fromHex("855946a5b3ee202e45e502f56472e9698e0547c7cb2ca8147a6aef69512804b8"));
     CHECK(static_cast<patchman::Rom::Type>(actualRomInfo.getRomType()) == patchman::Rom::Type::ENR);
     CHECK(actualRomInfo.getRackCount() == 6);
+    CHECK(actualRomInfo.getRomChecksum() == QByteArray::fromHex("0018e5f0"));
 }

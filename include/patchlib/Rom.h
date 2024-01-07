@@ -149,7 +149,7 @@ public:
      *
      * @return
      */
-    [[nodiscard]] virtual QString getChecksum() const;
+    [[nodiscard]] virtual QByteArray getChecksum() const;
 
     /**
      * Update the RomInfo object for storage in the database.
