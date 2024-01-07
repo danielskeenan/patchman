@@ -125,7 +125,7 @@ void Rom::removeRack(unsigned int rackNum)
 
 Rack *Rom::getRack(unsigned int rackNum) const
 {
-    if (rackNum > racks_.size()) {
+    if (rackNum >= racks_.size()) {
         return nullptr;
     }
     else {

@@ -32,13 +32,18 @@ public:
     };
     static const auto kColumnCount = static_cast<std::underlying_type_t<Column>>(Column::Checksum) + 1;
 
-    void checkForFilesystemChanges();
+    using QAbstractTableModel::QAbstractTableModel;
+
     [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 
+public Q_SLOTS:
+    void checkForFilesystemChanges();
+
 private:
+    std::mutex romInfoMutex_;
     QList<RomInfo> romInfo_;
 };
 

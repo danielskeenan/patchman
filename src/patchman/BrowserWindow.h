@@ -10,8 +10,10 @@
 #define BROWSERWINDOW_H
 
 #include <QMainWindow>
+#include <QTableView>
 #include "patchlib/Rom.h"
 #include "EditorWindow.h"
+#include "RomLibraryModel.h"
 
 namespace patchman
 {
@@ -40,10 +42,18 @@ private:
         QAction *helpHomepage = nullptr;
     };
     Actions actions_;
+    struct Widgets
+    {
+        QTableView *browser = nullptr;
+    };
+    Widgets widgets_;
     QList<QPointer<EditorWindow>> editors_;
+    QFileSystemWatcher *fsWatcher_;
+    RomLibraryModel *browserModel_;
 
     void initMenus();
     void initWidgets();
+    void initFsWatcher();
     void openFrom(const QString &path);
     void updateRecentDocuments(const QString &path = {});
     void showEditor(Rom *rom, const QString &path = {});
