@@ -17,7 +17,11 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ReportBuilder.h
         RomEditor.cpp
         RomEditor.h
+        RomLibraryModel.cpp
+        RomLibraryModel.h
         Settings.h
+        SettingsDialog.cpp
+        SettingsDialog.h
         main.cpp
         util.h
         d192/D192RackEditor.cpp

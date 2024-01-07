@@ -13,6 +13,7 @@
 #include "Settings.h"
 #include "AboutDialog.h"
 #include "patchman_config.h"
+#include "SettingsDialog.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -61,6 +62,15 @@ void BrowserWindow::initMenus()
     actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
     connect(actions_.fileCreateReport, &QAction::triggered, this, &BrowserWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
+    // ------
+    menuFile->addSeparator();
+    // Settings
+    actions_.fileSettings = new QAction(tr("Se&ttings"), this);
+    actions_.fileSettings->setIcon(QIcon::fromTheme("configure"));
+    connect(actions_.fileSettings, &QAction::triggered, this, &BrowserWindow::settings);
+    menuFile->addAction(actions_.fileSettings);
+    // ------
+    menuFile->addSeparator();
     // Exit
     actions_.fileExit = new QAction(tr("E&xit"), this);
     actions_.fileExit->setIcon(QIcon::fromTheme("application-exit"));
@@ -188,7 +198,13 @@ void BrowserWindow::open()
 
 void BrowserWindow::createReport()
 {
+    // TODO
+}
 
+void BrowserWindow::settings()
+{
+    SettingsDialog dialog(this);
+    dialog.exec();
 }
 
 void BrowserWindow::about()

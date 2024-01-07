@@ -29,6 +29,9 @@ public:
 
     /** Max number of recent documents to track */
     DGSETTINGS_SETTING(unsigned int, RecentDocumentsMax, 8)
+
+    /** Search paths for ROMS */
+    DGSETTINGS_SETTING(QStringList, RomSearchPaths, {})
 };
 
 } // patchman

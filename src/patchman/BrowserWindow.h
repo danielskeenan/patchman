@@ -34,6 +34,7 @@ private:
         QAction *fileOpen = nullptr;
         QMenu *fileRecent = nullptr;
         QAction *fileCreateReport = nullptr;
+        QAction *fileSettings = nullptr;
         QAction *fileExit = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
@@ -54,6 +55,7 @@ private Q_SLOTS:
     void newFile(Rom::Type romType);
     void open();
     void createReport();
+    void settings();
     void about();
     void homepage();
     void editorClosed();
