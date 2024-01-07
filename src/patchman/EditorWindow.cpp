@@ -26,7 +26,7 @@ namespace patchman
 EditorWindow::EditorWindow(Rom *rom, const QString &path, QWidget *parent)
     : QMainWindow(parent), rom_(rom)
 {
-    setWindowTitle(path);
+    setWindowFilePath(path);
     rom_->setParent(this);
     initMenus();
     initWidgets();
