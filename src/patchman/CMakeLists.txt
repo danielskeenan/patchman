@@ -5,6 +5,8 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         AboutDialog.h
         AutoNumberDialog.cpp
         AutoNumberDialog.h
+        BrowserWindow.cpp
+        BrowserWindow.h
         EditorWindow.cpp
         EditorWindow.h
         RackEditor.cpp

@@ -15,7 +15,7 @@
 #include <QLibraryInfo>
 #include "patchman_config.h"
 #include "Settings.h"
-#include "EditorWindow.h"
+#include "BrowserWindow.h"
 
 /**
  * Ask the user about resetting settings
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    patchman::EditorWindow mainWindow;
+    patchman::BrowserWindow mainWindow;
     mainWindow.show();
 
     return QApplication::exec();

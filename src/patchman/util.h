@@ -20,7 +20,7 @@ namespace patchman
  * @param e
  * @param parent
  */
-void showExceptionMessageBox(const PatchmanUserException &e, QWidget *parent = nullptr)
+inline void showExceptionMessageBox(const PatchmanUserException &e, QWidget *parent = nullptr)
 {
     QMessageBox msgbox(parent);
     msgbox.setIcon(QMessageBox::Critical);
