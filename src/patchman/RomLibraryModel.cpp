@@ -9,24 +9,13 @@
 #include "RomLibraryModel.h"
 
 #include <utility>
+#include <QFont>
 #include "patchlib/library/RomLibrary.h"
 #include "patchlib/Rom.h"
 #include "Settings.h"
 
 namespace patchman
 {
-
-void RomLibraryModel::checkForFilesystemChanges()
-{
-    RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths())
-        .then(
-            [this](QList<RomInfo> romInfo)
-            {
-                beginResetModel();
-                romInfo_ = std::move(romInfo);
-                endResetModel();
-            });
-}
 
 int RomLibraryModel::rowCount(const QModelIndex &parent) const
 {
@@ -80,6 +69,19 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
     }
 
     return {};
+}
+
+void RomLibraryModel::checkForFilesystemChanges()
+{
+    RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths())
+        .then(
+            [this](QList<RomInfo> romInfo)
+            {
+                std::lock_guard guard(romInfoMutex_);
+                beginResetModel();
+                romInfo_ = std::move(romInfo);
+                endResetModel();
+            });
 }
 
 } // patchman

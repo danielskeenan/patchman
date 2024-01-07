@@ -29,6 +29,7 @@ BrowserWindow::BrowserWindow(QWidget *parent)
 {
     initMenus();
     initWidgets();
+    initFsWatcher();
 }
 
 void BrowserWindow::initMenus()
@@ -100,6 +101,27 @@ void BrowserWindow::initWidgets()
         resize(1024, 768);
         Settings::SetMainWindowGeometry(saveGeometry());
     }
+
+    widgets_.browser = new QTableView(this);
+    setCentralWidget(widgets_.browser);
+    browserModel_ = new RomLibraryModel(this);
+    widgets_.browser->setModel(browserModel_);
+    browserModel_->checkForFilesystemChanges();
+    connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
+    { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
+}
+
+void BrowserWindow::initFsWatcher()
+{
+    fsWatcher_ = new QFileSystemWatcher(Settings::GetRomSearchPaths(), this);
+    connect(fsWatcher_,
+            &QFileSystemWatcher::directoryChanged,
+            browserModel_,
+            &RomLibraryModel::checkForFilesystemChanges);
+    connect(fsWatcher_,
+            &QFileSystemWatcher::fileChanged,
+            browserModel_,
+            &RomLibraryModel::checkForFilesystemChanges);
 }
 
 void BrowserWindow::openFrom(const QString &path)
@@ -205,6 +227,7 @@ void BrowserWindow::settings()
 {
     SettingsDialog dialog(this);
     dialog.exec();
+    initFsWatcher();
 }
 
 void BrowserWindow::about()
