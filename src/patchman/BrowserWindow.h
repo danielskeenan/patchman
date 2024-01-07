@@ -53,6 +53,7 @@ private:
     QList<QPointer<EditorWindow>> editors_;
     QFileSystemWatcher *fsWatcher_;
     RomLibraryModel *browserModel_;
+    RomLibrarySortFilterModel *sortFilterModel_;
 
     void initMenus();
     void initWidgets();

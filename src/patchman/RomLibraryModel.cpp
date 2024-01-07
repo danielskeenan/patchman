@@ -38,6 +38,7 @@ QVariant RomLibraryModel::headerData(int section, Qt::Orientation orientation, i
                 case Column::Modified:return tr("Modified");
                 case Column::RackCount:return tr("Racks");
                 case Column::Checksum:return tr("Checksum");
+                case Column::PatchHash:return tr("Patch Hash");
             }
         }
     }
@@ -58,7 +59,7 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
             return QFileInfo(romInfo.getFilePath()).fileName();
         }
         else if (column == Column::Modified) {
-            return QLocale().toString(romInfo.getFileMTime(), QLocale::ShortFormat);
+            return romInfo.getFileMTime();
         }
         else if (column == Column::RackCount) {
             return romInfo.getRackCount();
@@ -66,12 +67,35 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
         else if (column == Column::Checksum) {
             return romInfo.getRomChecksum().toHex();
         }
+        else if (column == Column::PatchHash) {
+            return romInfo.getPatchHash().toHex();
+        }
     }
     else if (role == Qt::DecorationRole) {
         if (column == Column::Name) {
             if (patchTableCounts_[romInfo.getPatchHash()] > 1) {
                 return QIcon::fromTheme("document-duplicate");
             }
+        }
+    }
+    else if (role == Qt::UserRole) {
+        if (column == Column::Type) {
+            return Rom::typeName(static_cast<Rom::Type>(romInfo.getRomType()));
+        }
+        else if (column == Column::Name) {
+            return QFileInfo(romInfo.getFilePath()).fileName();
+        }
+        else if (column == Column::Modified) {
+            return romInfo.getFileMTime();
+        }
+        else if (column == Column::RackCount) {
+            return romInfo.getRackCount();
+        }
+        else if (column == Column::Checksum) {
+            return romInfo.getRomChecksum();
+        }
+        else if (column == Column::PatchHash) {
+            return romInfo.getPatchHash();
         }
     }
 
@@ -110,6 +134,14 @@ void RomLibraryModel::checkForFilesystemChanges()
                 endResetModel();
             }
         );
+}
+
+RomLibrarySortFilterModel::RomLibrarySortFilterModel(RomLibraryModel *sourceModel, QObject *parent)
+    : QSortFilterProxyModel(parent)
+{
+    QSortFilterProxyModel::setSourceModel(sourceModel);
+    setFilterRole(Qt::UserRole);
+    setSortRole(Qt::UserRole);
 }
 
 } // patchman
