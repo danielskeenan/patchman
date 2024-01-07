@@ -2,6 +2,7 @@
     <qresource prefix="icons">
         <file>application-exit.svg</file>
         <file>configure.svg</file>
+        <file>document-duplicate.svg</file>
         <file>document-edit.svg</file>
         <file>document-new.svg</file>
         <file>document-open.svg</file>
