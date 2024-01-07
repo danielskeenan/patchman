@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="icons">
         <file>application-exit.svg</file>
+        <file>configure.svg</file>
+        <file>document-duplicate.svg</file>
+        <file>document-edit.svg</file>
         <file>document-new.svg</file>
         <file>document-open.svg</file>
         <file>document-save.svg</file>
@@ -8,6 +11,10 @@
         <file>folder-open-recent.svg</file>
         <file>help-about.svg</file>
         <file>internet-web-browser.svg</file>
+        <file>list-add.svg</file>
+        <file>list-remove.svg</file>
         <file>office-report.svg</file>
+        <file>system-file-manager.svg</file>
+        <file>view-refresh.svg</file>
     </qresource>
 </RCC>

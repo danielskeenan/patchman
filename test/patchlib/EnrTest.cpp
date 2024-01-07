@@ -23,7 +23,7 @@ protected:
 public:
     explicit EnrFixture()
     {
-        QFile romFile(QString("%1/enr_bal_294.bin").arg(TEST_SOURCES_DIR));
+        QFile romFile(QString("%1/roms/enr_bal_294.bin").arg(TEST_SOURCES_DIR));
         if (!romFile.open(QFile::ReadOnly)) {
             FAIL("Failed to open fixture rom file.");
         }

@@ -41,12 +41,16 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif ()
 
 find_package(Qt6 COMPONENTS
+        Concurrent
         Core
         Gui
         LinguistTools
         Svg
         Widgets
         REQUIRED)
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(Qt6 COMPONENTS DBus REQUIRED)
+endif ()
 qt_standard_project_setup()
 
 add_subdirectory(src)

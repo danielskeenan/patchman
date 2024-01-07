@@ -1,13 +1,13 @@
 /**
- * @file MainWindow.h
+ * @file EditorWindow.h
  *
  * @author Dan Keenan
  * @date 12/9/23
  * @copyright GNU GPLv3
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef EDITORWINDOW_H
+#define EDITORWINDOW_H
 
 #include <QMainWindow>
 #include <patchlib/Rom.h>
@@ -18,27 +18,31 @@ namespace patchman
 {
 
 /**
- * Main Window
+ * ROM Editor window.
  */
-class MainWindow: public QMainWindow
+class EditorWindow: public QMainWindow
 {
 Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    /**
+     * New EditorWindow.
+     *
+     * This window will take ownership of the passed @p rom.
+     * @param rom
+     * @param parent
+     */
+    explicit EditorWindow(Rom *rom, const QString &path, QWidget *parent = nullptr);
 
 private:
     RomEditor *editor_ = nullptr;
     struct Actions
     {
-        QMenu *fileNew = nullptr;
-        QAction *fileOpen = nullptr;
-        QMenu *fileRecent = nullptr;
         QAction *fileSave = nullptr;
         QAction *fileSaveAs = nullptr;
         QAction *fileCreateReport = nullptr;
-        QAction *fileExit = nullptr;
-        QAction* helpAbout = nullptr;
-        QAction* helpHomepage = nullptr;
+        QAction *fileClose = nullptr;
+        QAction *helpAbout = nullptr;
+        QAction *helpHomepage = nullptr;
     };
     Actions actions_;
     struct Widgets
@@ -54,10 +58,7 @@ private:
     void initWidgets();
 
     void saveTo(const QString &path);
-    void openFrom(const QString &path);
     void setSaveEnabled();
-    void updateRecentDocuments();
-    void replaceOpenRom(Rom *newRom);
     bool maybeSave();
     void updatePatchedRacksCount();
     void updateChecksum();
@@ -66,8 +67,6 @@ protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
 
 private Q_SLOTS:
-    void newFile(Rom::Type romType);
-    void open();
     void save();
     void saveAs();
     void createReport();
@@ -79,4 +78,4 @@ private Q_SLOTS:
 
 } // patchman
 
-#endif //MAINWINDOW_H
+#endif //EDITORWINDOW_H

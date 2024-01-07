@@ -13,6 +13,7 @@
 #include "patchlib/Exceptions.h"
 #include <frozen/map.h>
 #include <QtEndian>
+#include <QCryptographicHash>
 
 namespace patchman
 {
@@ -124,7 +125,7 @@ void Rom::removeRack(unsigned int rackNum)
 
 Rack *Rom::getRack(unsigned int rackNum) const
 {
-    if (rackNum > racks_.size()) {
+    if (rackNum >= racks_.size()) {
         return nullptr;
     }
     else {
@@ -148,7 +149,7 @@ unsigned int Rom::countPatchedRacks() const
                          { return rack->isPatched(); });
 }
 
-QString Rom::getChecksum() const
+QByteArray Rom::getChecksum() const
 {
     // This is a terrible checksum algorithm, but appears to be the one commonly in use.
     const auto data = toByteArray();
@@ -157,7 +158,24 @@ QString Rom::getChecksum() const
         checksum += byte;
     }
 
-    return QString::fromStdString(std::format("{:08X}", checksum));
+    // Need to swap endianness to display bytes in expected order.
+    checksum = qToBigEndian(checksum);
+    return QByteArray(std::bit_cast<const char *>(&checksum), sizeof(checksum));
+}
+
+void Rom::updateRomInfo(RomInfo &romInfo) const
+{
+    romInfo.setHashAlgo(getHashAlgorithm());
+    romInfo.setSoftwareHash(getSoftwareHash());
+    romInfo.setPatchHash(getPatchHash());
+    romInfo.setRomType(static_cast<int>(getType()));
+    romInfo.setRackCount(countPatchedRacks());
+    romInfo.setRomChecksum(getChecksum());
+}
+
+QCryptographicHash::Algorithm Rom::getHashAlgorithm()
+{
+    return QCryptographicHash::Algorithm::Sha256;
 }
 
 } // patchlib

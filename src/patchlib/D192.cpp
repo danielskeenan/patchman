@@ -10,6 +10,7 @@
 #include "patchlib/Exceptions.h"
 #include <source_location>
 #include <frozen/unordered_map.h>
+#include <QCryptographicHash>
 
 namespace patchman
 {
@@ -640,6 +641,17 @@ QByteArray D192Rom::toByteArray() const
     data.resize(useSize, 0xFF);
 
     return data;
+}
+
+QByteArray D192Rom::getSoftwareHash() const
+{
+    // D192 Patch ROMs have no software.
+    return QCryptographicHash::hash({}, getHashAlgorithm());
+}
+
+QByteArray D192Rom::getPatchHash() const
+{
+    return QCryptographicHash::hash(toByteArray(), getHashAlgorithm());
 }
 
 } // patchlib

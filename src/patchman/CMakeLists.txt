@@ -5,8 +5,10 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         AboutDialog.h
         AutoNumberDialog.cpp
         AutoNumberDialog.h
-        MainWindow.cpp
-        MainWindow.h
+        BrowserWindow.cpp
+        BrowserWindow.h
+        EditorWindow.cpp
+        EditorWindow.h
         RackEditor.cpp
         RackEditor.h
         RackModel.cpp
@@ -15,8 +17,15 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ReportBuilder.h
         RomEditor.cpp
         RomEditor.h
+        RomLibraryModel.cpp
+        RomLibraryModel.h
         Settings.h
+        SettingsDialog.cpp
+        SettingsDialog.h
+        ShowDuplicatesDialog.cpp
+        ShowDuplicatesDialog.h
         main.cpp
+        showPathInFileBrowser.h
         util.h
         d192/D192RackEditor.cpp
         d192/D192RackEditor.h
@@ -55,6 +64,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt::Widgets
         Qt::Svg
 )
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(${PROJECT_NAME} PRIVATE Qt::DBus)
+endif ()
 
 install(TARGETS ${PROJECT_NAME}
         BUNDLE DESTINATION .

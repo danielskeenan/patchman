@@ -58,6 +58,10 @@ public:
     [[nodiscard]] QByteArray toByteArray() const override;
 
     Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
+
+protected:
+    [[nodiscard]] QByteArray getSoftwareHash() const override;
+    [[nodiscard]] QByteArray getPatchHash() const override;
 };
 
 } // patchlib

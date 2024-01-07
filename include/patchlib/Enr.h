@@ -91,12 +91,17 @@ public:
 
     void setVersion(Version version);
 
+protected:
+    [[nodiscard]] QByteArray getSoftwareHash() const override;
+    [[nodiscard]] QByteArray getPatchHash() const override;
+
 Q_SIGNALS:
     void versionChanged(Version newVersion);
 
 private:
     Version version_ = Version::Unknown;
     QByteArray software_;
+    QByteArray software_hash_;
 };
 
 } // patchman

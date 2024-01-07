@@ -14,5 +14,8 @@
   }, {
     "name" : "inja",
     "version>=" : "3.4.0"
+  }, {
+    "name" : "tinyorm",
+    "version>=" : "0.36.5#2"
   } ]
 }

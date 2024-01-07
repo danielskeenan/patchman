@@ -14,7 +14,9 @@
 #include <QList>
 #include <QString>
 #include <ranges>
+#include <QtCore>
 #include "Rack.h"
+#include "patchlib/library/RomInfo.h"
 
 namespace patchman
 {
@@ -38,8 +40,8 @@ public:
      */
     enum class Type
     {
-        D192,
-        ENR,
+        D192 = 1,
+        ENR = 2,
     };
 
     Q_ENUM(patchman::Rom::Type)
@@ -147,7 +149,14 @@ public:
      *
      * @return
      */
-    [[nodiscard]] virtual QString getChecksum() const;
+    [[nodiscard]] virtual QByteArray getChecksum() const;
+
+    /**
+     * Update the RomInfo object for storage in the database.
+     *
+     * All fields will be filled, except for file path and modification time.
+     */
+    virtual void updateRomInfo(RomInfo &romInfo) const;
 
 Q_SIGNALS:
     void rackAdded(Rack *rack);
@@ -158,6 +167,24 @@ protected:
     QList<Rack *> racks_;
 
     void sortRacks();
+
+    /**
+     * Get a hash, using the hash algorithm returned by getHashAlgorithm(), of the software (i.e. non-modifiable) portion of the ROM.
+     * @return
+     */
+    [[nodiscard]] virtual QByteArray getSoftwareHash() const = 0;
+
+    /**
+     * Get a hash, using the hash algorithm returned by getHashAlgorithm(), of the patch (i.e. modifiable) portion of the ROM.
+     * @return
+     */
+    [[nodiscard]] virtual QByteArray getPatchHash() const = 0;
+
+    /**
+     * A QCryptographicHash::Algorithm constant.
+     * @return
+     */
+    static QCryptographicHash::Algorithm getHashAlgorithm();
 };
 
 } // patchlib

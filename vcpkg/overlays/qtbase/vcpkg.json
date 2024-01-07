@@ -1,0 +1,15 @@
+{
+  "features" : 
+  {
+    "sql" : 
+    {
+      "description" : ""
+    },
+    "sql-sqlite" : 
+    {
+      "description" : ""
+    }
+  },
+  "name" : "qtbase",
+  "version" : "6.4.2"
+}
