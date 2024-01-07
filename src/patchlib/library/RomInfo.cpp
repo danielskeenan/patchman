@@ -27,12 +27,17 @@ create table if not exists rom_info
     sw_hash    BLOB,
     patch_hash BLOB,
     rom_type   integer,
-    rack_count integer
+    rack_count  integer,
+    rom_checksum BLOB
 );
 )",
         R"(
 create unique index if not exists rom_info_file_path_uindex
     on rom_info (file_path);
+)",
+        R"(
+create index if not exists rom_info_patch_hash_index
+    on rom_info (patch_hash);
 )"
     };
 }

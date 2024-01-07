@@ -32,6 +32,7 @@ public:
     PATCHMAN_ORM_COL(QByteArray, PatchHash, "patch_hash")
     PATCHMAN_ORM_COL_INTEGRAL(int, RomType, "rom_type")
     PATCHMAN_ORM_COL_INTEGRAL(unsigned int, RackCount, "rack_count")
+    PATCHMAN_ORM_COL(QByteArray, RomChecksum, "rom_checksum")
 
 private:
     QString u_table{"rom_info"};
