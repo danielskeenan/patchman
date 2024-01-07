@@ -22,7 +22,10 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         Settings.h
         SettingsDialog.cpp
         SettingsDialog.h
+        ShowDuplicatesDialog.cpp
+        ShowDuplicatesDialog.h
         main.cpp
+        showPathInFileBrowser.h
         util.h
         d192/D192RackEditor.cpp
         d192/D192RackEditor.h

@@ -22,6 +22,24 @@ class RomInfo final: public Model<RomInfo>
     friend Model;
     using Model::Model;
 
+    friend bool operator==(const RomInfo &lhs, const RomInfo &rhs)
+    {
+        return
+            lhs.getFilePath() == rhs.getFilePath()
+                && lhs.getFileMTime() == rhs.getFileMTime()
+                && lhs.getHashAlgo() == rhs.getHashAlgo()
+                && lhs.getSoftwareHash() == rhs.getSoftwareHash()
+                && lhs.getPatchHash() == rhs.getPatchHash()
+                && lhs.getRomType() == rhs.getRomType()
+                && lhs.getRackCount() == rhs.getRackCount()
+                && lhs.getRomChecksum() == rhs.getRomChecksum();
+    }
+
+    friend bool operator!=(const RomInfo &lhs, const RomInfo &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
 public:
     [[nodiscard]] static QStringList getDDL();
 

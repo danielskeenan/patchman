@@ -15,16 +15,14 @@
 #include "patchman_config.h"
 #include "SettingsDialog.h"
 #include "ReportBuilder.h"
+#include "showPathInFileBrowser.h"
+#include "ShowDuplicatesDialog.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QCloseEvent>
-#ifdef PLATFORM_LINUX
-#include <QDBusConnection>
-#include <QDBusMessage>
-#endif
 
 namespace patchman
 {
@@ -91,6 +89,11 @@ void BrowserWindow::initMenus()
     actions_.editEditRom->setIcon(QIcon::fromTheme("document-edit"));
     connect(actions_.editEditRom, &QAction::triggered, this, &BrowserWindow::editRom);
     menuEdit->addAction(actions_.editEditRom);
+    // Show Duplicates
+    actions_.editShowDuplicates = new QAction(tr("Show &Duplicates"), this);
+    actions_.editShowDuplicates->setIcon(QIcon::fromTheme("document-duplicate"));
+    connect(actions_.editShowDuplicates, &QAction::triggered, this, &BrowserWindow::showDuplicates);
+    menuEdit->addAction(actions_.editShowDuplicates);
     // Show In File Browser
     actions_.editShowInFileBrowser = new QAction(tr("&Show in Explorer"), this);
     actions_.editShowInFileBrowser->setIcon(QIcon::fromTheme("system-file-manager"));
@@ -136,6 +139,7 @@ void BrowserWindow::initWidgets()
     widgets_.browser->setContextMenuPolicy(Qt::ActionsContextMenu);
     widgets_.browser->addAction(actions_.editEditRom);
     widgets_.browser->addAction(actions_.fileCreateReport);
+    widgets_.browser->addAction(actions_.editShowDuplicates);
     widgets_.browser->addAction(actions_.editShowInFileBrowser);
     browserModel_->checkForFilesystemChanges();
 
@@ -207,6 +211,7 @@ void BrowserWindow::updateActionsFromSelection()
     const bool hasSelection = widgets_.browser->selectionModel()->hasSelection();
     actions_.fileCreateReport->setEnabled(hasSelection);
     actions_.editEditRom->setEnabled(hasSelection);
+    actions_.editShowDuplicates->setEnabled(hasSelection);
     actions_.editShowInFileBrowser->setEnabled(hasSelection);
 }
 
@@ -294,35 +299,14 @@ void BrowserWindow::editRom()
 void BrowserWindow::showInFileBrowser()
 {
     const auto romInfo = getSelectedRomInfo();
-    const auto nativePath = QDir::toNativeSeparators(QFileInfo(romInfo.getFilePath()).canonicalFilePath());
-#ifdef PLATFORM_WINDOWS
-    const auto explorer = QStandardPaths::findExecutable("explorer");
-    if (explorer.isEmpty()) {
-        qCritical() << "Could not find explorer.exe";
-        return;
-    }
-    QProcess::startDetached(
-        QString("%1 /select,%2")
-            .arg(explorer)
-            .arg(nativePath)
-    );
-#endif
-#ifdef PLATFORM_LINUX
-    auto msg = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
-                                              "/org/freedesktop/FileManager1",
-                                              "",
-                                              "ShowItems");
-    msg.setArguments(
-        {
-            QStringList{QString("file:///%1").arg(nativePath)},
-            QString("%1+%2+%3")
-                .arg(qApp->applicationName())
-                .arg(qApp->applicationPid())
-                .arg(QDateTime().toSecsSinceEpoch())
-        }
-    );
-    const auto resp = QDBusConnection::sessionBus().call(msg, QDBus::Block, 500);
-#endif
+    showPathInFileBrowser(romInfo.getFilePath());
+}
+
+void BrowserWindow::showDuplicates()
+{
+    const auto romInfo = getSelectedRomInfo();
+    ShowDuplicatesDialog dialog(romInfo, this);
+    dialog.exec();
 }
 
 void BrowserWindow::about()
