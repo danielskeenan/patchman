@@ -38,6 +38,8 @@ private:
         QAction *fileCreateReport = nullptr;
         QAction *fileSettings = nullptr;
         QAction *fileExit = nullptr;
+        QAction *editEditRom = nullptr;
+        QAction *editShowInFileBrowser = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
     };
@@ -57,6 +59,7 @@ private:
     void openFrom(const QString &path);
     void updateRecentDocuments(const QString &path = {});
     void showEditor(Rom *rom, const QString &path = {});
+    [[nodiscard]] const RomInfo &getSelectedRomInfo() const;
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
@@ -66,8 +69,11 @@ private Q_SLOTS:
     void open();
     void createReport();
     void settings();
+    void editRom();
+    void showInFileBrowser();
     void about();
     void homepage();
+    void updateActionsFromSelection();
     void editorClosed();
 };
 

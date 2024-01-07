@@ -71,6 +71,11 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
     return {};
 }
 
+const RomInfo &RomLibraryModel::getRomInfoForRow(int row) const
+{
+    return romInfo_.at(row);
+}
+
 void RomLibraryModel::checkForFilesystemChanges()
 {
     RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths())

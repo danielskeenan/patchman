@@ -20,6 +20,10 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QCloseEvent>
+#ifdef PLATFORM_LINUX
+#include <QDBusConnection>
+#include <QDBusMessage>
+#endif
 
 namespace patchman
 {
@@ -79,6 +83,19 @@ void BrowserWindow::initMenus()
     connect(actions_.fileExit, &QAction::triggered, this, &BrowserWindow::close);
     menuFile->addAction(actions_.fileExit);
 
+    // Edit menu
+    QMenu *menuEdit = menuBar()->addMenu(tr("&Edit"));
+    // Edit ROM
+    actions_.editEditRom = new QAction(tr("&Edit ROM"), this);
+    actions_.editEditRom->setIcon(QIcon::fromTheme("document-edit"));
+    connect(actions_.editEditRom, &QAction::triggered, this, &BrowserWindow::editRom);
+    menuEdit->addAction(actions_.editEditRom);
+    // Show In File Browser
+    actions_.editShowInFileBrowser = new QAction(tr("&Show in Explorer"), this);
+    actions_.editShowInFileBrowser->setIcon(QIcon::fromTheme("system-file-manager"));
+    connect(actions_.editShowInFileBrowser, &QAction::triggered, this, &BrowserWindow::showInFileBrowser);
+    menuEdit->addAction(actions_.editShowInFileBrowser);
+
     // Help menu
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
     // About
@@ -106,9 +123,20 @@ void BrowserWindow::initWidgets()
     setCentralWidget(widgets_.browser);
     browserModel_ = new RomLibraryModel(this);
     widgets_.browser->setModel(browserModel_);
-    browserModel_->checkForFilesystemChanges();
+    widgets_.browser->setSelectionMode(QTableView::SingleSelection);
+    widgets_.browser->setSelectionBehavior(QTableView::SelectRows);
+    connect(widgets_.browser->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            this,
+            &BrowserWindow::updateActionsFromSelection);
     connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
     { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
+    widgets_.browser->setContextMenuPolicy(Qt::ActionsContextMenu);
+    widgets_.browser->addAction(actions_.editEditRom);
+    widgets_.browser->addAction(actions_.editShowInFileBrowser);
+    browserModel_->checkForFilesystemChanges();
+
+    updateActionsFromSelection();
 }
 
 void BrowserWindow::initFsWatcher()
@@ -171,12 +199,30 @@ void BrowserWindow::updateRecentDocuments(const QString &path)
     }
 }
 
+void BrowserWindow::updateActionsFromSelection()
+{
+    const bool hasSelection = widgets_.browser->selectionModel()->hasSelection();
+    actions_.fileCreateReport->setEnabled(hasSelection);
+    actions_.editEditRom->setEnabled(hasSelection);
+    actions_.editShowInFileBrowser->setEnabled(hasSelection);
+}
+
 void BrowserWindow::showEditor(Rom *rom, const QString &path)
 {
     auto *editor = new EditorWindow(rom, path, this);
     editors_.emplace_back(editor);
     connect(editor, &EditorWindow::destroyed, this, &BrowserWindow::editorClosed, Qt::QueuedConnection);
     editor->show();
+}
+
+const RomInfo &BrowserWindow::getSelectedRomInfo() const
+{
+    const auto selection = widgets_.browser->selectionModel()->selectedIndexes();
+    if (selection.empty()) {
+        qFatal("Tried to get selected ROM info when no ROM is selected.");
+    }
+    const auto row = selection.first().row();
+    return browserModel_->getRomInfoForRow(row);
 }
 
 void BrowserWindow::closeEvent(QCloseEvent *event)
@@ -228,6 +274,46 @@ void BrowserWindow::settings()
     SettingsDialog dialog(this);
     dialog.exec();
     initFsWatcher();
+}
+
+void BrowserWindow::editRom()
+{
+    const auto romInfo = getSelectedRomInfo();
+    openFrom(romInfo.getFilePath());
+}
+
+void BrowserWindow::showInFileBrowser()
+{
+    const auto romInfo = getSelectedRomInfo();
+    const auto nativePath = QDir::toNativeSeparators(QFileInfo(romInfo.getFilePath()).canonicalFilePath());
+#ifdef PLATFORM_WINDOWS
+    const auto explorer = QStandardPaths::findExecutable("explorer");
+    if (explorer.isEmpty()) {
+        qCritical() << "Could not find explorer.exe";
+        return;
+    }
+    QProcess::startDetached(
+        QString("%1 /select,%2")
+            .arg(explorer)
+            .arg(nativePath)
+    );
+#endif
+#ifdef PLATFORM_LINUX
+    auto msg = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                              "/org/freedesktop/FileManager1",
+                                              "",
+                                              "ShowItems");
+    msg.setArguments(
+        {
+            QStringList{QString("file:///%1").arg(nativePath)},
+            QString("%1+%2+%3")
+                .arg(qApp->applicationName())
+                .arg(qApp->applicationPid())
+                .arg(QDateTime().toSecsSinceEpoch())
+        }
+    );
+    const auto resp = QDBusConnection::sessionBus().call(msg, QDBus::Block, 500);
+#endif
 }
 
 void BrowserWindow::about()
