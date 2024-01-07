@@ -10,6 +10,7 @@
 #define ROMLIBRARYMODEL_H
 
 #include <QAbstractTableModel>
+#include <QSortFilterProxyModel>
 #include "patchlib/library/RomInfo.h"
 
 namespace patchman
@@ -29,8 +30,9 @@ public:
         Modified,
         RackCount,
         Checksum,
+        PatchHash,
     };
-    static const auto kColumnCount = static_cast<std::underlying_type_t<Column>>(Column::Checksum) + 1;
+    static const auto kColumnCount = static_cast<std::underlying_type_t<Column>>(Column::PatchHash) + 1;
 
     using QAbstractTableModel::QAbstractTableModel;
 
@@ -49,6 +51,16 @@ private:
     std::mutex patchTableCountsMutex_;
     /** How many patch tables have the same hash. */
     QHash<QByteArray, unsigned int> patchTableCounts_;
+};
+
+/**
+ * Sort/Filter implementations for RomLibraryModel.
+ */
+class RomLibrarySortFilterModel: public QSortFilterProxyModel
+{
+Q_OBJECT
+public:
+    explicit RomLibrarySortFilterModel(RomLibraryModel *sourceModel, QObject *parent = nullptr);
 };
 
 } // patchman

@@ -126,22 +126,26 @@ void BrowserWindow::initWidgets()
     widgets_.browser = new QTableView(this);
     setCentralWidget(widgets_.browser);
     browserModel_ = new RomLibraryModel(this);
-    widgets_.browser->setModel(browserModel_);
     widgets_.browser->setSelectionMode(QTableView::SingleSelection);
     widgets_.browser->setSelectionBehavior(QTableView::SelectRows);
-    connect(widgets_.browser->selectionModel(),
-            &QItemSelectionModel::selectionChanged,
-            this,
-            &BrowserWindow::updateActionsFromSelection);
-    connect(widgets_.browser, &QTableView::doubleClicked, this, &BrowserWindow::editRom);
-    connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
-    { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
     widgets_.browser->setContextMenuPolicy(Qt::ActionsContextMenu);
     widgets_.browser->addAction(actions_.editEditRom);
     widgets_.browser->addAction(actions_.fileCreateReport);
     widgets_.browser->addAction(actions_.editShowDuplicates);
     widgets_.browser->addAction(actions_.editShowInFileBrowser);
     browserModel_->checkForFilesystemChanges();
+    sortFilterModel_ = new RomLibrarySortFilterModel(browserModel_, this);
+    widgets_.browser->setSortingEnabled(true);
+    widgets_.browser->setModel(sortFilterModel_);
+    widgets_.browser->hideColumn(static_cast<int>(RomLibraryModel::Column::PatchHash));
+    connect(widgets_.browser->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            this,
+            &BrowserWindow::updateActionsFromSelection);
+    connect(widgets_.browser, &QTableView::doubleClicked, this, &BrowserWindow::editRom);
+    // Resize everything to fit on first data load.
+    connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
+    { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
 
     updateActionsFromSelection();
 }
