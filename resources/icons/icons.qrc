@@ -15,5 +15,6 @@
         <file>list-remove.svg</file>
         <file>office-report.svg</file>
         <file>system-file-manager.svg</file>
+        <file>view-refresh.svg</file>
     </qresource>
 </RCC>

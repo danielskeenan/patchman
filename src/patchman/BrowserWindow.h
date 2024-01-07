@@ -39,6 +39,7 @@ private:
         QAction *fileSettings = nullptr;
         QAction *fileExit = nullptr;
         QAction *editEditRom = nullptr;
+        QAction *editShowDuplicates = nullptr;
         QAction *editShowInFileBrowser = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
@@ -71,6 +72,7 @@ private Q_SLOTS:
     void settings();
     void editRom();
     void showInFileBrowser();
+    void showDuplicates();
     void about();
     void homepage();
     void updateActionsFromSelection();
