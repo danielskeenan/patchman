@@ -40,6 +40,14 @@ public:
      */
     QFuture<QList<RomInfo>> getAllRoms(const QStringList &searchPaths);
 
+    /**
+     * Find ROMs with the same patch table as @p romInfo.
+     *
+     * @param romInfo
+     * @return
+     */
+    QFuture<QList<RomInfo>> getDuplicates(const RomInfo &romInfo);
+
 private:
     QThreadPool pool_;
     std::shared_ptr<Orm::DatabaseManager> db_;

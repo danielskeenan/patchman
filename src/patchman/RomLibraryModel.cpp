@@ -9,7 +9,7 @@
 #include "RomLibraryModel.h"
 
 #include <utility>
-#include <QFont>
+#include <QIcon>
 #include "patchlib/library/RomLibrary.h"
 #include "patchlib/Rom.h"
 #include "Settings.h"
@@ -67,6 +67,13 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
             return romInfo.getRomChecksum().toHex();
         }
     }
+    else if (role == Qt::DecorationRole) {
+        if (column == Column::Name) {
+            if (patchTableCounts_[romInfo.getPatchHash()] > 1) {
+                return QIcon::fromTheme("document-duplicate");
+            }
+        }
+    }
 
     return {};
 }
@@ -80,13 +87,29 @@ void RomLibraryModel::checkForFilesystemChanges()
 {
     RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths())
         .then(
-            [this](QList<RomInfo> romInfo)
+            [this](const QList<RomInfo> &romInfoList)
             {
-                std::lock_guard guard(romInfoMutex_);
+                std::scoped_lock romInfoGuard(romInfoMutex_);
                 beginResetModel();
-                romInfo_ = std::move(romInfo);
+                romInfo_ = romInfoList;
                 endResetModel();
-            });
+
+                return romInfoList;
+            })
+        .then(
+            [this](const QList<RomInfo> &romInfoList)
+            {
+                std::scoped_lock patchTableCountsGuard(patchTableCountsMutex_);
+                beginResetModel();
+                patchTableCounts_.clear();
+                patchTableCounts_.reserve(romInfoList.size());
+                for (const auto &romInfo : romInfoList) {
+                    const auto duplicates = RomLibrary::get()->getDuplicates(romInfo).result();
+                    patchTableCounts_[romInfo.getPatchHash()] = duplicates.size();
+                }
+                endResetModel();
+            }
+        );
 }
 
 } // patchman

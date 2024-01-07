@@ -46,6 +46,9 @@ public Q_SLOTS:
 private:
     std::mutex romInfoMutex_;
     QList<RomInfo> romInfo_;
+    std::mutex patchTableCountsMutex_;
+    /** How many patch tables have the same hash. */
+    QHash<QByteArray, unsigned int> patchTableCounts_;
 };
 
 } // patchman

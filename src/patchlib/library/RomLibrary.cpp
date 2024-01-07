@@ -151,4 +151,14 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
     });
 }
 
+QFuture<QList<RomInfo>> RomLibrary::getDuplicates(const RomInfo &romInfo)
+{
+    const auto &patchHash = romInfo.getPatchHash();
+    return QtConcurrent::run(&pool_, [this, patchHash](QPromise<QList<RomInfo>> &promise)
+    {
+        const auto duplicates = RomInfo::whereEq(RomInfo::kColPatchHash, patchHash)->get().all();
+        promise.addResult(duplicates);
+    });
+}
+
 } // patchman
