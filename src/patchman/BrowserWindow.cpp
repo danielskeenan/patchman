@@ -14,6 +14,7 @@
 #include "AboutDialog.h"
 #include "patchman_config.h"
 #include "SettingsDialog.h"
+#include "ReportBuilder.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -129,10 +130,12 @@ void BrowserWindow::initWidgets()
             &QItemSelectionModel::selectionChanged,
             this,
             &BrowserWindow::updateActionsFromSelection);
+    connect(widgets_.browser, &QTableView::doubleClicked, this, &BrowserWindow::editRom);
     connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
     { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
     widgets_.browser->setContextMenuPolicy(Qt::ActionsContextMenu);
     widgets_.browser->addAction(actions_.editEditRom);
+    widgets_.browser->addAction(actions_.fileCreateReport);
     widgets_.browser->addAction(actions_.editShowInFileBrowser);
     browserModel_->checkForFilesystemChanges();
 
@@ -266,7 +269,13 @@ void BrowserWindow::open()
 
 void BrowserWindow::createReport()
 {
-    // TODO
+    const auto romInfo = getSelectedRomInfo();
+    auto romType = Rom::guessType(romInfo.getFilePath());
+    auto rom = Rom::create(romType, this);
+    rom->loadFromFile(romInfo.getFilePath());
+    ReportBuilder *builder = ReportBuilder::create(rom, this);
+    const auto reportPath = builder->createReport();
+    QDesktopServices::openUrl(QUrl(QString("file:///%1").arg(reportPath), QUrl::TolerantMode));
 }
 
 void BrowserWindow::settings()
