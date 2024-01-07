@@ -11,6 +11,7 @@
 
 #include <catch2/catch_tostring.hpp>
 #include <fmt/format.h>
+#include <QDateTime>
 
 std::string formatBinPosition(std::size_t pos);
 
@@ -36,6 +37,18 @@ std::string formatBytes(Iterator begin, Iterator end) {
   ss << "\n";
 
   return ss.str();
+}
+
+namespace Catch
+{
+template<>
+struct StringMaker<QDateTime>
+{
+    static std::string convert(const QDateTime &value)
+    {
+        return value.toString(Qt::DateFormat::ISODateWithMs).toStdString();
+    }
+};
 }
 
 #endif //FORMATTERS_H_

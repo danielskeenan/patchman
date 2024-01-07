@@ -4,8 +4,10 @@ qt_add_executable(patchlib_test
         D192Test.cpp
         EnrTest.cpp
         Formatters.cpp
+        RomLibraryTest.cpp
 )
 
+# Used to get the path to test resources.
 target_compile_definitions(patchlib_test PRIVATE "TEST_SOURCES_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"")
 
 find_package(Catch2 3 REQUIRED)
