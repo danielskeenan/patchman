@@ -9,6 +9,7 @@
 #ifndef ROMLIBRARYMODEL_H
 #define ROMLIBRARYMODEL_H
 
+#include <mutex>
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>
 #include "patchlib/library/RomInfo.h"

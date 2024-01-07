@@ -20,22 +20,22 @@ class RomLibraryFixture
 public:
     explicit RomLibraryFixture()
     {
-        const auto oldPatchmanDbPath = getenv("PATCHMAN_DB_PATH");
+        const auto oldPatchmanDbPath = qgetenv("PATCHMAN_DB_PATH");
         if (oldPatchmanDbPath != nullptr) {
             oldPatchmanDbPath_ = oldPatchmanDbPath;
         }
         else {
             oldPatchmanDbPath_.clear();
         }
-        setenv("PATCHMAN_DB_PATH", ":memory:", true);
+        qputenv("PATCHMAN_DB_PATH", ":memory:");
     }
     ~RomLibraryFixture()
     {
         if (!oldPatchmanDbPath_.empty()) {
-            setenv("PATCHMAN_DB_PATH", oldPatchmanDbPath_.c_str(), true);
+            qputenv("PATCHMAN_DB_PATH", oldPatchmanDbPath_.c_str());
         }
         else {
-            unsetenv("PATCHMAN_DB_PATH");
+            qunsetenv("PATCHMAN_DB_PATH");
         }
     }
 private:
