@@ -254,7 +254,7 @@ void MainWindow::updateChecksum()
     }
     else {
         const auto checksum = rom_->getChecksum();
-        widgets.checksum->setText(tr("Checksum: %1").arg(checksum));
+        widgets.checksum->setText(tr("Checksum: %1").arg(checksum.toHex()));
     }
 }
 
