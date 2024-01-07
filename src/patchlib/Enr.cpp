@@ -243,17 +243,17 @@ void EnrRom::loadFromData(QByteArrayView data)
 
     // Guess software version
     const auto software = data.sliced(0, kPatchTableStart).toByteArray();
-    const auto swChecksum = QCryptographicHash::hash(software, QCryptographicHash::Algorithm::Sha256);
+    const auto swHash = QCryptographicHash::hash(software, getHashAlgorithm());
     version_ = Version::Unknown;
     for (const auto &[version, checksum]: kSoftwareChecksums) {
-        if (checksum == swChecksum) {
+        if (checksum == swHash) {
             version_ = version;
             break;
         }
     }
     // Hold on to the rom file, the patch table will be spliced in at the end.
     software_ = software;
-    software_hash_ = swChecksum;
+    software_hash_ = swHash;
 
     // Patch tables starts as 0x0300. 16 tables total, 192 bytes per table. Each circuit is 2 bytes little-endian.
     // Address is 9 bits, flags remaining 7 bits.
@@ -330,15 +330,14 @@ QString EnrRom::getTitle() const
     return tr("ENR Rack v%1").arg(getVersionNames().value(version_));
 }
 
-void EnrRom::updateRomInfo(RomInfo &romInfo) const
+QByteArray EnrRom::getSoftwareHash() const
 {
-    romInfo.setRomType(static_cast<int>(getType()));
-    romInfo.setRackCount(countPatchedRacks());
+    return software_hash_;
+}
 
-    const auto hashAlgo = QCryptographicHash::Algorithm::Sha256;
-    romInfo.setHashAlgo(hashAlgo);
-    romInfo.setSoftwareHash(software_hash_);
-    romInfo.setPatchHash(QCryptographicHash::hash(toByteArray().sliced(kPatchTableStart), hashAlgo));
+QByteArray EnrRom::getPatchHash() const
+{
+    return QCryptographicHash::hash(toByteArray().sliced(kPatchTableStart), getHashAlgorithm());
 }
 
 };

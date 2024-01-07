@@ -91,7 +91,9 @@ public:
 
     void setVersion(Version version);
 
-    void updateRomInfo(RomInfo& romInfo) const override;
+protected:
+    [[nodiscard]] QByteArray getSoftwareHash() const override;
+    [[nodiscard]] QByteArray getPatchHash() const override;
 
 Q_SIGNALS:
     void versionChanged(Version newVersion);

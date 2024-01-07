@@ -13,6 +13,7 @@
 #include "patchlib/Exceptions.h"
 #include <frozen/map.h>
 #include <QtEndian>
+#include <QCryptographicHash>
 
 namespace patchman
 {
@@ -158,6 +159,20 @@ QString Rom::getChecksum() const
     }
 
     return QString::fromStdString(std::format("{:08X}", checksum));
+}
+
+void Rom::updateRomInfo(RomInfo &romInfo) const
+{
+    romInfo.setRomType(static_cast<int>(getType()));
+    romInfo.setRackCount(countPatchedRacks());
+    romInfo.setHashAlgo(getHashAlgorithm());
+    romInfo.setSoftwareHash(getSoftwareHash());
+    romInfo.setPatchHash(getPatchHash());
+}
+
+QCryptographicHash::Algorithm Rom::getHashAlgorithm()
+{
+    return QCryptographicHash::Algorithm::Sha256;
 }
 
 } // patchlib

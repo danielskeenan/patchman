@@ -643,15 +643,15 @@ QByteArray D192Rom::toByteArray() const
     return data;
 }
 
-void D192Rom::updateRomInfo(RomInfo& romInfo) const
+QByteArray D192Rom::getSoftwareHash() const
 {
-    romInfo.setRomType(static_cast<int>(getType()));
-    romInfo.setRackCount(countPatchedRacks());
+    // D192 Patch ROMs have no software.
+    return QCryptographicHash::hash({}, getHashAlgorithm());
+}
 
-    const auto hashAlgo = QCryptographicHash::Algorithm::Sha256;
-    romInfo.setHashAlgo(hashAlgo);
-    romInfo.setSoftwareHash(QCryptographicHash::hash({}, hashAlgo));
-    romInfo.setPatchHash(QCryptographicHash::hash(toByteArray(), hashAlgo));
+QByteArray D192Rom::getPatchHash() const
+{
+    return QCryptographicHash::hash(toByteArray(), getHashAlgorithm());
 }
 
 } // patchlib

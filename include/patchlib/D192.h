@@ -59,7 +59,9 @@ public:
 
     Rack *addRack(unsigned int rackNum, Rack::Type rackType) override;
 
-    void updateRomInfo(RomInfo& romInfo) const override;
+protected:
+    [[nodiscard]] QByteArray getSoftwareHash() const override;
+    [[nodiscard]] QByteArray getPatchHash() const override;
 };
 
 } // patchlib
