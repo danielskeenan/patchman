@@ -1,12 +1,12 @@
 /**
- * @file MainWindow.cpp
+ * @file EditorWindow.cpp
  *
  * @author Dan Keenan
  * @date 12/9/23
  * @copyright GNU GPLv3
  */
 
-#include "MainWindow.h"
+#include "EditorWindow.h"
 #include "Settings.h"
 #include "patchlib/Exceptions.h"
 #include "util.h"
@@ -23,14 +23,14 @@
 namespace patchman
 {
 
-MainWindow::MainWindow(QWidget *parent)
+EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     initMenus();
     initWidgets();
 }
 
-void MainWindow::initMenus()
+void EditorWindow::initMenus()
 {
     // File menu
     QMenu *menuFile = menuBar()->addMenu(tr("&File"));
@@ -50,7 +50,7 @@ void MainWindow::initMenus()
     actions_.fileOpen = new QAction(tr("&Open"), this);
     actions_.fileOpen->setIcon(QIcon::fromTheme("document-open"));
     actions_.fileOpen->setShortcut(QKeySequence::StandardKey::Open);
-    connect(actions_.fileOpen, &QAction::triggered, this, &MainWindow::open);
+    connect(actions_.fileOpen, &QAction::triggered, this, &EditorWindow::open);
     menuFile->addAction(actions_.fileOpen);
     // Recent
     actions_.fileRecent = new QMenu(tr("&Recent"), this);
@@ -60,24 +60,24 @@ void MainWindow::initMenus()
     actions_.fileSave = new QAction(tr("&Save"), this);
     actions_.fileSave->setIcon(QIcon::fromTheme("document-save"));
     actions_.fileSave->setShortcut(QKeySequence::StandardKey::Save);
-    connect(actions_.fileSave, &QAction::triggered, this, &MainWindow::save);
+    connect(actions_.fileSave, &QAction::triggered, this, &EditorWindow::save);
     menuFile->addAction(actions_.fileSave);
     // Save As
     actions_.fileSaveAs = new QAction(tr("Save &As"), this);
     actions_.fileSaveAs->setIcon(QIcon::fromTheme("document-save-as"));
     actions_.fileSaveAs->setShortcut(QKeySequence::StandardKey::SaveAs);
-    connect(actions_.fileSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(actions_.fileSaveAs, &QAction::triggered, this, &EditorWindow::saveAs);
     menuFile->addAction(actions_.fileSaveAs);
     // Create Report
     actions_.fileCreateReport = new QAction(tr("&Create Report"), this);
     actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
-    connect(actions_.fileCreateReport, &QAction::triggered, this, &MainWindow::createReport);
+    connect(actions_.fileCreateReport, &QAction::triggered, this, &EditorWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
     // Exit
     actions_.fileExit = new QAction(tr("E&xit"), this);
     actions_.fileExit->setIcon(QIcon::fromTheme("application-exit"));
     actions_.fileExit->setShortcut(QKeySequence::StandardKey::Quit);
-    connect(actions_.fileExit, &QAction::triggered, this, &MainWindow::close);
+    connect(actions_.fileExit, &QAction::triggered, this, &EditorWindow::close);
     menuFile->addAction(actions_.fileExit);
 
     // Help menu
@@ -85,19 +85,19 @@ void MainWindow::initMenus()
     // About
     actions_.helpAbout = new QAction(tr("&About"), this);
     actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
-    connect(actions_.helpAbout, &QAction::triggered, this, &MainWindow::about);
+    connect(actions_.helpAbout, &QAction::triggered, this, &EditorWindow::about);
     menuHelp->addAction(actions_.helpAbout);
     // Homepage
     actions_.helpHomepage = new QAction(tr("&Homepage"), this);
     actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
-    connect(actions_.helpHomepage, &QAction::triggered, this, &MainWindow::homepage);
+    connect(actions_.helpHomepage, &QAction::triggered, this, &EditorWindow::homepage);
     menuHelp->addAction(actions_.helpHomepage);
 
     setSaveEnabled();
     updateRecentDocuments();
 }
 
-void MainWindow::initWidgets()
+void EditorWindow::initWidgets()
 {
     if (!restoreGeometry(Settings::GetMainWindowGeometry())) {
         resize(1024, 768);
@@ -114,7 +114,7 @@ void MainWindow::initWidgets()
     statusBar()->addPermanentWidget(widgets.checksum);
 }
 
-void MainWindow::saveTo(const QString &path)
+void EditorWindow::saveTo(const QString &path)
 {
     if (rom_ == nullptr) {
         return;
@@ -133,7 +133,7 @@ void MainWindow::saveTo(const QString &path)
     }
 }
 
-void MainWindow::openFrom(const QString &path)
+void EditorWindow::openFrom(const QString &path)
 {
     try {
         auto romType = Rom::guessType(path);
@@ -154,7 +154,7 @@ void MainWindow::openFrom(const QString &path)
     }
 }
 
-void MainWindow::setSaveEnabled()
+void EditorWindow::setSaveEnabled()
 {
     const auto saveEnabled = (rom_ != nullptr && !windowFilePath().isEmpty());
 
@@ -163,7 +163,7 @@ void MainWindow::setSaveEnabled()
     actions_.fileCreateReport->setEnabled(saveEnabled);
 }
 
-void MainWindow::updateRecentDocuments()
+void EditorWindow::updateRecentDocuments()
 {
     // Update the stored paths.
     auto recents = Settings::GetRecentDocuments();
@@ -192,7 +192,7 @@ void MainWindow::updateRecentDocuments()
     }
 }
 
-void MainWindow::replaceOpenRom(Rom *newRom)
+void EditorWindow::replaceOpenRom(Rom *newRom)
 {
     if (editor_ != nullptr) {
         editor_->deleteLater();
@@ -203,8 +203,8 @@ void MainWindow::replaceOpenRom(Rom *newRom)
 
     rom_ = newRom;
     editor_ = new RomEditor(rom_, this);
-    connect(editor_, &RomEditor::dataChanged, this, &MainWindow::dataChanged);
-    connect(rom_, &Rom::titleChanged, this, &MainWindow::romTitleChanged);
+    connect(editor_, &RomEditor::dataChanged, this, &EditorWindow::dataChanged);
+    connect(rom_, &Rom::titleChanged, this, &EditorWindow::romTitleChanged);
     setCentralWidget(editor_);
     romTitleChanged();
     updateRecentDocuments();
@@ -212,7 +212,7 @@ void MainWindow::replaceOpenRom(Rom *newRom)
     updateChecksum();
 }
 
-bool MainWindow::maybeSave()
+bool EditorWindow::maybeSave()
 {
     if (!isWindowModified()) {
         return true;
@@ -236,7 +236,7 @@ bool MainWindow::maybeSave()
     }
 }
 
-void MainWindow::updatePatchedRacksCount()
+void EditorWindow::updatePatchedRacksCount()
 {
     if (rom_ == nullptr) {
         widgets.patchedRacksCount->clear();
@@ -247,7 +247,7 @@ void MainWindow::updatePatchedRacksCount()
     }
 }
 
-void MainWindow::updateChecksum()
+void EditorWindow::updateChecksum()
 {
     if (rom_ == nullptr) {
         widgets.checksum->clear();
@@ -258,7 +258,7 @@ void MainWindow::updateChecksum()
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void EditorWindow::closeEvent(QCloseEvent *event)
 {
     if (!maybeSave()) {
         event->ignore();
@@ -269,7 +269,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
-void MainWindow::newFile(Rom::Type romType)
+void EditorWindow::newFile(Rom::Type romType)
 {
     if (!maybeSave()) {
         return;
@@ -281,7 +281,7 @@ void MainWindow::newFile(Rom::Type romType)
     setSaveEnabled();
 }
 
-void MainWindow::open()
+void EditorWindow::open()
 {
     if (!maybeSave()) {
         return;
@@ -300,7 +300,7 @@ void MainWindow::open()
     }
 }
 
-void MainWindow::save()
+void EditorWindow::save()
 {
     if (rom_ == nullptr) {
         return;
@@ -314,7 +314,7 @@ void MainWindow::save()
     }
 }
 
-void MainWindow::saveAs()
+void EditorWindow::saveAs()
 {
     if (rom_ == nullptr) {
         return;
@@ -334,7 +334,7 @@ void MainWindow::saveAs()
     }
 }
 
-void MainWindow::createReport()
+void EditorWindow::createReport()
 {
     if (rom_ == nullptr) {
         return;
@@ -345,25 +345,25 @@ void MainWindow::createReport()
     QDesktopServices::openUrl(QUrl(QString("file:///%1").arg(reportPath), QUrl::TolerantMode));
 }
 
-void MainWindow::about()
+void EditorWindow::about()
 {
     AboutDialog dialog(this);
     dialog.exec();
 }
 
-void MainWindow::homepage()
+void EditorWindow::homepage()
 {
     QDesktopServices::openUrl(QUrl(config::kProjectHomepageUrl));
 }
 
-void MainWindow::dataChanged()
+void EditorWindow::dataChanged()
 {
     setWindowModified(true);
     updatePatchedRacksCount();
     updateChecksum();
 }
 
-void MainWindow::romTitleChanged()
+void EditorWindow::romTitleChanged()
 {
     widgets.romTitle->setText(rom_->getTitle());
 }
