@@ -61,6 +61,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt::Widgets
         Qt::Svg
 )
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(${PROJECT_NAME} PRIVATE Qt::DBus)
+endif ()
 
 install(TARGETS ${PROJECT_NAME}
         BUNDLE DESTINATION .

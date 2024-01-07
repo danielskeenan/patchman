@@ -38,6 +38,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
+    [[nodiscard]] const RomInfo &getRomInfoForRow(int row) const;
 
 public Q_SLOTS:
     void checkForFilesystemChanges();
