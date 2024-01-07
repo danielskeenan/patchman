@@ -338,7 +338,7 @@ void EnrRom::updateRomInfo(RomInfo &romInfo) const
     const auto hashAlgo = QCryptographicHash::Algorithm::Sha256;
     romInfo.setHashAlgo(hashAlgo);
     romInfo.setSoftwareHash(software_hash_);
-    romInfo.setPatchHash(QCryptographicHash::hash(toByteArray(), hashAlgo));
+    romInfo.setPatchHash(QCryptographicHash::hash(toByteArray().sliced(kPatchTableStart), hashAlgo));
 }
 
 };

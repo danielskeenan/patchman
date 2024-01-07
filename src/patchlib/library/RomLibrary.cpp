@@ -17,11 +17,11 @@ namespace patchman
 {
 
 RomLibrary::RomLibrary(QObject *parent)
-    : QObject(parent), pool_(new QThreadPool(this))
+    : QObject(parent)
 {
     // Ensure that database work allways happens on the same thread, without having to manually manage that thread.
-    pool_->setMaxThreadCount(1);
-    pool_->setExpiryTimeout(-1);
+    pool_.setMaxThreadCount(1);
+    pool_.setExpiryTimeout(-1);
 }
 
 RomLibrary *RomLibrary::get()
@@ -30,14 +30,16 @@ RomLibrary *RomLibrary::get()
     if (instance == nullptr) {
         instance = new RomLibrary();
         auto result = instance->open();
-        result.waitForFinished();
+        QFutureWatcher<void> futureWatcher;
+        futureWatcher.setFuture(result);
+        futureWatcher.waitForFinished();
     }
     return instance;
 }
 
 QFuture<void> RomLibrary::open()
 {
-    return QtConcurrent::run(pool_, [this]()
+    return QtConcurrent::run(&pool_, [this]()
     {
         // Use an env var for this path to facilitate testing.
         const auto
@@ -69,16 +71,18 @@ QFuture<void> RomLibrary::open()
 
 QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
 {
-    return QtConcurrent::run(pool_, [this, searchPaths](QPromise<QList<RomInfo>> &promise)
+    return QtConcurrent::run(&pool_, [this, searchPaths](QPromise<QList<RomInfo>> &promise)
     {
         // Iterate through search dirs for ROMs.
         promise.setProgressRange(0, 0);
         promise.setProgressValue(0);
-        int fileCount;
+        int fileCount = 0;
         for (const auto &searchPath : searchPaths) {
             QDirIterator it(searchPath, QDirIterator::Subdirectories);
             while (!it.next().isEmpty()) {
-                ++fileCount;
+                if (it.fileInfo().isFile()) {
+                    ++fileCount;
+                }
             }
         }
         promise.setProgressRange(0, fileCount);
@@ -92,12 +96,12 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                 if (promise.isCanceled()) {
                     return;
                 }
-                promise.setProgressValue(progressValue++);
 
                 const auto fileInfo = it.nextFileInfo();
                 if (!fileInfo.isFile()) {
                     continue;
                 }
+                promise.setProgressValue(progressValue++);
                 const auto filePath = fileInfo.canonicalFilePath();
                 const auto fileMTime = fileInfo.lastModified().toUTC();
                 std::optional<RomInfo> romInfo;
@@ -114,7 +118,7 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                 try {
                     const auto romType = Rom::guessType(filePath);
                     // Add rom info to database.
-                    const auto rom = Rom::create(romType, this);
+                    const auto rom = Rom::create(romType);
                     rom->loadFromFile(filePath);
                     if (!romInfo.has_value()) {
                         // New ROM.
@@ -125,6 +129,7 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                     romInfo->setFileMTime(fileMTime);
                     romInfo->save();
                     foundOnDisk.push_back(filePath);
+                    rom->deleteLater();
                 }
                 catch (const InvalidRomException &) {
                     // Not a ROM file; move on.
@@ -139,6 +144,10 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
         // Prune deleted ROMs from database.
         RomInfo::whereNotIn(RomInfo::kColFilePath, foundOnDisk)->remove();
         promise.setProgressValue(fileCount);
+
+        // Return found ROMs.
+        auto roms = RomInfo::all();
+        promise.addResult(roms.all());
     });
 }
 

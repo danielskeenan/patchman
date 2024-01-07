@@ -41,7 +41,7 @@ public:
     QFuture<QList<RomInfo>> getAllRoms(const QStringList &searchPaths);
 
 private:
-    QThreadPool *pool_;
+    QThreadPool pool_;
     std::shared_ptr<Orm::DatabaseManager> db_;
 
     explicit RomLibrary(QObject *parent = nullptr);
