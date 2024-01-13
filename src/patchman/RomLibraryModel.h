@@ -12,6 +12,7 @@
 #include <mutex>
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>
+#include <QFutureWatcher>
 #include "patchlib/library/RomInfo.h"
 
 namespace patchman
@@ -35,7 +36,7 @@ public:
     };
     static const auto kColumnCount = static_cast<std::underlying_type_t<Column>>(Column::PatchHash) + 1;
 
-    using QAbstractTableModel::QAbstractTableModel;
+    explicit RomLibraryModel(QObject *parent = nullptr);
 
     [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
@@ -43,15 +44,22 @@ public:
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
     [[nodiscard]] const RomInfo &getRomInfoForRow(int row) const;
 
+Q_SIGNALS:
+    void progressRangeChanged(int min, int max);
+    void progressTextChanged(const QString &text);
+    void progressValueChanged(int value);
+
 public Q_SLOTS:
     void checkForFilesystemChanges();
 
 private:
+    using RomInfoListWatcher = QFutureWatcher<QList<RomInfo>>;
     std::mutex romInfoMutex_;
     QList<RomInfo> romInfo_;
     std::mutex patchTableCountsMutex_;
     /** How many patch tables have the same hash. */
     QHash<QByteArray, unsigned int> patchTableCounts_;
+    RomInfoListWatcher *watcher_;
 };
 
 /**

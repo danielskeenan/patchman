@@ -24,6 +24,7 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QStatusBar>
 
 namespace patchman
 {
@@ -34,6 +35,13 @@ BrowserWindow::BrowserWindow(QWidget *parent)
     initMenus();
     initWidgets();
     initFsWatcher();
+
+    if (Settings::GetRomSearchPaths().empty()) {
+        QMessageBox::information(this,
+                                 tr("No ROM paths set."),
+                                 tr("Set ROM search paths in the Settings before using this program."));
+        settings();
+    }
 }
 
 void BrowserWindow::initMenus()
@@ -124,6 +132,7 @@ void BrowserWindow::initWidgets()
         Settings::SetMainWindowGeometry(saveGeometry());
     }
 
+    // Browser
     widgets_.browser = new QTableView(this);
     setCentralWidget(widgets_.browser);
     browserModel_ = new RomLibraryModel(this);
@@ -148,20 +157,27 @@ void BrowserWindow::initWidgets()
     connect(browserModel_, &RomLibraryModel::modelReset, this, [this]()
     { widgets_.browser->resizeColumnsToContents(); }, Qt::SingleShotConnection);
 
+    // Progress message
+    widgets_.progressMsg = new QLabel(this);
+    statusBar()->addPermanentWidget(widgets_.progressMsg);
+    connect(browserModel_, &RomLibraryModel::progressTextChanged, widgets_.progressMsg, &QLabel::setText);
+
+    // Progress bar
+    widgets_.progress = new QProgressBar(this);
+    statusBar()->addPermanentWidget(widgets_.progress);
+    connect(browserModel_, &RomLibraryModel::progressRangeChanged, widgets_.progress, &QProgressBar::setRange);
+    connect(browserModel_, &RomLibraryModel::progressValueChanged, widgets_.progress, &QProgressBar::setValue);
+
     updateActionsFromSelection();
 }
 
 void BrowserWindow::initFsWatcher()
 {
-    fsWatcher_ = new QFileSystemWatcher(Settings::GetRomSearchPaths(), this);
-    connect(fsWatcher_,
-            &QFileSystemWatcher::directoryChanged,
-            browserModel_,
-            &RomLibraryModel::checkForFilesystemChanges);
-    connect(fsWatcher_,
-            &QFileSystemWatcher::fileChanged,
-            browserModel_,
-            &RomLibraryModel::checkForFilesystemChanges);
+    fsWatcher_ = new QFileSystemWatcher(this);
+    for (const auto &searchPath : Settings::GetRomSearchPaths()) {
+        watchPath(searchPath);
+    }
+    connect(fsWatcher_, &QFileSystemWatcher::directoryChanged, this, &BrowserWindow::directoryChanged);
 }
 
 void BrowserWindow::openFrom(const QString &path)
@@ -238,6 +254,14 @@ const RomInfo &BrowserWindow::getSelectedRomInfo() const
     return browserModel_->getRomInfoForRow(row);
 }
 
+void BrowserWindow::watchPath(const QString &path)
+{
+    for (QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories); it.hasNext();) {
+        const auto &dir = it.next();
+        fsWatcher_->addPath(dir);
+    }
+}
+
 void BrowserWindow::closeEvent(QCloseEvent *event)
 {
     Settings::SetMainWindowGeometry(saveGeometry());
@@ -294,6 +318,7 @@ void BrowserWindow::settings()
     SettingsDialog dialog(this);
     dialog.exec();
     initFsWatcher();
+    browserModel_->checkForFilesystemChanges();
 }
 
 void BrowserWindow::editRom()
@@ -334,6 +359,18 @@ void BrowserWindow::editorClosed()
             return editor.isNull();
         }
     );
+}
+
+void BrowserWindow::directoryChanged(const QString &path)
+{
+    if (!QDir(path).exists()) {
+        fsWatcher_->removePath(path);
+    }
+    else {
+        // Ensure any newly-added subdirectories are monitored.
+        watchPath(path);
+    }
+    browserModel_->checkForFilesystemChanges();
 }
 
 } // patchman

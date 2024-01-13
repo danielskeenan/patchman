@@ -16,6 +16,7 @@
 #include "patchman_config.h"
 #include "Settings.h"
 #include "BrowserWindow.h"
+#include "patchlib/library/RomLibrary.h"
 
 /**
  * Ask the user about resetting settings
@@ -68,6 +69,7 @@ int main(int argc, char *argv[])
     if (app.queryKeyboardModifiers() == Qt::ShiftModifier) {
         if (reallyClearSettings(app)) {
             patchman::Settings::Clear();
+            patchman::RomLibrary::deleteDbFile();
         }
     }
 

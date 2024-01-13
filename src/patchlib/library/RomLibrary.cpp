@@ -13,6 +13,11 @@
 #include <QStandardPaths>
 #include <QSqlError>
 
+QDirIterator getRomDirIterator(const QString &path)
+{
+    return QDirIterator(path, QDir::Readable | QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+}
+
 namespace patchman
 {
 
@@ -82,6 +87,7 @@ QFuture<void> RomLibrary::open()
                     continue;
                 }
 
+                // Verify integrity.
                 const auto integrityCheckResults = []()
                 {
                     QSqlQuery q("PRAGMA integrity_check(1);");
@@ -145,7 +151,7 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
         promise.setProgressValue(0);
         int fileCount = 0;
         for (const auto &searchPath : searchPaths) {
-            QDirIterator it(searchPath, QDirIterator::Subdirectories);
+            auto it = getRomDirIterator(searchPath);
             while (!it.next().isEmpty()) {
                 if (it.fileInfo().isFile()) {
                     ++fileCount;
@@ -173,7 +179,7 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                 .arg(QStringList(RomInfo::kAllColumns.size(), "?").join(", "))
         );
         for (const auto &searchPath : searchPaths) {
-            for (QDirIterator it(searchPath, QDirIterator::Subdirectories); it.hasNext();) {
+            for (auto it = getRomDirIterator(searchPath); it.hasNext();) {
                 if (promise.isCanceled()) {
                     return;
                 }
@@ -277,8 +283,6 @@ QFuture<QList<RomInfo>> RomLibrary::getDuplicates(const RomInfo &romInfo)
                 .arg(RomInfo::kTable)
         );
         q.bindValue(0, patchHash);
-        qDebug() << q.lastQuery();
-        qDebug() << q.boundValues();
         q.exec();
         duplicates.reserve(q.size());
         while (q.next()) {
@@ -303,9 +307,15 @@ void RomLibrary::deleteDbFile()
 {
     auto db = QSqlDatabase::database();
     const auto dbPath = getDbPath();
-    const auto connName = db.connectionName();
-    db.close();
-    QSqlDatabase::removeDatabase(connName);
+
+    if (db.isValid()) {
+        const auto connName = db.connectionName();
+        if (db.isOpen()) {
+            db.close();
+        }
+        QSqlDatabase::removeDatabase(connName);
+    }
+
     if (dbPath != ":memory:") {
         QFile::remove(dbPath);
     }

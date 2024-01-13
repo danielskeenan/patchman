@@ -17,6 +17,14 @@
 namespace patchman
 {
 
+RomLibraryModel::RomLibraryModel(QObject *parent)
+    : QAbstractTableModel(parent), watcher_(new QFutureWatcher<QList<RomInfo>>(this))
+{
+    connect(watcher_, &RomInfoListWatcher::progressRangeChanged, this, &RomLibraryModel::progressRangeChanged);
+    connect(watcher_, &RomInfoListWatcher::progressTextChanged, this, &RomLibraryModel::progressTextChanged);
+    connect(watcher_, &RomInfoListWatcher::progressValueChanged, this, &RomLibraryModel::progressValueChanged);
+}
+
 int RomLibraryModel::rowCount(const QModelIndex &parent) const
 {
     return romInfo_.size();
@@ -109,7 +117,10 @@ const RomInfo &RomLibraryModel::getRomInfoForRow(int row) const
 
 void RomLibraryModel::checkForFilesystemChanges()
 {
-    RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths())
+    Q_EMIT(progressTextChanged(tr("Searching for ROMs")));
+    auto future = RomLibrary::get()->getAllRoms(Settings::GetRomSearchPaths());
+    watcher_->setFuture(future);
+    future
         .then(
             [this](const QList<RomInfo> &romInfoList)
             {
@@ -127,11 +138,16 @@ void RomLibraryModel::checkForFilesystemChanges()
                 beginResetModel();
                 patchTableCounts_.clear();
                 patchTableCounts_.reserve(romInfoList.size());
-                for (const auto &romInfo : romInfoList) {
+                Q_EMIT(progressRangeChanged(0, romInfoList.size()));
+                Q_EMIT(progressTextChanged(tr("Finding duplicate ROMs")));
+                for (int ix = 0; ix < romInfoList.size(); ++ix) {
+                    const auto &romInfo = romInfoList.at(ix);
                     const auto duplicates = RomLibrary::get()->getDuplicates(romInfo).result();
                     patchTableCounts_[romInfo.getPatchHash()] = duplicates.size();
+                    Q_EMIT(progressValueChanged(ix + 1));
                 }
                 endResetModel();
+                Q_EMIT(progressTextChanged(""));
             }
         );
 }

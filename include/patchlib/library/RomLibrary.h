@@ -34,6 +34,11 @@ public:
     QFuture<void> cleanup();
 
     /**
+     * Delete the database file, forcing everything to be recalculated.
+     */
+    static void deleteDbFile();
+
+    /**
      * Update library with contents from paths.
      *
      * @param searchPaths
@@ -59,7 +64,6 @@ private:
     QFuture<void> open();
 
     static QString getDbPath();
-    static void deleteDbFile();
 };
 
 } // patchman

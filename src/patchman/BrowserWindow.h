@@ -11,6 +11,7 @@
 
 #include <QMainWindow>
 #include <QTableView>
+#include <QProgressBar>
 #include "patchlib/Rom.h"
 #include "EditorWindow.h"
 #include "RomLibraryModel.h"
@@ -48,6 +49,8 @@ private:
     struct Widgets
     {
         QTableView *browser = nullptr;
+        QProgressBar *progress = nullptr;
+        QLabel *progressMsg = nullptr;
     };
     Widgets widgets_;
     QList<QPointer<EditorWindow>> editors_;
@@ -62,6 +65,7 @@ private:
     void updateRecentDocuments(const QString &path = {});
     void showEditor(Rom *rom, const QString &path = {});
     [[nodiscard]] const RomInfo &getSelectedRomInfo() const;
+    void watchPath(const QString& path);
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
@@ -78,6 +82,7 @@ private Q_SLOTS:
     void homepage();
     void updateActionsFromSelection();
     void editorClosed();
+    void directoryChanged(const QString &path);
 };
 
 } // patchman
