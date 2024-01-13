@@ -45,6 +45,7 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         LinguistTools
+        Sql
         Svg
         Widgets
         REQUIRED)

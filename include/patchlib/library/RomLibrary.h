@@ -13,12 +13,6 @@
 #include <QFuture>
 #include "RomInfo.h"
 
-namespace Orm
-{
-// Declare the database manager so we can hold onto an instance without consumers needing to link with the ORM library.
-class DatabaseManager;
-}
-
 namespace patchman
 {
 
@@ -32,6 +26,12 @@ class RomLibrary: public QObject
 Q_OBJECT
 public:
     static RomLibrary *get();
+
+    /**
+     * Perform database cleaning.
+     * @return
+     */
+    QFuture<void> cleanup();
 
     /**
      * Update library with contents from paths.
@@ -49,12 +49,17 @@ public:
     QFuture<QList<RomInfo>> getDuplicates(const RomInfo &romInfo);
 
 private:
+    /** PTCH */
+    static const int32_t kAppId = 0x50544348;
+    static const int32_t kAppVersion = 0;
     QThreadPool pool_;
-    std::shared_ptr<Orm::DatabaseManager> db_;
 
     explicit RomLibrary(QObject *parent = nullptr);
 
     QFuture<void> open();
+
+    static QString getDbPath();
+    static void deleteDbFile();
 };
 
 } // patchman

@@ -7,39 +7,68 @@
  */
 
 #include "patchlib/library/RomInfo.h"
+#include <QDateTime>
 
 namespace patchman
 {
 
-QStringList RomInfo::getDDL()
+QList<QSqlQuery> RomInfo::getDDL()
 {
     return {
-        R"(
+        QSqlQuery(QString(R"(
 create table if not exists rom_info
 (
-    id         integer
-        primary key,
-    file_path  text collate NOCASE not null
-        constraint rom_info_k
-            unique,
-    file_mtime text,
-    hash_algo  integer,
-    sw_hash    BLOB,
-    patch_hash BLOB,
-    rom_type   integer,
-    rack_count  integer,
-    rom_checksum BLOB
+    %1  text primary key not null collate NOCASE,
+    %2  text,
+    %3  integer,
+    %4  BLOB,
+    %5  BLOB,
+    %6  integer,
+    %7  integer,
+    %8  BLOB
 );
-)",
-        R"(
-create unique index if not exists rom_info_file_path_uindex
-    on rom_info (file_path);
-)",
-        R"(
+)")
+                      .arg(kColFilePath)
+                      .arg(kColFileMTime)
+                      .arg(kColHashAlgo)
+                      .arg(kColSoftwareHash)
+                      .arg(kColPatchHash)
+                      .arg(kColRomType)
+                      .arg(kColRackCount)
+                      .arg(kColRomChecksum)),
+        QSqlQuery(QString(R"(
 create index if not exists rom_info_patch_hash_index
-    on rom_info (patch_hash);
-)"
+    on rom_info (%1);
+)").arg(kColPatchHash))
     };
+}
+
+void RomInfo::bind(QSqlQuery &q, int pos)
+{
+    q.bindValue(pos++, filePath_);
+    q.bindValue(pos++, fileMTime_);
+    q.bindValue(pos++, hashAlgo_);
+    q.bindValue(pos++, softwareHash_);
+    q.bindValue(pos++, patchHash_);
+    q.bindValue(pos++, romType_);
+    q.bindValue(pos++, rackCount_);
+    q.bindValue(pos++, romChecksum_);
+}
+
+RomInfo RomInfo::hydrate(QSqlQuery &q)
+{
+    Q_ASSERT(q.isActive());
+    RomInfo o;
+    o.filePath_ = q.value(kColFilePath).toString();
+    o.fileMTime_ = q.value(kColFileMTime).toDateTime();
+    o.hashAlgo_ = q.value(kColHashAlgo).toInt();
+    o.softwareHash_ = q.value(kColSoftwareHash).toByteArray();
+    o.patchHash_ = q.value(kColPatchHash).toByteArray();
+    o.romType_ = q.value(kColRomType).toInt();
+    o.rackCount_ = q.value(kColRackCount).toUInt();
+    o.romChecksum_ = q.value(kColRomChecksum).toByteArray();
+
+    return o;
 }
 
 } // patchman

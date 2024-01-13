@@ -18,20 +18,12 @@ qt_add_library(patchlib STATIC
 )
 
 find_package(frozen REQUIRED)
-include(FetchContent)
-FetchContent_Declare(TinyORM
-        GIT_REPOSITORY https://github.com/silverqx/TinyORM.git
-        GIT_TAG        "v0.36.5"
-        OVERRIDE_FIND_PACKAGE
-)
-set(TOM OFF)
-find_package(TinyOrm REQUIRED)
 target_link_libraries(patchlib PRIVATE
         frozen::frozen
 )
 target_link_libraries(patchlib PUBLIC
         Qt::Concurrent
         Qt::Core
-        TinyOrm::TinyOrm
+        Qt::Sql
 )
 target_compile_definitions(patchlib PUBLIC QT_NO_KEYWORDS)

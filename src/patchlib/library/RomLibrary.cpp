@@ -10,8 +10,8 @@
 #include "patchlib/Rom.h"
 #include "patchlib/Exceptions.h"
 #include <QtConcurrent>
-#include <orm/db.hpp>
 #include <QStandardPaths>
+#include <QSqlError>
 
 namespace patchman
 {
@@ -19,7 +19,7 @@ namespace patchman
 RomLibrary::RomLibrary(QObject *parent)
     : QObject(parent)
 {
-    // Ensure that database work allways happens on the same thread, without having to manually manage that thread.
+    // Ensure that database work always happens on the same thread, without having to manually manage that thread.
     pool_.setMaxThreadCount(1);
     pool_.setExpiryTimeout(-1);
 }
@@ -39,39 +39,106 @@ RomLibrary *RomLibrary::get()
 
 QFuture<void> RomLibrary::open()
 {
-    return QtConcurrent::run(&pool_, [this]()
+    return QtConcurrent::run(&pool_, []()
     {
-        // Use an env var for this path to facilitate testing.
-        const auto
-            dbPath = qEnvironmentVariable("PATCHMAN_DB_PATH",
-                                          QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation))
-                                              .filePath("patchman.db"));
-        db_ = Orm::DB::create(
-            {
-                {"driver", "QSQLITE"},
-                {"database", dbPath},
-                {"foreign_key_constraints", true},
-                {"check_database_exists", false},
-                {"qt_timezone", Qt::UTC},
-                {"return_qdatetime", true},
-                {"prefix", ""},
-                {"prefix_indexes", false},
+
+        const auto dbPath = getDbPath();
+        do {
+            const bool initNewFile = (dbPath == ":memory:" || !QFileInfo(dbPath).isFile());
+            if (dbPath != ":memory:") {
+                QDir dbDir(dbPath);
+                dbDir.cdUp();
+                QDir::root().mkpath(dbDir.path());
             }
-        );
+            QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+            db.setDatabaseName(dbPath);
+            if (!db.open()) {
+                qCritical() << "Failed to open browser database:" << db.lastError();
+                break;
+            }
+
+            // Integrity check
+            if (!initNewFile) {
+                // This should already be a database file, so make sure it's in good condition.
+
+                // Verify app id.
+                const auto dbAppId = []()
+                {
+                    QSqlQuery q("PRAGMA application_id;");
+                    q.exec();
+                    q.next();
+                    return q.value(0).value<int32_t>();
+                }();
+                const auto dbAppVersion = []()
+                {
+                    QSqlQuery q("PRAGMA user_version;");
+                    q.exec();
+                    q.next();
+                    return q.value(0).value<int32_t>();
+                }();
+                if (dbAppId != kAppId || dbAppVersion != kAppVersion) {
+                    // Wrong database. Delete and recreate.
+                    deleteDbFile();
+                    continue;
+                }
+
+                const auto integrityCheckResults = []()
+                {
+                    QSqlQuery q("PRAGMA integrity_check(1);");
+                    q.exec();
+                    QStringList results;
+                    while (q.next()) {
+                        results.push_back(q.value(0).toString());
+                    }
+                    return results;
+                }();
+                if (integrityCheckResults.size() > 1 || integrityCheckResults.first() != "ok") {
+                    // Bad database. Delete and recreate.
+                    deleteDbFile();
+                    continue;
+                }
+            }
+        }
+        while (!QSqlDatabase::database().isOpen());
+        if (!QSqlDatabase::database().isOpen()) {
+            qFatal("Failed to open browser database.");
+        }
 
         // Create tables.
-        QStringList ddlSpecs;
-        ddlSpecs.append(RomInfo::getDDL());
+        QList<QSqlQuery> ddl{
+            QSqlQuery(QString("PRAGMA application_id = %1;").arg(kAppId)),
+            QSqlQuery(QString("PRAGMA user_version = %1").arg(kAppVersion)),
+            QSqlQuery("PRAGMA foreign_keys = 1;")
+        };
+        ddl.append(std::move(RomInfo::getDDL()));
 
-        for (const auto &ddl : ddlSpecs) {
-            db_->unprepared(ddl);
+        for (auto &q : ddl) {
+            q.exec();
+        }
+    });
+}
+
+QFuture<void> RomLibrary::cleanup()
+{
+    return QtConcurrent::run(&pool_, []()
+    {
+        if (!QSqlDatabase::database().isOpen()) {
+            return;
+        }
+
+        static QList<QSqlQuery> ops{
+            QSqlQuery("PRAGMA optimize;"),
+            QSqlQuery("VACUUM;"),
+        };
+        for (auto &q : ops) {
+            q.exec();
         }
     });
 }
 
 QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
 {
-    return QtConcurrent::run(&pool_, [this, searchPaths](QPromise<QList<RomInfo>> &promise)
+    return QtConcurrent::run(&pool_, [searchPaths](QPromise<QList<RomInfo>> &promise)
     {
         // Iterate through search dirs for ROMs.
         promise.setProgressRange(0, 0);
@@ -91,6 +158,20 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
         // Track file paths on disk so we can prune non-existent files from the database.
         QList<QVariant> foundOnDisk;
         int progressValue = 0;
+        QSqlQuery filePathQ;
+        filePathQ.prepare(
+            QString("SELECT %1 FROM %2 WHERE %3 = ? LIMIT 1;")
+                .arg(RomInfo::kAllColumns.join(", "))
+                .arg(RomInfo::kTable)
+                .arg(RomInfo::kColFilePath)
+        );
+        QSqlQuery saveRomInfoQ;
+        saveRomInfoQ.prepare(
+            QString("INSERT INTO %1(%2) VALUES(%3);")
+                .arg(RomInfo::kTable)
+                .arg(RomInfo::kAllColumns.join(", "))
+                .arg(QStringList(RomInfo::kAllColumns.size(), "?").join(", "))
+        );
         for (const auto &searchPath : searchPaths) {
             for (QDirIterator it(searchPath, QDirIterator::Subdirectories); it.hasNext();) {
                 if (promise.isCanceled()) {
@@ -104,10 +185,18 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                 promise.setProgressValue(progressValue++);
                 const auto filePath = fileInfo.canonicalFilePath();
                 const auto fileMTime = fileInfo.lastModified().toUTC();
-                std::optional<RomInfo> romInfo;
 
                 // Has this file been modified?
-                romInfo = RomInfo::firstWhereEq(RomInfo::kColFilePath, filePath);
+                auto romInfo = [&filePathQ, &filePath]() -> std::optional<RomInfo>
+                {
+                    filePathQ.bindValue(0, filePath);
+                    filePathQ.exec();
+                    if (filePathQ.size() <= 0) {
+                        return {};
+                    }
+                    filePathQ.next();
+                    return RomInfo::hydrate(filePathQ);
+                }();
                 if (romInfo.has_value() && romInfo->getFileMTime().toUTC() == fileMTime) {
                     // File is already in database and has not changed.
                     foundOnDisk.push_back(filePath);
@@ -127,7 +216,8 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
                     rom->updateRomInfo(*romInfo);
                     romInfo->setFilePath(filePath);
                     romInfo->setFileMTime(fileMTime);
-                    romInfo->save();
+                    romInfo->bind(saveRomInfoQ, 0);
+                    saveRomInfoQ.exec();
                     foundOnDisk.push_back(filePath);
                     rom->deleteLater();
                 }
@@ -142,23 +232,83 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
         }
 
         // Prune deleted ROMs from database.
-        RomInfo::whereNotIn(RomInfo::kColFilePath, foundOnDisk)->remove();
+        QSqlQuery pruneQ(
+            QString("DELETE FROM %1 WHERE %2 NOT IN (%3)")
+                .arg(RomInfo::kTable)
+                .arg(RomInfo::kColFilePath)
+                .arg(QStringList(foundOnDisk.size(), "?").join(", "))
+        );
+        for (const auto &path : foundOnDisk) {
+            pruneQ.addBindValue(path);
+        }
+        pruneQ.exec();
         promise.setProgressValue(fileCount);
 
         // Return found ROMs.
-        auto roms = RomInfo::all();
-        promise.addResult(roms.all());
+        auto roms = []()
+        {
+            QList<RomInfo> result;
+            QSqlQuery q(
+                QString("SELECT %1 FROM %2;")
+                    .arg(RomInfo::kAllColumns.join(", "))
+                    .arg(RomInfo::kTable)
+            );
+            q.exec();
+            result.reserve(q.size());
+            while (q.next()) {
+                result.push_back(RomInfo::hydrate(q));
+            }
+
+            return result;
+        }();
+        promise.addResult(roms);
     });
 }
 
 QFuture<QList<RomInfo>> RomLibrary::getDuplicates(const RomInfo &romInfo)
 {
     const auto &patchHash = romInfo.getPatchHash();
-    return QtConcurrent::run(&pool_, [this, patchHash](QPromise<QList<RomInfo>> &promise)
+    return QtConcurrent::run(&pool_, [patchHash](QPromise<QList<RomInfo>> &promise)
     {
-        const auto duplicates = RomInfo::whereEq(RomInfo::kColPatchHash, patchHash)->get().all();
+        QList<RomInfo> duplicates;
+        QSqlQuery q(
+            QString("SELECT %1 FROM %2 WHERE %3 = ?")
+                .arg(RomInfo::kAllColumns.join(", "))
+                .arg(RomInfo::kTable)
+        );
+        q.bindValue(0, patchHash);
+        qDebug() << q.lastQuery();
+        qDebug() << q.boundValues();
+        q.exec();
+        duplicates.reserve(q.size());
+        while (q.next()) {
+            duplicates.push_back(RomInfo::hydrate(q));
+        }
         promise.addResult(duplicates);
     });
+}
+
+QString RomLibrary::getDbPath()
+{
+    // Use an env var for this path to facilitate testing.
+    static const auto dbPath =
+        qEnvironmentVariable("PATCHMAN_DB_PATH",
+                             QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation))
+                                 .filePath("patchman.db"));
+
+    return dbPath;
+}
+
+void RomLibrary::deleteDbFile()
+{
+    auto db = QSqlDatabase::database();
+    const auto dbPath = getDbPath();
+    const auto connName = db.connectionName();
+    db.close();
+    QSqlDatabase::removeDatabase(connName);
+    if (dbPath != ":memory:") {
+        QFile::remove(dbPath);
+    }
 }
 
 } // patchman

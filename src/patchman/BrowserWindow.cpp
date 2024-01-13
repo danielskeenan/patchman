@@ -17,6 +17,7 @@
 #include "ReportBuilder.h"
 #include "showPathInFileBrowser.h"
 #include "ShowDuplicatesDialog.h"
+#include "patchlib/library/RomLibrary.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -250,6 +251,7 @@ void BrowserWindow::closeEvent(QCloseEvent *event)
             return;
         }
     }
+    RomLibrary::get()->cleanup();
 
     QWidget::closeEvent(event);
 }
