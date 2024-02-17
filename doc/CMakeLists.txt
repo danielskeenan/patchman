@@ -6,8 +6,13 @@ execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv .venv
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
 )
-set(SPHINX_PYTHON "${CMAKE_CURRENT_SOURCE_DIR}/.venv/bin/python${CMAKE_EXECUTABLE_SUFFIX}")
-execute_process(COMMAND "${SPHINX_PYTHON}" -m pip install -r requirements.txt
+find_program(SPHINX_PIP pip
+        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/.venv"
+        PATH_SUFFIXES bin Scripts
+        NO_DEFAULT_PATH
+        REQUIRED
+)
+execute_process(COMMAND "${SPHINX_PIP}" install -r requirements.txt
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
 )
@@ -20,8 +25,14 @@ string(JSON SPHINX_BUILD_INFO SET "${SPHINX_BUILD_INFO}" "version" "\"${PROJECT_
 file(WRITE "${CMAKE_CURRENT_LIST_DIR}/build_info.json" "${SPHINX_BUILD_INFO}")
 
 # Generate doc
+find_program(SPHINX_BUILD sphinx-build
+        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/.venv"
+        PATH_SUFFIXES bin Scripts
+        NO_DEFAULT_PATH
+        REQUIRED
+)
 add_custom_target(${PROJECT_NAME}_doc_html
-        COMMAND "${SPHINX_PYTHON}" -m sphinx -M html "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
+        COMMAND "${SPHINX_BUILD}" -M html "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/html" "${CMAKE_CURRENT_BINARY_DIR}/doctrees"
         COMMENT "Running Sphinx..."
