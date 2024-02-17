@@ -40,6 +40,9 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         enr/EnrReportBuilder.cpp
         enr/EnrReportBuilder.h
 )
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_sources(${PROJECT_NAME} PRIVATE patchman.rc)
+endif ()
 
 qt_add_translations(${PROJECT_NAME}
         TS_FILES ${PROJECT_SOURCE_DIR}/translations/patchman_en.ts

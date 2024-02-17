@@ -42,7 +42,22 @@ int main(int argc, char *argv[])
     app.setApplicationName(patchman::config::kProjectName);
     app.setApplicationDisplayName(patchman::config::kProjectDisplayName);
     app.setApplicationVersion(patchman::config::kProjectVersion);
-    //  app.setWindowIcon(QIcon(":/logo.svg"));
+    QIcon defaultWindowIcon;
+    defaultWindowIcon.addFile(":/icons/patchman-16.svg", {16, 16});
+    defaultWindowIcon.addFile(":/icons/patchman-16@2x.svg", {16, 16});
+    defaultWindowIcon.addFile(":/icons/patchman-24.svg", {24, 24});
+    defaultWindowIcon.addFile(":/icons/patchman-24@2x.svg", {24, 24});
+    defaultWindowIcon.addFile(":/icons/patchman-32.svg", {32, 32});
+    defaultWindowIcon.addFile(":/icons/patchman-32@2x.svg", {32, 32});
+    defaultWindowIcon.addFile(":/icons/patchman-48.svg", {48, 48});
+    defaultWindowIcon.addFile(":/icons/patchman-48@2x.svg", {48, 48});
+    defaultWindowIcon.addFile(":/icons/patchman-64.svg", {64, 64});
+    defaultWindowIcon.addFile(":/icons/patchman-64@2x.svg", {64, 64});
+    defaultWindowIcon.addFile(":/icons/patchman-128.svg", {128, 128});
+    defaultWindowIcon.addFile(":/icons/patchman-128@2x.svg", {128, 128});
+    defaultWindowIcon.addFile(":/icons/patchman-256.svg", {256, 256});
+    defaultWindowIcon.addFile(":/icons/patchman-256@2x.svg", {256, 256});
+    app.setWindowIcon(defaultWindowIcon);
 
     Q_INIT_RESOURCE(bin);
 
