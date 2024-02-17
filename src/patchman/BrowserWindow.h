@@ -66,6 +66,7 @@ private:
     void showEditor(Rom *rom, const QString &path = {});
     [[nodiscard]] const RomInfo &getSelectedRomInfo() const;
     void watchPath(const QString& path);
+    void hideProgressIfComplete();
 
 protected Q_SLOTS:
     void closeEvent(QCloseEvent *event) override;
@@ -83,6 +84,8 @@ private Q_SLOTS:
     void updateActionsFromSelection();
     void editorClosed();
     void directoryChanged(const QString &path);
+    void progressRangeChanged(int min, int max);
+    void progressValueChanged(int value);
 };
 
 } // patchman

@@ -165,8 +165,8 @@ void BrowserWindow::initWidgets()
     // Progress bar
     widgets_.progress = new QProgressBar(this);
     statusBar()->addPermanentWidget(widgets_.progress);
-    connect(browserModel_, &RomLibraryModel::progressRangeChanged, widgets_.progress, &QProgressBar::setRange);
-    connect(browserModel_, &RomLibraryModel::progressValueChanged, widgets_.progress, &QProgressBar::setValue);
+    connect(browserModel_, &RomLibraryModel::progressRangeChanged, this, &BrowserWindow::progressRangeChanged);
+    connect(browserModel_, &RomLibraryModel::progressValueChanged, this, &BrowserWindow::progressValueChanged);
 
     updateActionsFromSelection();
 }
@@ -260,6 +260,13 @@ void BrowserWindow::watchPath(const QString &path)
         const auto &dir = it.next();
         fsWatcher_->addPath(dir);
     }
+}
+
+void BrowserWindow::hideProgressIfComplete()
+{
+    const bool complete = (widgets_.progress->value() >= widgets_.progress->maximum());
+    widgets_.progress->setHidden(complete);
+    widgets_.progressMsg->setHidden(complete);
 }
 
 void BrowserWindow::closeEvent(QCloseEvent *event)
@@ -371,6 +378,18 @@ void BrowserWindow::directoryChanged(const QString &path)
         watchPath(path);
     }
     browserModel_->checkForFilesystemChanges();
+}
+
+void BrowserWindow::progressRangeChanged(int min, int max)
+{
+    widgets_.progress->setRange(min, max);
+    hideProgressIfComplete();
+}
+
+void BrowserWindow::progressValueChanged(int value)
+{
+    widgets_.progress->setValue(value);
+    hideProgressIfComplete();
 }
 
 } // patchman
