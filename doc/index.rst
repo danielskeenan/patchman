@@ -1,16 +1,26 @@
-.. Patchman documentation master file, created by
-   sphinx-quickstart on Sat Feb 17 13:20:18 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Patchman's documentation!
 ====================================
+
+Patchman is a browser and editor for patch ROM files for classic dimming systems.
+
+.. _supported-systems:
+Supported systems:
+
+- Colortran Dimension 192
+- Colortran ENR
+
+To support other systems, documentation must exist for the binary layout, or
+several ROMs for known systems must exist for reverse engineering.
+
+ROM files may be in raw binary or Intel HEX format.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   first_time
+   browser
+   editor
 
 Indices and tables
 ==================
