@@ -61,6 +61,12 @@ if (BUILD_PACKAGE)
     add_subdirectory(install)
 endif ()
 
+find_package(Python3 COMPONENTS Interpreter)
+option(BUILD_DOC "Build documentation (Requires Python)" ${Python3_FOUND})
+if (BUILD_DOC)
+    add_subdirectory(doc)
+endif ()
+
 include(CTest)
 if (BUILD_TESTING)
     add_subdirectory(test)
