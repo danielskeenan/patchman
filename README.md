@@ -14,6 +14,10 @@ several ROMs for known systems must exist for reverse engineering.
 
 ROM files may be in raw binary or Intel HEX format.
 
+Download
+--------
+See releases [here](https://github.com/danielskeenan/patchman/releases).
+
 Documentation
 -------------
 See current documentation [here](https://danielskeenan.github.io/patchman/).
