@@ -1,4 +1,5 @@
 .. index:: Editor
+
 Editor
 ======
 
@@ -8,6 +9,7 @@ the addressing of individual circuits.
 .. image:: img/editor.png
 
 .. index:: Checksum
+
 Each rack available in the ROM is shown as a tab across the top. Each circuit's
 phase, circuit number, module type, and DMX address is shown in the table. Only
 the address is editable. The status bar at the bottom of the window shows the
@@ -20,10 +22,12 @@ The :guilabel:`Autonumber` and :guilabel:`Unpatch` buttons at the top will bulk-
 edit the selected rows, or all rows if none are selected.
 
 .. index:: Unpatch
+
 To unpatch a circuit, set its address to ``0`` or press the :guilabel:`Unpatch`
 button.
 
 .. index:: Autonumber
+
 Autonumber
 ----------
 The Autonumber dialog makes addressing racks fast.

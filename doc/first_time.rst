@@ -2,6 +2,7 @@ First-Time Setup
 ================
 
 .. index:: Paths
+
 The first time you open Patchman, you must set where your patch ROM files live.
 
 .. image:: img/settings.png

@@ -25,7 +25,7 @@ release = version
 extensions = []
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'CMakeLists.txt', 'requirements.txt', '*.json', '.venv']
 
 rst_prolog = """
 .. |version| replace:: {version}
@@ -36,3 +36,6 @@ rst_prolog = """
 
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
+html_theme_options = {
+    'navigation_with_keys': False
+}

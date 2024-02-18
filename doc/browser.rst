@@ -1,4 +1,5 @@
 .. index:: Browser
+
 Browser
 =======
 
@@ -11,6 +12,7 @@ Upon launch, the browser will scan all folders set in the settings (see
 the bottom of the window.
 
 .. index:: Checksum
+
 A table lists the type, name, date, rack count, and checksum for each ROM found.
 If files are missing, ensure the path they are in is set as a search path in the
 settings and that it is a :ref:`supported file type <supported-systems>`.
@@ -25,12 +27,13 @@ Further options are available by right-clicking on its entry:
    Open the :doc:`editor`. Same action as double-clicking on the row.
 
 .. index:: Reports
+
 :guilabel:`Create Report`
    Create a document visually demonstrating, for each rack in the ROM, the
-   location of each DMX address. Suitable for printing and including with a ROM
-   chip or control module containing the ROM to document its configuration.
+   location of each DMX address. See :doc:`reports`.
 
 .. index:: Duplicates
+
 :guilabel:`Show Duplicates`
    Show all ROM files that contain the same patch information as the selected
    ROM file.
