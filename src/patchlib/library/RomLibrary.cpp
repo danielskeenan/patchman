@@ -279,8 +279,11 @@ QFuture<QList<RomInfo>> RomLibrary::getDuplicates(const RomInfo &romInfo)
         QList<RomInfo> duplicates;
         QSqlQuery q(
             QString("SELECT %1 FROM %2 WHERE %3 = ?")
-                .arg(RomInfo::kAllColumns.join(", "))
-                .arg(RomInfo::kTable)
+                .arg(
+                    RomInfo::kAllColumns.join(", "),
+                    RomInfo::kTable,
+                    RomInfo::kColPatchHash
+                )
         );
         q.bindValue(0, patchHash);
         q.exec();
