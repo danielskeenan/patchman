@@ -12,8 +12,9 @@ the addressing of individual circuits.
 
 Each rack available in the ROM is shown as a tab across the top. Each circuit's
 phase, circuit number, module type, and DMX address is shown in the table. Only
-the address is editable. The status bar at the bottom of the window shows the
-ROM type, number of racks with patch information, and ROM checksum.
+the address is editable. Click on a column header to sort the table by that column.
+The status bar at the bottom of the window shows the ROM type, number of racks
+with patch information, and ROM checksum.
 
 .. note:: The module type is not stored in the patch ROM file. Instead, it is
    guessed based on contextual information from the circuit addressing.

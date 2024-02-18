@@ -14,10 +14,19 @@ the bottom of the window.
 .. index:: Checksum
 
 A table lists the type, name, date, rack count, and checksum for each ROM found.
-If files are missing, ensure the path they are in is set as a search path in the
-settings and that it is a :ref:`supported file type <supported-systems>`.
+Click on a column header to sort the table by that column.
+
+.. note:: If files are missing, ensure the path they are in is set as a search
+   path in the settings and that it is a
+   :ref:`supported file type <supported-systems>`.
 
 To edit a file, double-click on its entry.
+
+.. |icon-duplicate| image:: img/icons/document-duplicate.svg
+   :height: 24px
+
+If the same patch table appears in multiple files, each file will be marked with
+a |icon-duplicate| icon.
 
 Further options are available by right-clicking on its entry:
 
