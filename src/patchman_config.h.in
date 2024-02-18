@@ -28,6 +28,8 @@ const auto kProjectOrganizationName = "${PROJECT_ORGANIZATION_NAME}";
 const auto kProjectOrganizationDomain = "${PROJECT_ORGANIZATION_DOMAIN}";
 const auto kProjectAuthor = "${PROJECT_AUTHOR}";
 
+const auto kHelpPath = "${PROJECT_HELP_PATH}";
+
 } // patchman::config
 
 #endif //PATCHMAN_SRC_PATCHMAN_CONFIG_H_

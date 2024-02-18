@@ -18,6 +18,7 @@
 #include "showPathInFileBrowser.h"
 #include "ShowDuplicatesDialog.h"
 #include "patchlib/library/RomLibrary.h"
+#include "help.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -111,6 +112,11 @@ void BrowserWindow::initMenus()
 
     // Help menu
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
+    // Help
+    actions_.helpHelp = new QAction(tr("&Help"), this);
+    actions_.helpHelp->setIcon(QIcon::fromTheme("help-contents"));
+    connect(actions_.helpHelp, &QAction::triggered, this, &BrowserWindow::help);
+    menuHelp->addAction(actions_.helpHelp);
     // About
     actions_.helpAbout = new QAction(tr("&About"), this);
     actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
@@ -345,6 +351,11 @@ void BrowserWindow::showDuplicates()
     const auto romInfo = getSelectedRomInfo();
     ShowDuplicatesDialog dialog(romInfo, this);
     dialog.exec();
+}
+
+void BrowserWindow::help()
+{
+    showHelp();
 }
 
 void BrowserWindow::about()

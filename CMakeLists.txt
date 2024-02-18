@@ -39,20 +39,34 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_compile_definitions(PLATFORM_MACOS)
 endif ()
+include(GNUInstallDirs)
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(PROJECT_HELP_PATH "Resources/help")
+else ()
+    set(PROJECT_HELP_PATH "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/help")
+endif ()
 
 find_package(Qt6 COMPONENTS
         Concurrent
         Core
         Gui
+        Help
         LinguistTools
         Sql
         Svg
+        Tools
         Widgets
         REQUIRED)
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(Qt6 COMPONENTS DBus REQUIRED)
 endif ()
 qt_standard_project_setup()
+
+find_package(Python3 COMPONENTS Interpreter)
+option(BUILD_DOC "Build documentation (Requires Python)" ${Python3_FOUND})
+if (BUILD_DOC)
+    add_subdirectory(doc)
+endif ()
 
 add_subdirectory(src)
 

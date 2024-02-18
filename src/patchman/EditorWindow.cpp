@@ -13,6 +13,7 @@
 #include "ReportBuilder.h"
 #include "AboutDialog.h"
 #include "patchman_config.h"
+#include "help.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -62,6 +63,11 @@ void EditorWindow::initMenus()
 
     // Help menu
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
+    // Help
+    actions_.helpHelp = new QAction(tr("&Help"), this);
+    actions_.helpHelp->setIcon(QIcon::fromTheme("help-contents"));
+    connect(actions_.helpHelp, &QAction::triggered, this, &EditorWindow::help);
+    menuHelp->addAction(actions_.helpHelp);
     // About
     actions_.helpAbout = new QAction(tr("&About"), this);
     actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
@@ -225,6 +231,11 @@ void EditorWindow::createReport()
     ReportBuilder *builder = ReportBuilder::create(rom_, this);
     const auto reportPath = builder->createReport();
     QDesktopServices::openUrl(QUrl(QString("file:///%1").arg(reportPath), QUrl::TolerantMode));
+}
+
+void EditorWindow::help()
+{
+    showHelp();
 }
 
 void EditorWindow::about()
