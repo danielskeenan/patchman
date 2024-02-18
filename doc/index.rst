@@ -1,5 +1,5 @@
-Welcome to Patchman's documentation!
-====================================
+Patchman
+========
 
 Patchman is a browser and editor for patch ROM files for classic dimming systems.
 
@@ -26,5 +26,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
