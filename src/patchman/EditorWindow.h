@@ -41,6 +41,7 @@ private:
         QAction *fileSaveAs = nullptr;
         QAction *fileCreateReport = nullptr;
         QAction *fileClose = nullptr;
+        QAction *helpHelp = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
     };
@@ -70,6 +71,7 @@ private Q_SLOTS:
     void save();
     void saveAs();
     void createReport();
+    void help();
     void about();
     void homepage();
     void dataChanged();

@@ -42,6 +42,7 @@ private:
         QAction *editEditRom = nullptr;
         QAction *editShowDuplicates = nullptr;
         QAction *editShowInFileBrowser = nullptr;
+        QAction *helpHelp = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
     };
@@ -65,7 +66,7 @@ private:
     void updateRecentDocuments(const QString &path = {});
     void showEditor(Rom *rom, const QString &path = {});
     [[nodiscard]] const RomInfo &getSelectedRomInfo() const;
-    void watchPath(const QString& path);
+    void watchPath(const QString &path);
     void hideProgressIfComplete();
 
 protected Q_SLOTS:
@@ -79,6 +80,7 @@ private Q_SLOTS:
     void editRom();
     void showInFileBrowser();
     void showDuplicates();
+    void help();
     void about();
     void homepage();
     void updateActionsFromSelection();

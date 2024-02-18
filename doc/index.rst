@@ -18,7 +18,6 @@ ROM files may be in raw binary or Intel HEX format.
 .. toctree::
    :maxdepth: 1
    :titlesonly:
-   :hidden:
    :caption: Contents:
 
    first_time
