@@ -9,6 +9,7 @@
 #include "patchlib/library/RomLibrary.h"
 #include "patchlib/Rom.h"
 #include "patchlib/Exceptions.h"
+#include <filesystem>
 #include <QtConcurrent>
 #include <QStandardPaths>
 #include <QSqlError>
@@ -51,9 +52,9 @@ QFuture<void> RomLibrary::open()
         do {
             const bool initNewFile = (dbPath == ":memory:" || !QFileInfo(dbPath).isFile());
             if (dbPath != ":memory:") {
-                QDir dbDir(dbPath);
-                dbDir.cdUp();
-                QDir::root().mkpath(dbDir.path());
+                // Doing this with QDir creates some heisenbugs that disappear when analyzed.
+                auto dbDir = std::filesystem::path(dbPath.toStdString()).parent_path();
+                std::filesystem::create_directories(dbDir);
             }
             QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
             db.setDatabaseName(dbPath);
