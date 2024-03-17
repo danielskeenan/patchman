@@ -13,6 +13,7 @@
 #include <QStyleFactory>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QStyleHints>
 #include "patchman_config.h"
 #include "Settings.h"
 #include "BrowserWindow.h"
@@ -34,12 +35,24 @@ bool reallyClearSettings(QApplication &app)
     return dialog->exec() == QMessageBox::Yes;
 }
 
+void updateIconTheme()
+{
+    if (qApp == nullptr) {
+        QIcon::setFallbackThemeName("patchman-light");
+        return;
+    }
+
+    if (qApp->styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+        QIcon::setFallbackThemeName("patchman-dark");
+    }
+    else {
+        QIcon::setFallbackThemeName("patchman-light");
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    // Icons must be set before initializing QApplication.
     QIcon::setFallbackSearchPaths({":/icons"});
-    // TODO: Detect whether to use light or dark theme.
-    QIcon::setFallbackThemeName("patchman-light");
 
     QApplication app(argc, argv);
     app.setOrganizationName(patchman::config::kProjectOrganizationName);
@@ -63,6 +76,8 @@ int main(int argc, char *argv[])
     defaultWindowIcon.addFile(":/icons/patchman-256.svg", {256, 256});
     defaultWindowIcon.addFile(":/icons/patchman-256@2x.svg", {256, 256});
     app.setWindowIcon(defaultWindowIcon);
+    updateIconTheme();
+    app.connect(app.styleHints(), &QStyleHints::colorSchemeChanged, &updateIconTheme);
 
     Q_INIT_RESOURCE(bin);
 
