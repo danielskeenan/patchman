@@ -45,6 +45,29 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(${PROJECT_NAME} PRIVATE patchman.rc)
 endif ()
 
+# Icon Theme
+include(FetchContent)
+fetchcontent_declare(qiconthemebuilder
+        GIT_REPOSITORY "https://github.com/danielskeenan/qiconthemebuilder.git"
+        GIT_TAG "main"
+)
+fetchcontent_makeavailable(qiconthemebuilder)
+build_breeze()
+set(ICON_PATTERNS
+        "application-exit"
+        "configure"
+        "document-(duplicate|edit|new|open|save|save-as)"
+        "folder-open-recent"
+        "help-(about|contents)"
+        "internet-web-browser"
+        "list-(add|remove)"
+        "office-report"
+        "system-file-manager"
+        "view-refresh"
+)
+create_icon_theme(patchman-light TARGET ${PROJECT_NAME} SOURCE "${breeze_icons_DIR}/breeze" ICON_PATTERNS ${ICON_PATTERNS})
+create_icon_theme(patchman-dark TARGET ${PROJECT_NAME} SOURCE "${breeze_icons_DIR}/breeze-dark" ICON_PATTERNS ${ICON_PATTERNS})
+
 qt_add_translations(${PROJECT_NAME}
         TS_FILES ${PROJECT_SOURCE_DIR}/translations/patchman_en.ts
 )

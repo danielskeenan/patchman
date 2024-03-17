@@ -36,6 +36,11 @@ bool reallyClearSettings(QApplication &app)
 
 int main(int argc, char *argv[])
 {
+    // Icons must be set before initializing QApplication.
+    QIcon::setFallbackSearchPaths({":/icons"});
+    // TODO: Detect whether to use light or dark theme.
+    QIcon::setFallbackThemeName("patchman-light");
+
     QApplication app(argc, argv);
     app.setOrganizationName(patchman::config::kProjectOrganizationName);
     app.setOrganizationDomain(patchman::config::kProjectOrganizationDomain);
@@ -60,8 +65,6 @@ int main(int argc, char *argv[])
     app.setWindowIcon(defaultWindowIcon);
 
     Q_INIT_RESOURCE(bin);
-
-    QIcon::setFallbackSearchPaths({":/icons"});
 
     QTranslator qtTranslator;
     if (qtTranslator.load(QLocale(), "qtbase", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
