@@ -256,7 +256,7 @@ const RomInfo &BrowserWindow::getSelectedRomInfo() const
     if (selection.empty()) {
         qFatal("Tried to get selected ROM info when no ROM is selected.");
     }
-    const auto row = selection.first().row();
+    const auto row = sortFilterModel_->mapToSource(selection.first()).row();
     return browserModel_->getRomInfoForRow(row);
 }
 
