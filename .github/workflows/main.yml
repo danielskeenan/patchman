@@ -24,6 +24,7 @@ jobs:
     env:
       # See https://learn.microsoft.com/en-us/vcpkg/consume/binary-caching-github-actions-cache
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+      DSA_PRIV: ${{ secrets.DSA_PRIV }}
     steps:
       - name: Get number of CPU cores
         uses: SimenB/github-actions-cpu-cores@v2
@@ -49,6 +50,11 @@ jobs:
         shell: bash
         # Telling cmake to make the directory adapts the different syntax for each platform
         run: cmake -E make_directory "${BUILD_DIR}"
+      - name: Get signing key
+        shell: bash
+        if: ${{ env.DSA_PRIV != '' }}
+        run: |
+          echo "${DSA_PRIV}" > ${{github.workspace}}/build/dsa_priv.pem
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager above
         if: ${{runner.os != 'Linux'}}
@@ -59,7 +65,7 @@ jobs:
           cache: true
       - name: Configure CMake
         shell: bash
-        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TESTING=On -DBUILD_PACKAGE=On -DCMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
+        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TESTING=On -DBUILD_PACKAGE=On -DDSA_PRIV=${{github.workspace}}/build/dsa_priv.pem -DCMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
       - name: Build
         shell: bash
         run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
