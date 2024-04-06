@@ -23,3 +23,11 @@ https://github.com/pantor/inja
 
 .. include:: licenses/inja.txt
    :literal:
+
+JSON for Modern C++
+-------------------
+
+https://github.com/nlohmann/json
+
+.. include:: licenses/nlohmann_json.txt
+   :literal:
