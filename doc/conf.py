@@ -24,6 +24,7 @@ release = version
 
 extensions = []
 
+primary_domain = None
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'CMakeLists.txt', 'requirements.txt', '*.json', '.venv']
 

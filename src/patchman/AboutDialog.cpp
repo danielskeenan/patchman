@@ -58,6 +58,13 @@ AboutDialog::AboutDialog(QWidget *parent)
     connect(aboutQtLabel, &QLabel::linkActivated, this, &AboutDialog::linkActivated);
     layout->addWidget(aboutQtLabel);
 
+    auto *about3rdPartyLabel = new QLabel(
+        QString("<a href=\"file:///%1/../%2/3rd_party.html\">3rd Party Software</a>")
+            .arg(qApp->applicationDirPath(), config::kHelpPath), this);
+    about3rdPartyLabel->setAlignment(Qt::AlignCenter);
+    about3rdPartyLabel->setOpenExternalLinks(true);
+    layout->addWidget(about3rdPartyLabel);
+
     auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, this);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &AboutDialog::close);
     layout->addWidget(buttonBox);

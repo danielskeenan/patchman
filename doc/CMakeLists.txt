@@ -12,7 +12,7 @@ find_program(SPHINX_PIP pip
         NO_DEFAULT_PATH
         REQUIRED
 )
-execute_process(COMMAND "${SPHINX_PIP}" install -r requirements.txt
+execute_process(COMMAND "${SPHINX_PIP}" install --upgrade -r requirements.txt
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
 )
