@@ -20,4 +20,15 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CPACK_GENERATOR "DragNDrop")
 endif ()
 
+# Updater signing.
+set(DSA_PRIV "${CMAKE_CURRENT_SOURCE_DIR}/dsa_priv.pem" CACHE FILEPATH "Path to DSA Private Key, for signing installers")
+if (EXISTS "${DSA_PRIV}")
+    message(STATUS "DSA private key available, signing installer.")
+    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        find_program(WINSPARKLE_SIGN_UPDATE NAMES "sign_update.bat" DOC "winsparkle update signing script")
+    endif ()
+    configure_file(sign_installer.cmake "${CMAKE_CURRENT_BINARY_DIR}/sign_installer.cmake" @ONLY)
+    set(CPACK_POST_BUILD_SCRIPTS "${CMAKE_CURRENT_BINARY_DIR}/sign_installer.cmake")
+endif ()
+
 include(CPack)

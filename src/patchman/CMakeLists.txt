@@ -96,6 +96,8 @@ if (NOT qsettingscontainer_POPULATED)
 endif ()
 
 find_package(inja CONFIG REQUIRED)
+find_path(WINSPARKLE_INCLUDE_DIR NAMES "winsparkle.h" PATH_SUFFIXES winsparkle REQUIRED)
+target_include_directories(${PROJECT_NAME} PRIVATE "${WINSPARKLE_INCLUDE_DIR}")
 target_link_libraries(${PROJECT_NAME} PRIVATE
         patchlib
         pantor::inja

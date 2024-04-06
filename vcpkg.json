@@ -14,5 +14,8 @@
   }, {
     "name" : "inja",
     "version>=" : "3.4.0"
+  }, {
+    "name" : "winsparkle",
+    "version>=" : "0.8.1"
   } ]
 }
