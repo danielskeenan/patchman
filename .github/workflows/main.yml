@@ -57,9 +57,6 @@ jobs:
           dir: ${{github.workspace}}/.qt
           version: ${{env.QT_VERSION}}
           cache: true
-      - name: Update vcpkg Qt Overlay
-        shell: bash
-        run: cmake -P "${SOURCE_DIR}/update_qtbase_overlay.cmake"
       - name: Configure CMake
         shell: bash
         run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TESTING=On -DBUILD_PACKAGE=On -DCMAKE_TOOLCHAIN_FILE=${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake
