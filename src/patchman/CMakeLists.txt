@@ -57,6 +57,7 @@ set(ICON_PATTERNS
         "application-exit"
         "configure"
         "document-(duplicate|edit|new|open|save|save-as)"
+        "edit-copy-path"
         "folder-open-recent"
         "help-(about|contents)"
         "internet-web-browser"

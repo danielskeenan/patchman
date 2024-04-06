@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 #include <QStatusBar>
+#include <QClipboard>
 
 namespace patchman
 {
@@ -109,6 +110,11 @@ void BrowserWindow::initMenus()
     actions_.editShowInFileBrowser->setIcon(QIcon::fromTheme("system-file-manager"));
     connect(actions_.editShowInFileBrowser, &QAction::triggered, this, &BrowserWindow::showInFileBrowser);
     menuEdit->addAction(actions_.editShowInFileBrowser);
+    // Copy Checksum
+    actions_.editCopyChecksum = new QAction(tr("&Copy Checksum"), this);
+    actions_.editCopyChecksum->setIcon(QIcon::fromTheme("edit-copy-path"));
+    connect(actions_.editCopyChecksum, &QAction::triggered, this, &BrowserWindow::copyChecksum);
+    menuEdit->addAction(actions_.editCopyChecksum);
 
     // Help menu
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
@@ -145,10 +151,14 @@ void BrowserWindow::initWidgets()
     widgets_.browser->setSelectionMode(QTableView::SingleSelection);
     widgets_.browser->setSelectionBehavior(QTableView::SelectRows);
     widgets_.browser->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    // ROM context menu actions
     widgets_.browser->addAction(actions_.editEditRom);
     widgets_.browser->addAction(actions_.fileCreateReport);
     widgets_.browser->addAction(actions_.editShowDuplicates);
     widgets_.browser->addAction(actions_.editShowInFileBrowser);
+    widgets_.browser->addAction(actions_.editCopyChecksum);
+
     browserModel_->checkForFilesystemChanges();
     sortFilterModel_ = new RomLibrarySortFilterModel(browserModel_, this);
     widgets_.browser->setSortingEnabled(true);
@@ -240,6 +250,7 @@ void BrowserWindow::updateActionsFromSelection()
     actions_.editEditRom->setEnabled(hasSelection);
     actions_.editShowDuplicates->setEnabled(hasSelection);
     actions_.editShowInFileBrowser->setEnabled(hasSelection);
+    actions_.editCopyChecksum->setEnabled(hasSelection);
 }
 
 void BrowserWindow::showEditor(Rom *rom, const QString &path)
@@ -351,6 +362,14 @@ void BrowserWindow::showDuplicates()
     const auto romInfo = getSelectedRomInfo();
     ShowDuplicatesDialog dialog(romInfo, this);
     dialog.exec();
+}
+
+void BrowserWindow::copyChecksum()
+{
+    const auto romInfo = getSelectedRomInfo();
+    const QString checksumString(romInfo.getRomChecksum().toHex());
+    auto* clipboard = qApp->clipboard();
+    clipboard->setText(checksumString);
 }
 
 void BrowserWindow::help()

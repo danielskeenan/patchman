@@ -42,6 +42,7 @@ private:
         QAction *editEditRom = nullptr;
         QAction *editShowDuplicates = nullptr;
         QAction *editShowInFileBrowser = nullptr;
+        QAction *editCopyChecksum = nullptr;
         QAction *helpHelp = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
@@ -80,6 +81,7 @@ private Q_SLOTS:
     void editRom();
     void showInFileBrowser();
     void showDuplicates();
+    void copyChecksum();
     void help();
     void about();
     void homepage();
