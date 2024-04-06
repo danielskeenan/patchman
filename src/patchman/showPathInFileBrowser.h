@@ -33,11 +33,12 @@ inline void showPathInFileBrowser(const QString &path)
         qCritical() << "Could not find explorer.exe";
         return;
     }
-    QProcess::startDetached(
-        QString("%1 /select,%2")
-            .arg(explorer)
-            .arg(nativePath)
-    );
+    QProcess cmd;
+    cmd.setProgram(explorer);
+    // explorer.exe will not perform the needed action unless the args are
+    // passed this way.
+    cmd.setNativeArguments(QString("/select,\"%1\"").arg(nativePath));
+    cmd.startDetached();
 #endif
 #ifdef PLATFORM_LINUX
     auto msg = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
