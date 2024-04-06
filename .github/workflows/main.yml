@@ -54,7 +54,7 @@ jobs:
         shell: bash
         if: ${{ env.DSA_PRIV != '' }}
         run: |
-          echo "${DSA_PRIV}" > ${{github.workspace}}/build/dsa_priv.pem
+          echo "${DSA_PRIV}" > "${BUILD_DIR}/dsa_priv.pem"
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager above
         if: ${{runner.os != 'Linux'}}
