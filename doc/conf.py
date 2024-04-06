@@ -41,6 +41,7 @@ html_static_path = ['_static']
 html_title = '{name} v{version}'.format(name=build_info['display_name'], version=release)
 html_logo = 'img/icons/patchman-32.svg'
 html_favicon = 'img/icons/patchman.ico'
+html_copy_source = False
 html_domain_indices = False
 html_show_sourcelink = False
 html_show_sphinx = False
