@@ -23,6 +23,11 @@ AboutDialog::AboutDialog(QWidget *parent)
     auto *layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
 
+    auto *iconLabel = new QLabel(this);
+    iconLabel->setAlignment(Qt::AlignCenter);
+    iconLabel->setPixmap(qApp->windowIcon().pixmap(48));
+    layout->addWidget(iconLabel);
+
     auto *titleLabel = new QLabel(QString("<span style=\"font-size: x-large; font-weight: bold;\">%1</span>")
                                       .arg(qApp->applicationDisplayName()), this);
     titleLabel->setAlignment(Qt::AlignCenter);
