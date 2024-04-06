@@ -112,7 +112,7 @@ void BrowserWindow::initMenus()
     menuEdit->addAction(actions_.editShowInFileBrowser);
     // Copy Checksum
     actions_.editCopyChecksum = new QAction(tr("&Copy Checksum"), this);
-    actions_.editCopyChecksum->setIcon(QIcon::fromTheme("edit-copy-path"));
+    actions_.editCopyChecksum->setIcon(QIcon::fromTheme("checksum"));
     connect(actions_.editCopyChecksum, &QAction::triggered, this, &BrowserWindow::copyChecksum);
     menuEdit->addAction(actions_.editCopyChecksum);
 

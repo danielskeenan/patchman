@@ -1,0 +1,18 @@
+[Icon Theme]
+Name=patchman-dark
+Comment=Patchman Dark
+
+Directories=24
+ScaledDirectories=24@2x
+
+[24]
+Size=24
+Scale=1
+Type=Threshold
+Threshold=2
+
+[24@2x]
+Size=24
+Scale=2
+Type=Threshold
+Threshold=2

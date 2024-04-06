@@ -11,6 +11,11 @@ https://github.com/serge-sans-paille/frozen
 .. include:: licenses/frozen.txt
    :literal:
 
+Icons8
+------
+
+https://icons8.com/
+
 Inja
 ----
 

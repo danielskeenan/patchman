@@ -1,5 +1,4 @@
 qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
-        ${PROJECT_SOURCE_DIR}/resources/icons/icons.qrc
         ${PROJECT_SOURCE_DIR}/resources/reports/reports.qrc
         AboutDialog.cpp
         AboutDialog.h
@@ -46,6 +45,18 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif ()
 
 # Icon Theme
+file(
+        GLOB_RECURSE ICON_RESOURCES
+        LIST_DIRECTORIES false
+        RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+        CONFIGURE_DEPENDS
+        "${PROJECT_SOURCE_DIR}/resources/icons/*"
+)
+qt_add_resources(${PROJECT_NAME} icons
+        PREFIX icons
+        BASE "${PROJECT_SOURCE_DIR}/resources/icons"
+        FILES ${ICON_RESOURCES}
+)
 #include(FetchContent)
 #fetchcontent_declare(qiconthemebuilder
 #        GIT_REPOSITORY "https://github.com/danielskeenan/qiconthemebuilder.git"

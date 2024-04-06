@@ -22,7 +22,7 @@ Click on a column header to sort the table by that column.
 
 To edit a file, double-click on its entry.
 
-.. |icon-duplicate| image:: img/icons/document-duplicate.svg
+.. |icon-duplicate| image:: img/icons/document-duplicate.png
    :height: 24px
 
 If the same patch table appears in multiple files, each file will be marked with
