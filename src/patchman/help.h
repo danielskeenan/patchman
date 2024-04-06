@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QStandardPaths>
 #include <QProcess>
+#include <QDesktopServices>
 #include "patchman_config.h"
 
 namespace patchman
@@ -22,37 +23,12 @@ namespace patchman
  */
 inline void showHelp()
 {
-    const auto collectionFile = QString("%1/../%2/%3.qhc")
-        .arg(qApp->applicationDirPath(), config::kHelpPath, config::kProjectName);
-    const auto assistantPath = []()
-    {
-        for (const auto &assistantName : {"assistant", "Assistant"}) {
-            auto foundPath = QStandardPaths::findExecutable(assistantName);
-            if (!foundPath.isEmpty()) {
-                return foundPath;
-            }
-#ifdef PLATFORM_MACOS
-            const auto extraPath = QString("%1/../Resources/Assistant.app/Contents/MacOS").arg(qApp->applicationDirPath());
-#else
-
-            const auto extraPath = qApp->applicationDirPath();
-#endif
-            foundPath = QStandardPaths::findExecutable(assistantName, {extraPath});
-            if (!foundPath.isEmpty()) {
-                return foundPath;
-            }
-        }
-        return QString();
-    }();
-
-    auto *process = new QProcess;
-    QStringList args(
-        {
-            "-collectionFile",
-            collectionFile,
-        });
-    process->start(assistantPath, args);
-    process->waitForStarted();
+    QDesktopServices::openUrl(
+        QUrl(
+            QString("file:///%1/../%2/index.html")
+                .arg(qApp->applicationDirPath(), config::kHelpPath),
+            QUrl::TolerantMode)
+    );
 }
 
 } // patchman

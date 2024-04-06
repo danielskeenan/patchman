@@ -37,6 +37,13 @@ rst_prolog = """
 # https://github.com/executablebooks/sphinx-book-theme
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
+html_title = '{name} v{version}'.format(name=build_info['display_name'], version=release)
+html_logo = 'img/icons/patchman-32.svg'
+html_favicon = 'img/icons/patchman.ico'
+html_domain_indices = False
+html_show_sourcelink = False
+html_show_sphinx = False
+html_show_copyright = False
 html_theme_options = {
     'navigation_with_keys': False,
     'repository_url': 'https://github.com/danielskeenan/patchman',
@@ -48,6 +55,9 @@ html_theme_options = {
     'use_fullscreen_button': False,
     'path_to_docs': 'doc/',
     'repository_branch': 'main',
+    'logo': {
+        'text': html_title,
+    }
 }
 
 # -- Options for QtHelp output -------------------------------------------------

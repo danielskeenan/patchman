@@ -95,43 +95,36 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt::DBus)
 endif ()
 
-set(ASSISTANT_PATH "")
-if (TARGET "${PROJECT_NAME}_doc_qthelp")
-    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_qthelp_qhc)
-    # Help installation
-    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        # This is installed as part of the main executable build.
-    else ()
-        install(FILES
-                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qhc"
-                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qch"
-                DESTINATION "${PROJECT_HELP_PATH}"
-        )
-        if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-            # Install assistant.
-            set(ASSISTANT_PATH "$<TARGET_FILE_DIR:Qt::qhelpgenerator>/assistant${CMAKE_EXECUTABLE_SUFFIX}")
-            install(FILES "${ASSISTANT_PATH}" TYPE BIN)
-        endif ()
-    endif ()
-
-endif ()
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_html)
+#set(ASSISTANT_PATH "")
+#if (TARGET "${PROJECT_NAME}_doc_qthelp")
+#    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_qthelp_qhc)
+#    # Help installation
+#    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#        # This is installed as part of the main executable build.
+#    else ()
+#        install(FILES
+#                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qhc"
+#                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qch"
+#                DESTINATION "${PROJECT_HELP_PATH}"
+#        )
+#        if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+#            # Install assistant.
+#            set(ASSISTANT_PATH "$<TARGET_FILE_DIR:Qt::qhelpgenerator>/assistant${CMAKE_EXECUTABLE_SUFFIX}")
+#            install(FILES "${ASSISTANT_PATH}" TYPE BIN)
+#        endif ()
+#    endif ()
+#endif ()
 
 install(TARGETS ${PROJECT_NAME}
         BUNDLE DESTINATION .
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    qt_generate_deploy_script(
+    qt_generate_deploy_app_script(
             TARGET ${PROJECT_NAME}
             OUTPUT_SCRIPT DEPLOY_SCRIPT
-            CONTENT "
-qt_deploy_runtime_dependencies(
-    EXECUTABLE \"$<TARGET_FILE:${PROJECT_NAME}>\"
-    GENERATE_QT_CONF
-)
-qt_deploy_runtime_dependencies(
-    EXECUTABLE \"${ASSISTANT_PATH}\"
-)
-")
+            NO_UNSUPPORTED_PLATFORM_ERROR
+    )
     install(SCRIPT ${DEPLOY_SCRIPT})
 endif ()
