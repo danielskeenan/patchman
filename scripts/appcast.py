@@ -1,10 +1,9 @@
-import base64
-import hashlib
 import http.client
 import json.decoder
 import mimetypes
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -13,12 +12,6 @@ import xml.etree.ElementTree as ET
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
-
-from cryptography.hazmat.primitives.asymmetric.dsa import DSAPrivateKey
-from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
-from cryptography.hazmat.primitives.hashes import SHA1
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 # Parse link header
 # https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api?apiVersion=2022-11-28#using-link-headers
@@ -62,13 +55,6 @@ def main():
     args = argparser.parse_args()
     token = args.token
     repo = args.repo
-    if args.dsa is not None:
-        with open(args.dsa, mode='rb') as dsa_key_f:
-            dsa_key: Optional[DSAPrivateKey] = load_pem_private_key(dsa_key_f.read(), None)
-            if not isinstance(dsa_key, DSAPrivateKey):
-                raise RuntimeError(f'{args.dsa} is not a DSA Private Key')
-    else:
-        dsa_key = None
 
     headers = {
         'Accept': 'application/vnd.github+json',
@@ -85,9 +71,14 @@ def main():
             out_file.flush()
 
     def dsa_signature(in_file):
-        digest = hashlib.file_digest(in_file, 'sha1').digest()
-        signed = dsa_key.sign(digest, Prehashed(SHA1()))
-        return str(base64.b64encode(signed), encoding='ascii')
+        openssl = shutil.which('openssl')
+        if openssl is None:
+            raise RuntimeError('OpenSSL not in PATH.')
+        in_file.seek(0)
+        digest = subprocess.run([openssl, 'dgst', '-sha1', '-binary'], stdin=in_file, capture_output=True)
+        signed = subprocess.run([openssl, 'dgst', '-sha1', '-sign', args.dsa], input=digest.stdout, capture_output=True)
+        encoded = subprocess.run([openssl, 'enc', '-base64'], input=signed.stdout, capture_output=True)
+        return str(encoded.stdout, encoding='ascii')
 
     # Get repo
     q = urllib.request.Request(f'https://api.github.com/repos/{repo}', headers=headers)
@@ -169,7 +160,7 @@ def main():
                             mimetype = 'application/octet-stream'
                         enclosure.set('type', mimetype)
                         # DSA Signature
-                        if dsa_key is not None:
+                        if args.dsa is not None:
                             dsa = dsa_signature(f)
                             enclosure.set('sparkle:dsaSignature', dsa)
 

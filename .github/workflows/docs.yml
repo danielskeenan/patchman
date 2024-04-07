@@ -40,9 +40,7 @@ jobs:
         working-directory: ${{env.SOURCE_DIR}}/scripts
         env:
           DSA_PRIV: ${{ secrets.DSA_PRIV }}
-        run: |
-          pip install -r requirements.txt
-          echo "${DSA_PRIV}" > "${BUILD_DIR}/dsa_priv.pem"
+        run: echo "${DSA_PRIV}" > "${BUILD_DIR}/dsa_priv.pem"
       - name: Generate appcast.xml
         shell: bash
         working-directory: ${{env.SOURCE_DIR}}/scripts
