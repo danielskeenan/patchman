@@ -305,7 +305,10 @@ void BrowserWindow::closeEvent(QCloseEvent *event)
             return;
         }
     }
-    RomLibrary::get()->cleanup();
+    QFutureWatcher<void> futureWatcher;
+    auto result = RomLibrary::get()->cleanup();
+    futureWatcher.setFuture(result);
+    futureWatcher.waitForFinished();
 
     QWidget::closeEvent(event);
 }
