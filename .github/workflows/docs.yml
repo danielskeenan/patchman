@@ -30,6 +30,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Configure CMake
+        shell: bash
+        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_APP=Off -DBUILD_DOC=On
       # TODO: Move this to a separate job once the Sparkle integration library is ready.
       - name: Setup appcaster
         shell: bash
@@ -39,9 +42,6 @@ jobs:
         run: |
           pip install -r requirements.txt
           echo "${DSA_PRIV}" > "${BUILD_DIR}/dsa_priv.pem"
-      - name: Configure CMake
-        shell: bash
-        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_APP=Off -DBUILD_DOC=On
       - name: Generate appcast.xml
         shell: bash
         working-directory: ${{env.SOURCE_DIR}}/scripts
