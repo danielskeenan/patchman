@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - doc/**
+      - scripts/appcast.py
   release: ~
   workflow_dispatch: ~
 

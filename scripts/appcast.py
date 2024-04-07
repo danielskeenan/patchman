@@ -144,13 +144,17 @@ def main():
                 if re.match(regex, asset['name']) is not None:
                     item = ET.SubElement(channel, 'item')
                     ET.SubElement(item, 'title').text = release['name']
-                    ET.SubElement(item, 'sparkle:releaseNotesLink').text = release['html_url']
+                    if release['prerelease']:
+                        ET.SubElement(item, 'sparkle:channel').text = 'dev'
+                    ET.SubElement(item, 'sparkle:fullReleaseNotesLink').text = release['html_url']
+                    ET.SubElement(item, 'sparkle:version').text = version
                     ET.SubElement(item, 'pubDate').text = release['published_at'].strftime('%a, %d %b %Y %H:%M:%S %z')
                     ET.SubElement(item, 'sparkle:os').text = platform
                     ET.SubElement(item, 'description').text = release['body']
                     enclosure = ET.SubElement(item, 'enclosure')
                     enclosure.set('url', asset['browser_download_url'])
                     enclosure.set('sparkle:version', version)
+                    enclosure.set('sparkle:shortVersionString', version)
                     enclosure.set('length', str(asset['size']))
                     if Path(asset['name']).suffix == '.msi':
                         # Unattended MSI install.
