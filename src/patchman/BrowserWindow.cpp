@@ -19,6 +19,7 @@
 #include "ShowDuplicatesDialog.h"
 #include "patchlib/library/RomLibrary.h"
 #include "help.h"
+#include "updater.h"
 #include <QMenuBar>
 #include <QAction>
 #include <QMessageBox>
@@ -133,6 +134,11 @@ void BrowserWindow::initMenus()
     actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
     connect(actions_.helpHomepage, &QAction::triggered, this, &BrowserWindow::homepage);
     menuHelp->addAction(actions_.helpHomepage);
+    // Check for updates
+    actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
+    actions_.helpUpdate->setIcon(QIcon::fromTheme("download"));
+    connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
+    menuHelp->addAction(actions_.helpUpdate);
 
     updateRecentDocuments();
 }
@@ -368,7 +374,7 @@ void BrowserWindow::copyChecksum()
 {
     const auto romInfo = getSelectedRomInfo();
     const QString checksumString(romInfo.getRomChecksum().toHex());
-    auto* clipboard = qApp->clipboard();
+    auto *clipboard = qApp->clipboard();
     clipboard->setText(checksumString);
 }
 

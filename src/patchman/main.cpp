@@ -18,6 +18,7 @@
 #include "Settings.h"
 #include "BrowserWindow.h"
 #include "patchlib/library/RomLibrary.h"
+#include "updater.h"
 
 /**
  * Ask the user about resetting settings
@@ -95,5 +96,9 @@ int main(int argc, char *argv[])
     patchman::BrowserWindow mainWindow;
     mainWindow.show();
 
-    return QApplication::exec();
+    // Updater
+    app.connect(qApp, &QApplication::aboutToQuit, &patchman::cleanupUpdater);
+    patchman::setupUpdater();
+
+    return app.exec();
 }

@@ -9,6 +9,9 @@ set(PROJECT_AUTHOR "Dan Keenan")
 set(PROJECT_ORGANIZATION_NAME "dankeenan")
 set(PROJECT_ORGANIZATION_DOMAIN "dankeenan.org")
 string(TIMESTAMP PROJECT_BUILD_TIMESTAMP "%s" UTC)
+
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 find_package(Git REQUIRED)
 execute_process(COMMAND "${GIT_EXECUTABLE}" log -n1 --format=%H
         OUTPUT_VARIABLE PROJECT_COMMIT_SHA
@@ -54,6 +57,8 @@ if (BUILD_APP)
     elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         add_compile_definitions(PLATFORM_MACOS)
     endif ()
+
+    set(APPCAST_URL "https://danielskeenan.github.io/patchman/_static/appcast.xml" CACHE STRING "appcast.xml URL")
 
     find_package(Qt6 COMPONENTS
             Concurrent

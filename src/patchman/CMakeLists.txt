@@ -1,5 +1,6 @@
 qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         ${PROJECT_SOURCE_DIR}/resources/reports/reports.qrc
+        ${PROJECT_SOURCE_DIR}/resources/resources.qrc
         AboutDialog.cpp
         AboutDialog.h
         AutoNumberDialog.cpp
@@ -96,8 +97,6 @@ if (NOT qsettingscontainer_POPULATED)
 endif ()
 
 find_package(inja CONFIG REQUIRED)
-find_path(WINSPARKLE_INCLUDE_DIR NAMES "winsparkle.h" PATH_SUFFIXES winsparkle REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE "${WINSPARKLE_INCLUDE_DIR}")
 target_link_libraries(${PROJECT_NAME} PRIVATE
         patchlib
         pantor::inja
@@ -107,6 +106,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt::DBus)
+endif ()
+
+# Updater
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    find_package(WinSparkle REQUIRED)
+    target_link_libraries(${PROJECT_NAME} PRIVATE WinSparkle::WinSparkle)
+    target_sources(${PROJECT_NAME} PRIVATE updater_win.cpp)
+else ()
+    target_sources(${PROJECT_NAME} PRIVATE updater_nop.cpp)
 endif ()
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_html)
@@ -133,6 +141,9 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_html)
 install(TARGETS ${PROJECT_NAME}
         BUNDLE DESTINATION .
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(FILES "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>"
+        TYPE BIN
 )
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     qt_generate_deploy_app_script(

@@ -29,6 +29,7 @@ const auto kProjectOrganizationDomain = "${PROJECT_ORGANIZATION_DOMAIN}";
 const auto kProjectAuthor = "${PROJECT_AUTHOR}";
 
 const auto kHelpPath = "${PROJECT_HELP_PATH}";
+const auto kAppCastUrl = "${APPCAST_URL}";
 
 } // patchman::config
 

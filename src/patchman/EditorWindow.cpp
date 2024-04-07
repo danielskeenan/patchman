@@ -14,6 +14,7 @@
 #include "AboutDialog.h"
 #include "patchman_config.h"
 #include "help.h"
+#include "updater.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -78,6 +79,11 @@ void EditorWindow::initMenus()
     actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
     connect(actions_.helpHomepage, &QAction::triggered, this, &EditorWindow::homepage);
     menuHelp->addAction(actions_.helpHomepage);
+    // Check for updates
+    actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
+    actions_.helpUpdate->setIcon(QIcon::fromTheme("download"));
+    connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
+    menuHelp->addAction(actions_.helpUpdate);
 
     setSaveEnabled();
 }

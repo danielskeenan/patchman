@@ -46,6 +46,7 @@ private:
         QAction *helpHelp = nullptr;
         QAction *helpAbout = nullptr;
         QAction *helpHomepage = nullptr;
+        QAction *helpUpdate = nullptr;
     };
     Actions actions_;
     struct Widgets
