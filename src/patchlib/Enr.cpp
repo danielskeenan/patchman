@@ -157,9 +157,10 @@ void EnrRack::fromByteArray(QByteArrayView data)
                    std::source_location::current().function_name(),
                    "Tried to load lug patch beyond end of rack");
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
-        const auto address = lugData & 0x01FFu;
         // 9-bit unsigned int maxes out at 511.
-        const auto analog = (lugData & 0xFE00u) >> 9;
+        const auto address = lugData & 0x01FFu;
+        // 3-bits. 0 Means no analog, 1-4 are analog channels.
+        const auto analog = (lugData & 0x7000u) >> 12;
         lugAddresses_[lug] = address;
         lugAnalog_[lug] = analog;
     }
@@ -177,7 +178,7 @@ QByteArray EnrRack::toByteArray() const
     for (unsigned int lug = 0; lug < getLugCount(); ++lug) {
         const auto address = lugAddresses_.at(lug);
         const auto analog = lugAnalog_.at(lug);
-        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | ((analog & 0x7F) << 9));
+        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | ((analog & 0x07) << 12));
 
         const auto dataOffset = lug * 2;
         std::memcpy(data.data() + dataOffset, &lugData, 2);
