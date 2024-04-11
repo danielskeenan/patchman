@@ -34,7 +34,7 @@ int RackModel::rowCount(const QModelIndex &parent) const
 
 int RackModel::columnCount(const QModelIndex &parent) const
 {
-    return kColumnCount;
+    return static_cast<std::underlying_type_t<Column>>(Column::Address) + 1;
 }
 
 QVariant RackModel::data(const QModelIndex &index, int role) const

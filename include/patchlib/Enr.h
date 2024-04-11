@@ -26,19 +26,18 @@ class EnrRack: public Rack
 Q_OBJECT
     friend EnrRom;
 public:
-    using CircuitFlags = std::bitset<7>;
-
     [[nodiscard]] unsigned int getLugCount() const override;
     [[nodiscard]] unsigned int getLugsPerModule() const override;
     [[nodiscard]] unsigned int getModuleDensityForLug(unsigned int lug) const override;
     [[nodiscard]] QString getModuleNameForLug(unsigned int lug) const override;
     [[nodiscard]] Phase getPhaseForLug(unsigned int lug) const override;
+    [[nodiscard]] unsigned int getLugAnalogChan(unsigned int lug) const;
 protected:
     void initLugAddressMap() override;
 
 private:
     // Unknown purpose.
-    QList<CircuitFlags> lugFlags_;
+    QList<unsigned int> lugAnalog_;
 
     using Rack::Rack;
     void fromByteArray(QByteArrayView data);
