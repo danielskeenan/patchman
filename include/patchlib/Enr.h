@@ -36,7 +36,6 @@ protected:
     void initLugAddressMap() override;
 
 private:
-    // Unknown purpose.
     QList<unsigned int> lugAnalog_;
 
     using Rack::Rack;
