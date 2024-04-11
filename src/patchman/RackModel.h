@@ -29,7 +29,6 @@ public:
         Module,
         Address,
     };
-    static constexpr auto kColumnCount = static_cast<std::underlying_type_t<Column>>(Column::Address) + 1;
 
     explicit RackModel(Rack *rack, QObject *parent);
     [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
@@ -38,6 +37,11 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value, int role) override;
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     [[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+protected:
+    /** Starting column id for child classes to add their own columns */
+    static inline const std::underlying_type_t<Column>
+        kUserColumn = static_cast<std::underlying_type_t<Column>>(Column::Address) + 1;
 
 private:
     Rack *rack_;

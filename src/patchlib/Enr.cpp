@@ -128,10 +128,18 @@ Phase EnrRack::getPhaseForLug(unsigned int lug) const
     return static_cast<Phase>(phase + 1);
 }
 
+unsigned int EnrRack::getLugAnalogChan(unsigned int lug) const
+{
+    Q_ASSERT_X(lug < lugAddresses_.size(),
+               std::source_location::current().function_name(),
+               "Tried to get lug not in rack.");
+    return lugAnalog_.at(lug);
+}
+
 void EnrRack::initLugAddressMap()
 {
     lugAddresses_.fill(0, kLugCounts.at(getRackType()));
-    lugFlags_.fill({}, kLugCounts.at(getRackType()));
+    lugAnalog_.fill(0, kLugCounts.at(getRackType()));
 }
 
 void EnrRack::fromByteArray(QByteArrayView data)
@@ -139,7 +147,7 @@ void EnrRack::fromByteArray(QByteArrayView data)
     Q_ASSERT_X(lugAddresses_.size() == getLugCount(),
                std::source_location::current().function_name(),
                "Lug addresses size mismatch.");
-    Q_ASSERT_X(lugFlags_.size() == getLugCount(),
+    Q_ASSERT_X(lugAnalog_.size() == getLugCount(),
                std::source_location::current().function_name(),
                "Lug flags size mismatch.");
     // Different from D192. Each table is a list of addresses, stored in lug order.
@@ -151,9 +159,9 @@ void EnrRack::fromByteArray(QByteArrayView data)
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
         const auto address = lugData & 0x01FFu;
         // 9-bit unsigned int maxes out at 511.
-        const auto flags = (lugData & 0xFE00u) >> 1;
+        const auto analog = (lugData & 0xFE00u) >> 9;
         lugAddresses_[lug] = address;
-        lugFlags_[lug] = flags;
+        lugAnalog_[lug] = analog;
     }
 }
 
@@ -162,14 +170,14 @@ QByteArray EnrRack::toByteArray() const
     Q_ASSERT_X(lugAddresses_.size() == getLugCount(),
                std::source_location::current().function_name(),
                "Lug addresses size mismatch.");
-    Q_ASSERT_X(lugFlags_.size() == getLugCount(),
+    Q_ASSERT_X(lugAnalog_.size() == getLugCount(),
                std::source_location::current().function_name(),
                "Lug flags size mismatch.");
     QByteArray data(getLugCount() * 2, 0);
     for (unsigned int lug = 0; lug < getLugCount(); ++lug) {
         const auto address = lugAddresses_.at(lug);
-        const auto flags = lugFlags_.at(lug);
-        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | (flags.to_ulong() << 9));
+        const auto analog = lugAnalog_.at(lug);
+        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | ((analog & 0x7F) << 9));
 
         const auto dataOffset = lug * 2;
         std::memcpy(data.data() + dataOffset, &lugData, 2);
@@ -255,8 +263,8 @@ void EnrRom::loadFromData(QByteArrayView data)
     software_ = software;
     software_hash_ = swHash;
 
-    // Patch tables starts as 0x0300. 16 tables total, 192 bytes per table. Each circuit is 2 bytes little-endian.
-    // Address is 9 bits, flags remaining 7 bits.
+    // Patch tables starts as 0x3000. 16 tables total, 192 bytes per table. Each circuit is 2 bytes little-endian.
+    // DMX Address is low 9 bits, analog channel high 7 bits.
     const auto allRackPatchTables = data.sliced(kPatchTableStart);
     for (unsigned int rackNum = 0; rackNum < kPatchTableCount; ++rackNum) {
         auto rack = dynamic_cast<EnrRack *>(getRack(rackNum));
