@@ -26,12 +26,31 @@ class EnrRack: public Rack
 Q_OBJECT
     friend EnrRom;
 public:
+    friend bool operator==(const EnrRack &lhs, const EnrRack &rhs);
+
+    friend bool operator!=(const EnrRack &lhs, const EnrRack &rhs)
+    {
+        return !(rhs == lhs);
+    }
+
+public:
     [[nodiscard]] unsigned int getLugCount() const override;
     [[nodiscard]] unsigned int getLugsPerModule() const override;
     [[nodiscard]] unsigned int getModuleDensityForLug(unsigned int lug) const override;
     [[nodiscard]] QString getModuleNameForLug(unsigned int lug) const override;
     [[nodiscard]] Phase getPhaseForLug(unsigned int lug) const override;
     [[nodiscard]] unsigned int getLugAnalogChan(unsigned int lug) const;
+
+    /**
+     * Set the Analog channel for @p lug. To unpatch this lug, pass `0`.
+     *
+     * Emits lugChanged().
+     *
+     * @param lug
+     * @param chan
+     */
+    void setLugAnalogChan(unsigned int lug, unsigned int chan);
+
 protected:
     void initLugAddressMap() override;
 

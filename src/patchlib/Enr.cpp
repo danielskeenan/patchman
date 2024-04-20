@@ -57,20 +57,19 @@ static const auto kSoftwareChecksums = frozen::make_unordered_map<EnrRom::Versio
 );
 
 static const QHash<EnrRom::Version, QString> kSoftwareFilepaths{
-        {EnrRom::Version::EnrRack220, ":/bin/enr/enr_rack_220.bin"},
-        {EnrRom::Version::EnrRack230, ":/bin/enr/enr_rack_230.bin"},
-        {EnrRom::Version::EnrRack254, ":/bin/enr/enr_rack_254.bin"},
-        {EnrRom::Version::EnrRack260, ":/bin/enr/enr_rack_260.bin"},
-        {EnrRom::Version::EnrRack272, ":/bin/enr/enr_rack_272.bin"},
-        {EnrRom::Version::EnrRack274, ":/bin/enr/enr_rack_274.bin"},
-        {EnrRom::Version::EnrRack294, ":/bin/enr/enr_rack_294.bin"},
+    {EnrRom::Version::EnrRack220, ":/bin/enr/enr_rack_220.bin"},
+    {EnrRom::Version::EnrRack230, ":/bin/enr/enr_rack_230.bin"},
+    {EnrRom::Version::EnrRack254, ":/bin/enr/enr_rack_254.bin"},
+    {EnrRom::Version::EnrRack260, ":/bin/enr/enr_rack_260.bin"},
+    {EnrRom::Version::EnrRack272, ":/bin/enr/enr_rack_272.bin"},
+    {EnrRom::Version::EnrRack274, ":/bin/enr/enr_rack_274.bin"},
+    {EnrRom::Version::EnrRack294, ":/bin/enr/enr_rack_294.bin"},
 };
 
 unsigned int EnrRack::getLugCount() const
 {
     switch (getRackType()) {
-        case Type::Enr96:
-            return 96;
+        case Type::Enr96:return 96;
     }
     Q_UNREACHABLE();
 }
@@ -82,7 +81,6 @@ unsigned int EnrRack::getLugsPerModule() const
 
 unsigned int EnrRack::getModuleDensityForLug(unsigned int lug) const
 {
-    // TODO: Confirm this is correct. This is copied from D192, where the first lug in the slot is the control lug for single-density modules.
     // Get the lugs in this slot.
     unsigned int lugA, lugB;
     if (lug % 2 == 0) {
@@ -136,10 +134,20 @@ unsigned int EnrRack::getLugAnalogChan(unsigned int lug) const
     return lugAnalog_.at(lug);
 }
 
+void EnrRack::setLugAnalogChan(unsigned int lug, unsigned int chan)
+{
+    Q_ASSERT_X(lug < lugAddresses_.size(),
+               std::source_location::current().function_name(),
+               "Tried to set lug not in rack.");
+    lugAnalog_[lug] = chan;
+    Q_EMIT(lugChanged(lug));
+}
+
 void EnrRack::initLugAddressMap()
 {
-    lugAddresses_.fill(0, kLugCounts.at(getRackType()));
-    lugAnalog_.fill(0, kLugCounts.at(getRackType()));
+    const auto lugCount = kLugCounts.at(getRackType());
+    lugAddresses_.fill(0, lugCount);
+    lugAnalog_.fill(0, lugCount);
 }
 
 void EnrRack::fromByteArray(QByteArrayView data)
@@ -149,7 +157,7 @@ void EnrRack::fromByteArray(QByteArrayView data)
                "Lug addresses size mismatch.");
     Q_ASSERT_X(lugAnalog_.size() == getLugCount(),
                std::source_location::current().function_name(),
-               "Lug flags size mismatch.");
+               "Lug analog size mismatch.");
     // Different from D192. Each table is a list of addresses, stored in lug order.
     for (unsigned int lug = 0; lug < getLugCount(); ++lug) {
         const auto dataOffset = lug * 2;
@@ -157,10 +165,8 @@ void EnrRack::fromByteArray(QByteArrayView data)
                    std::source_location::current().function_name(),
                    "Tried to load lug patch beyond end of rack");
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
-        // 9-bit unsigned int maxes out at 511.
-        const auto address = lugData & 0x01FFu;
-        // 3-bits. 0 Means no analog, 1-4 are analog channels.
-        const auto analog = (lugData & 0x7000u) >> 12;
+        const auto address = lugData & 0x03FFu;
+        const auto analog = (lugData & 0xF000u) >> 12;
         lugAddresses_[lug] = address;
         lugAnalog_[lug] = analog;
     }
@@ -173,18 +179,24 @@ QByteArray EnrRack::toByteArray() const
                "Lug addresses size mismatch.");
     Q_ASSERT_X(lugAnalog_.size() == getLugCount(),
                std::source_location::current().function_name(),
-               "Lug flags size mismatch.");
+               "Lug analog size mismatch.");
     QByteArray data(getLugCount() * 2, 0);
     for (unsigned int lug = 0; lug < getLugCount(); ++lug) {
         const auto address = lugAddresses_.at(lug);
         const auto analog = lugAnalog_.at(lug);
-        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | ((analog & 0x07) << 12));
+        const auto lugData = qToLittleEndian<uint16_t>(static_cast<uint16_t>(address) | ((analog & 0x0F) << 12));
 
         const auto dataOffset = lug * 2;
         std::memcpy(data.data() + dataOffset, &lugData, 2);
     }
 
     return data;
+}
+
+bool operator==(const EnrRack &lhs, const EnrRack &rhs)
+{
+    return static_cast<const patchman::Rack &>(lhs) == static_cast<const patchman::Rack &>(rhs) &&
+        lhs.lugAnalog_ == rhs.lugAnalog_;
 }
 
 const QMap<EnrRom::Version, QString> &EnrRom::getVersionNames()
@@ -218,11 +230,22 @@ EnrRom::EnrRom(QObject *parent)
 
 bool operator==(const EnrRom &lhs, const EnrRom &rhs)
 {
-    if (lhs.version_ != rhs.version_) {
+    if (static_cast<const Rom &>(lhs) != static_cast<const Rom &>(rhs) &&
+        lhs.version_ != rhs.version_) {
         return false;
     }
 
-    return static_cast<const Rom &>(lhs) == static_cast<const Rom &>(rhs);
+    // Need to examine racks as ENR racks, not generics.
+    for (auto lhsRackIt = lhs.racks_.cbegin(), rhsRackIt = rhs.racks_.cbegin();
+         lhsRackIt != lhs.racks_.cend() && rhsRackIt != rhs.racks_.cend(); ++lhsRackIt, ++rhsRackIt) {
+        const auto lhsRack = dynamic_cast<EnrRack *>(*lhsRackIt);
+        const auto rhsRack = dynamic_cast<EnrRack *>(*rhsRackIt);
+        if (*lhsRack != *rhsRack) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void EnrRom::setVersion(EnrRom::Version version)
@@ -254,7 +277,7 @@ void EnrRom::loadFromData(QByteArrayView data)
     const auto software = data.sliced(0, kPatchTableStart).toByteArray();
     const auto swHash = QCryptographicHash::hash(software, getHashAlgorithm());
     version_ = Version::Unknown;
-    for (const auto &[version, checksum]: kSoftwareChecksums) {
+    for (const auto &[version, checksum] : kSoftwareChecksums) {
         if (checksum == swHash) {
             version_ = version;
             break;
@@ -297,7 +320,7 @@ void EnrRom::loadFromData(QByteArrayView data)
 QByteArray EnrRom::toByteArray() const
 {
     QByteArray data = software_;
-    for (const auto *rack: racks_) {
+    for (const auto *rack : racks_) {
         const auto *enrRack = dynamic_cast<const EnrRack *>(rack);
         Q_ASSERT_X(enrRack != nullptr,
                    std::source_location::current().function_name(),

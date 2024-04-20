@@ -45,7 +45,7 @@ private:
 TEST_CASE_METHOD(RomLibraryFixture, "Find All ROMs")
 {
     const QStringList searchPaths{
-        QString("%1/roms").arg(TEST_SOURCES_DIR)
+        QString(TEST_SOURCES_DIR "/roms")
     };
     auto future = patchman::RomLibrary::get()->getAllRoms(searchPaths);
     // Can't use waitForFinished() because Qt insists on running the functor in the main thread when that is used.
@@ -56,7 +56,7 @@ TEST_CASE_METHOD(RomLibraryFixture, "Find All ROMs")
     const auto roms = future.result();
     REQUIRE(roms.size() == 1);
     const auto &actualRomInfo = roms.first();
-    const auto expectedFilePath = QString("%1/roms/enr_bal_294.bin").arg(TEST_SOURCES_DIR);
+    const auto expectedFilePath = QString(TEST_SOURCES_DIR "/roms/enr_bal_294.bin");
     auto *expectedRom = dynamic_cast<patchman::EnrRom *>(patchman::Rom::create(patchman::Rom::Type::ENR));
     expectedRom->loadFromFile(expectedFilePath);
     CHECK(actualRomInfo.getFilePath() == expectedFilePath);
@@ -65,8 +65,8 @@ TEST_CASE_METHOD(RomLibraryFixture, "Find All ROMs")
     CHECK(actualRomInfo.getSoftwareHash()
               == QByteArray::fromHex("1c55981980eeb717264713ce336169dd3fa79d0716374719cc49351cd435ca5d"));
     CHECK(actualRomInfo.getPatchHash()
-              == QByteArray::fromHex("855946a5b3ee202e45e502f56472e9698e0547c7cb2ca8147a6aef69512804b8"));
+              == QByteArray::fromHex("90d236b6f8b8f5cce488bfa018078175dd21e902c8f0043829815ef8cdb78816"));
     CHECK(static_cast<patchman::Rom::Type>(actualRomInfo.getRomType()) == patchman::Rom::Type::ENR);
     CHECK(actualRomInfo.getRackCount() == 6);
-    CHECK(actualRomInfo.getRomChecksum() == QByteArray::fromHex("0018e5f0"));
+    CHECK(actualRomInfo.getRomChecksum() == QByteArray::fromHex("0018ef52"));
 }
