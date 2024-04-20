@@ -14,10 +14,9 @@ namespace patchman
 
 bool operator==(const Rack &lhs, const Rack &rhs)
 {
-    return
-        lhs.lugAddresses_ == rhs.lugAddresses_ &&
-            lhs.rackNum_ == rhs.rackNum_ &&
-            lhs.rackType_ == rhs.rackType_;
+    return lhs.rackNum_ == rhs.rackNum_ &&
+        lhs.rackType_ == rhs.rackType_ &&
+        lhs.lugAddresses_ == rhs.lugAddresses_;
 }
 
 std::strong_ordering operator<=>(const Rack &lhs, const Rack &rhs)

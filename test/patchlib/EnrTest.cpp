@@ -23,7 +23,7 @@ protected:
 public:
     explicit EnrFixture()
     {
-        QFile romFile(QString("%1/roms/enr_bal_294.bin").arg(TEST_SOURCES_DIR));
+        QFile romFile(QString(TEST_SOURCES_DIR "/roms/enr_bal_294.bin"));
         if (!romFile.open(QFile::ReadOnly)) {
             FAIL("Failed to open fixture rom file.");
         }
@@ -31,10 +31,10 @@ public:
 
         rom_ = dynamic_cast<patchman::EnrRom *>(patchman::Rom::create(patchman::Rom::Type::ENR));
         rom_->setVersion(patchman::EnrRom::Version::EnrRack294);
-        patchman::Rack *rack;
+        patchman::EnrRack* rack;
 
         // Rack 0
-        rack = rom_->addRack(0, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(0, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 1);
         rack->setLugAddress(1, 2);
         rack->setLugAddress(2, 7);
@@ -64,9 +64,13 @@ public:
         rack->setLugAddress(26, 79);
         rack->setLugAddress(27, 80);
         rack->setLugAddress(28, 85);
+        rack->setLugAnalogChan(28, 4);
         rack->setLugAddress(29, 86);
+        rack->setLugAnalogChan(29, 3);
         rack->setLugAddress(30, 91);
+        rack->setLugAnalogChan(30, 2);
         rack->setLugAddress(31, 92);
+        rack->setLugAnalogChan(31, 1);
         rack->setLugAddress(32, 3);
         rack->setLugAddress(33, 4);
         rack->setLugAddress(34, 9);
@@ -96,9 +100,13 @@ public:
         rack->setLugAddress(58, 81);
         rack->setLugAddress(59, 82);
         rack->setLugAddress(60, 87);
+        rack->setLugAnalogChan(60, 4);
         rack->setLugAddress(61, 88);
+        rack->setLugAnalogChan(61, 4);
         rack->setLugAddress(62, 93);
+        rack->setLugAnalogChan(62, 3);
         rack->setLugAddress(63, 94);
+        rack->setLugAnalogChan(63, 3);
         rack->setLugAddress(64, 5);
         rack->setLugAddress(65, 6);
         rack->setLugAddress(66, 11);
@@ -128,12 +136,16 @@ public:
         rack->setLugAddress(90, 83);
         rack->setLugAddress(91, 84);
         rack->setLugAddress(92, 89);
+        rack->setLugAnalogChan(92, 2);
         rack->setLugAddress(93, 90);
+        rack->setLugAnalogChan(93, 2);
         rack->setLugAddress(94, 95);
+        rack->setLugAnalogChan(94, 1);
         rack->setLugAddress(95, 96);
+        rack->setLugAnalogChan(95, 1);
 
         // Rack 1
-        rack = rom_->addRack(1, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(1, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 97);
         rack->setLugAddress(1, 98);
         rack->setLugAddress(2, 103);
@@ -163,9 +175,13 @@ public:
         rack->setLugAddress(26, 175);
         rack->setLugAddress(27, 176);
         rack->setLugAddress(28, 181);
+        rack->setLugAnalogChan(28, 4);
         rack->setLugAddress(29, 182);
+        rack->setLugAnalogChan(29, 3);
         rack->setLugAddress(30, 187);
+        rack->setLugAnalogChan(30, 2);
         rack->setLugAddress(31, 188);
+        rack->setLugAnalogChan(31, 1);
         rack->setLugAddress(32, 99);
         rack->setLugAddress(33, 100);
         rack->setLugAddress(34, 105);
@@ -195,9 +211,13 @@ public:
         rack->setLugAddress(58, 177);
         rack->setLugAddress(59, 178);
         rack->setLugAddress(60, 183);
+        rack->setLugAnalogChan(60, 4);
         rack->setLugAddress(61, 184);
+        rack->setLugAnalogChan(61, 4);
         rack->setLugAddress(62, 189);
+        rack->setLugAnalogChan(62, 3);
         rack->setLugAddress(63, 190);
+        rack->setLugAnalogChan(63, 3);
         rack->setLugAddress(64, 101);
         rack->setLugAddress(65, 102);
         rack->setLugAddress(66, 107);
@@ -227,12 +247,16 @@ public:
         rack->setLugAddress(90, 179);
         rack->setLugAddress(91, 180);
         rack->setLugAddress(92, 185);
+        rack->setLugAnalogChan(92, 2);
         rack->setLugAddress(93, 186);
+        rack->setLugAnalogChan(93, 2);
         rack->setLugAddress(94, 191);
+        rack->setLugAnalogChan(94, 1);
         rack->setLugAddress(95, 192);
+        rack->setLugAnalogChan(95, 1);
 
         // Rack 2
-        rack = rom_->addRack(2, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(2, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 193);
         rack->setLugAddress(1, 194);
         rack->setLugAddress(2, 199);
@@ -262,9 +286,13 @@ public:
         rack->setLugAddress(26, 271);
         rack->setLugAddress(27, 272);
         rack->setLugAddress(28, 277);
+        rack->setLugAnalogChan(28, 4);
         rack->setLugAddress(29, 278);
+        rack->setLugAnalogChan(29, 3);
         rack->setLugAddress(30, 283);
+        rack->setLugAnalogChan(30, 2);
         rack->setLugAddress(31, 284);
+        rack->setLugAnalogChan(31, 1);
         rack->setLugAddress(32, 195);
         rack->setLugAddress(33, 196);
         rack->setLugAddress(34, 201);
@@ -294,9 +322,13 @@ public:
         rack->setLugAddress(58, 273);
         rack->setLugAddress(59, 274);
         rack->setLugAddress(60, 279);
+        rack->setLugAnalogChan(60, 4);
         rack->setLugAddress(61, 280);
+        rack->setLugAnalogChan(61, 4);
         rack->setLugAddress(62, 285);
+        rack->setLugAnalogChan(62, 3);
         rack->setLugAddress(63, 286);
+        rack->setLugAnalogChan(63, 3);
         rack->setLugAddress(64, 197);
         rack->setLugAddress(65, 198);
         rack->setLugAddress(66, 203);
@@ -326,12 +358,16 @@ public:
         rack->setLugAddress(90, 275);
         rack->setLugAddress(91, 276);
         rack->setLugAddress(92, 281);
+        rack->setLugAnalogChan(92, 2);
         rack->setLugAddress(93, 282);
+        rack->setLugAnalogChan(93, 2);
         rack->setLugAddress(94, 287);
+        rack->setLugAnalogChan(94, 1);
         rack->setLugAddress(95, 288);
+        rack->setLugAnalogChan(95, 1);
 
         // Rack 3
-        rack = rom_->addRack(3, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(3, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 289);
         rack->setLugAddress(1, 290);
         rack->setLugAddress(2, 295);
@@ -361,9 +397,13 @@ public:
         rack->setLugAddress(26, 367);
         rack->setLugAddress(27, 368);
         rack->setLugAddress(28, 373);
+        rack->setLugAnalogChan(28, 4);
         rack->setLugAddress(29, 374);
+        rack->setLugAnalogChan(29, 3);
         rack->setLugAddress(30, 379);
+        rack->setLugAnalogChan(30, 2);
         rack->setLugAddress(31, 380);
+        rack->setLugAnalogChan(31, 1);
         rack->setLugAddress(32, 291);
         rack->setLugAddress(33, 292);
         rack->setLugAddress(34, 297);
@@ -393,9 +433,13 @@ public:
         rack->setLugAddress(58, 369);
         rack->setLugAddress(59, 370);
         rack->setLugAddress(60, 375);
+        rack->setLugAnalogChan(60, 4);
         rack->setLugAddress(61, 376);
+        rack->setLugAnalogChan(61, 4);
         rack->setLugAddress(62, 381);
+        rack->setLugAnalogChan(62, 3);
         rack->setLugAddress(63, 382);
+        rack->setLugAnalogChan(63, 3);
         rack->setLugAddress(64, 293);
         rack->setLugAddress(65, 294);
         rack->setLugAddress(66, 299);
@@ -425,12 +469,16 @@ public:
         rack->setLugAddress(90, 371);
         rack->setLugAddress(91, 372);
         rack->setLugAddress(92, 377);
+        rack->setLugAnalogChan(92, 2);
         rack->setLugAddress(93, 378);
+        rack->setLugAnalogChan(93, 2);
         rack->setLugAddress(94, 383);
+        rack->setLugAnalogChan(94, 1);
         rack->setLugAddress(95, 384);
+        rack->setLugAnalogChan(95, 1);
 
         // Rack 4
-        rack = rom_->addRack(4, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(4, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 385);
         rack->setLugAddress(1, 386);
         rack->setLugAddress(2, 391);
@@ -460,9 +508,13 @@ public:
         rack->setLugAddress(26, 463);
         rack->setLugAddress(27, 464);
         rack->setLugAddress(28, 469);
+        rack->setLugAnalogChan(28, 4);
         rack->setLugAddress(29, 470);
+        rack->setLugAnalogChan(29, 3);
         rack->setLugAddress(30, 475);
+        rack->setLugAnalogChan(30, 2);
         rack->setLugAddress(31, 476);
+        rack->setLugAnalogChan(31, 1);
         rack->setLugAddress(32, 387);
         rack->setLugAddress(33, 388);
         rack->setLugAddress(34, 393);
@@ -492,9 +544,13 @@ public:
         rack->setLugAddress(58, 465);
         rack->setLugAddress(59, 466);
         rack->setLugAddress(60, 471);
+        rack->setLugAnalogChan(60, 4);
         rack->setLugAddress(61, 472);
+        rack->setLugAnalogChan(61, 4);
         rack->setLugAddress(62, 477);
+        rack->setLugAnalogChan(62, 3);
         rack->setLugAddress(63, 478);
+        rack->setLugAnalogChan(63, 3);
         rack->setLugAddress(64, 389);
         rack->setLugAddress(65, 390);
         rack->setLugAddress(66, 395);
@@ -524,12 +580,16 @@ public:
         rack->setLugAddress(90, 467);
         rack->setLugAddress(91, 468);
         rack->setLugAddress(92, 473);
+        rack->setLugAnalogChan(92, 2);
         rack->setLugAddress(93, 474);
+        rack->setLugAnalogChan(93, 2);
         rack->setLugAddress(94, 479);
+        rack->setLugAnalogChan(94, 1);
         rack->setLugAddress(95, 480);
+        rack->setLugAnalogChan(95, 1);
 
         // Rack 5
-        rack = rom_->addRack(5, patchman::Rack::Type::Enr96);
+        rack = dynamic_cast<patchman::EnrRack*>(rom_->addRack(5, patchman::Rack::Type::Enr96));
         rack->setLugAddress(0, 481);
         rack->setLugAddress(1, 482);
         rack->setLugAddress(2, 487);
@@ -541,8 +601,7 @@ public:
         rack->setLugAddress(8, 505);
         rack->setLugAddress(9, 506);
         rack->setLugAddress(10, 511);
-        // ENR can't address 512 because a 9-bit unsigned int maxes out at 511.
-        rack->setLugAddress(11, 0);
+        rack->setLugAddress(11, 512);
         rack->setLugAddress(12, 0);
         rack->setLugAddress(13, 0);
         rack->setLugAddress(14, 0);
