@@ -41,7 +41,22 @@ QVariant EnrRackModel::data(const QModelIndex &index, int role) const
 
 bool EnrRackModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    return RackModel::setData(index, value, role);
+    const auto column = static_cast<EnrColumn>(index.column());
+    bool success = false;
+    if (column == EnrColumn::Analog) {
+        const auto newChan = value.toInt();
+        if (newChan >= 0 && newChan <= 8) {
+            const auto circuit = index.row();
+            const auto lug = rack_->getLugForCircuit(circuit);
+            rack_->setLugAnalogChan(lug, newChan);
+            success = true;
+        }
+    }
+    else {
+        success = RackModel::setData(index, value, role);
+    }
+
+    return success;
 }
 
 QVariant EnrRackModel::headerData(int section, Qt::Orientation orientation, int role) const
