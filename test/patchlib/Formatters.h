@@ -9,6 +9,7 @@
 #ifndef FORMATTERS_H_
 #define FORMATTERS_H_
 
+#include <sstream>
 #include <catch2/catch_tostring.hpp>
 #include <fmt/format.h>
 #include <QDateTime>

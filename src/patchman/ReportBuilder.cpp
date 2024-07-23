@@ -76,8 +76,8 @@ ReportBuilder::ReportBuilder(QObject *parent)
         const auto start = args.at(1)->get<std::size_t>();
         const auto len = args.at(2)->get<std::size_t>();
         inja::json slice;
-        for (const auto &item: std::ranges::views::counted(list->begin() + start, len)) {
-            slice.push_back(item);
+        for (auto item = list->cbegin() + start; item != list->cbegin() + len; ++item) {
+            slice.push_back(*item);
         }
         return slice;
     });
