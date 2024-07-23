@@ -168,7 +168,7 @@ void EnrRack::fromByteArray(QByteArrayView data)
                    std::source_location::current().function_name(),
                    "Tried to load lug patch beyond end of rack");
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
-        const auto address = lugData & 0x01FFu;
+        const auto address = lugData & 0x03FFu;
         const auto analog = (lugData & 0xF000u) >> 12;
         lugAddresses_[lug] = address;
         lugAnalog_[lug] = analog;
