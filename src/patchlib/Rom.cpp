@@ -81,6 +81,7 @@ Rom::Type Rom::guessType(const QString &path)
 
 void Rom::loadFromFile(const QString &path)
 {
+    const auto test = path.endsWith("ENR Analog Test.bin");
     const auto data = BinLoader::loadFile(path);
     loadFromData(data);
 }

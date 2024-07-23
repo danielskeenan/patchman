@@ -170,9 +170,6 @@ void EnrRack::fromByteArray(QByteArrayView data)
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
         const auto address = lugData & 0x01FFu;
         const auto analog = (lugData & 0xF000u) >> 12;
-        if (analog > kMaxAnalog) {
-            throw InvalidRomException("Exceeded maximum analog channel");
-        }
         lugAddresses_[lug] = address;
         lugAnalog_[lug] = analog;
     }
