@@ -131,7 +131,7 @@ void EditorWindow::saveTo(const QString &path)
 
 void EditorWindow::setSaveEnabled()
 {
-    const auto saveEnabled = (rom_ != nullptr && !windowFilePath().isEmpty());
+    const auto saveEnabled = (rom_ != nullptr);
 
     actions_.fileSave->setEnabled(saveEnabled);
     actions_.fileSaveAs->setEnabled(saveEnabled);
