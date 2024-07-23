@@ -139,6 +139,9 @@ void EnrRack::setLugAnalogChan(unsigned int lug, unsigned int chan)
     Q_ASSERT_X(lug < lugAddresses_.size(),
                std::source_location::current().function_name(),
                "Tried to set lug not in rack.");
+    if (chan > kMaxAnalog) {
+        return;
+    }
     lugAnalog_[lug] = chan;
     Q_EMIT(lugChanged(lug));
 }
@@ -165,8 +168,11 @@ void EnrRack::fromByteArray(QByteArrayView data)
                    std::source_location::current().function_name(),
                    "Tried to load lug patch beyond end of rack");
         const auto lugData = qFromLittleEndian<uint16_t>(data.data() + dataOffset);
-        const auto address = lugData & 0x03FFu;
+        const auto address = lugData & 0x01FFu;
         const auto analog = (lugData & 0xF000u) >> 12;
+        if (analog > kMaxAnalog) {
+            throw InvalidRomException("Exceeded maximum analog channel");
+        }
         lugAddresses_[lug] = address;
         lugAnalog_[lug] = analog;
     }
@@ -288,7 +294,7 @@ void EnrRom::loadFromData(QByteArrayView data)
     software_hash_ = swHash;
 
     // Patch tables starts as 0x3000. 16 tables total, 192 bytes per table. Each circuit is 2 bytes little-endian.
-    // DMX Address is low 9 bits, analog channel high 7 bits.
+    // DMX Address is low 9 bits, analog channel high 4 bits. Yes, there is unused data in the middle.
     const auto allRackPatchTables = data.sliced(kPatchTableStart);
     for (unsigned int rackNum = 0; rackNum < kPatchTableCount; ++rackNum) {
         auto rack = dynamic_cast<EnrRack *>(getRack(rackNum));
@@ -302,16 +308,7 @@ void EnrRom::loadFromData(QByteArrayView data)
 
     // Sanity check the racks. If all racks have all lugs set to address 511, then this is a stock 1-1 patch and
     // should not be edited.
-    const auto is1to1 = [](const Rack *rack)
-    {
-        for (const auto lugAddress : rack->getLugAddressesView()) {
-            if (lugAddress.second != 511) {
-                return false;
-            }
-        }
-        return true;
-    };
-    if (std::all_of(racks_.cbegin(), racks_.cend(), is1to1)) {
+    if (std::all_of(racks_.cbegin(), racks_.cend(), &EnrRack::is1To1)) {
         throw InvalidRomException(tr("ENR 1-1 Patch detected."),
                                   tr("ENR 1-1 patch ROMs are special and are not editable. To modify an ENR 1-1 patch, create a new patch ROM and autonumber each rack."));
     }
@@ -370,6 +367,16 @@ QByteArray EnrRom::getSoftwareHash() const
 QByteArray EnrRom::getPatchHash() const
 {
     return QCryptographicHash::hash(toByteArray().sliced(kPatchTableStart), getHashAlgorithm());
+}
+
+bool EnrRack::is1To1(const Rack *rack)
+{
+    for (const auto lugAddress : rack->getLugAddressesView()) {
+        if (lugAddress.second != 511) {
+            return false;
+        }
+    }
+    return true;
 }
 
 };

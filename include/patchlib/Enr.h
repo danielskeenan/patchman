@@ -26,6 +26,8 @@ class EnrRack: public Rack
 Q_OBJECT
     friend EnrRom;
 public:
+    static constexpr auto kMaxAnalog = 4;
+
     friend bool operator==(const EnrRack &lhs, const EnrRack &rhs);
 
     friend bool operator!=(const EnrRack &lhs, const EnrRack &rhs)
@@ -33,7 +35,6 @@ public:
         return !(rhs == lhs);
     }
 
-public:
     [[nodiscard]] unsigned int getLugCount() const override;
     [[nodiscard]] unsigned int getLugsPerModule() const override;
     [[nodiscard]] unsigned int getModuleDensityForLug(unsigned int lug) const override;
@@ -60,6 +61,7 @@ private:
     using Rack::Rack;
     void fromByteArray(QByteArrayView data);
     [[nodiscard]] QByteArray toByteArray() const;
+    static bool is1To1(const Rack* rack);
 };
 
 /**

@@ -45,7 +45,7 @@ bool EnrRackModel::setData(const QModelIndex &index, const QVariant &value, int 
     bool success = false;
     if (column == EnrColumn::Analog) {
         const auto newChan = value.toInt();
-        if (newChan >= 0 && newChan <= 8) {
+        if (newChan >= 0 && newChan <= EnrRack::kMaxAnalog) {
             const auto circuit = index.row();
             const auto lug = rack_->getLugForCircuit(circuit);
             rack_->setLugAnalogChan(lug, newChan);

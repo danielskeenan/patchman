@@ -33,7 +33,6 @@ public:
 
     friend std::strong_ordering operator<=>(const Rack &lhs, const Rack &rhs);
 
-public:
     enum class Type
     {
         D192Rack,
