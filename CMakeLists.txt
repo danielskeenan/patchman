@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.28)
 project(patchman
-        VERSION 1.1.0
+        VERSION 1.1.1
         DESCRIPTION "A tool for editing patch ROM files."
         HOMEPAGE_URL "https://github.com/danielskeenan/patchman"
 )

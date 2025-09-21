@@ -1,0 +1,49 @@
+{
+  "version": 8,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "linux-debug",
+      "displayName": "Debug (Linux)",
+      "description": "Debug build, Linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-debug",
+      "cacheVariables": {
+        "BUILD_APP": true,
+        "BUILD_PACKAGE": false,
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Og"
+      },
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Release (Linux)",
+      "description": "Release build, Linux",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-release",
+      "cacheVariables": {
+        "BUILD_APP": true,
+        "BUILD_PACKAGE": true,
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Werror -O3",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+      },
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    }
+  ]
+}
