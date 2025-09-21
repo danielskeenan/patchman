@@ -11,7 +11,7 @@
 namespace patchman
 {
 
-int EnrRackModel::columnCount(const QModelIndex &parent) const
+int EnrRackModel::columnCount(const QModelIndex &) const
 {
     return static_cast<std::underlying_type_t<EnrColumn>>(EnrColumn::Analog) + 1;
 }

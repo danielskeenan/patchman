@@ -261,7 +261,7 @@ TEST_CASE("Read Intel Hex")
 
     file.open();
     const auto contents = patchman::BinLoader::loadFile(file);
-    REQUIRE(contents.size() == kBinData.size());
+    REQUIRE(contents.size() == static_cast<qsizetype>(kBinData.size()));
     auto actual_it = contents.cbegin();
     auto expected_it = kBinData.cbegin();
     std::size_t ix = 0;

@@ -51,7 +51,7 @@ void EnrRackEditor::setModuleRowSpans()
 {
     const auto rowCount = model_->rowCount(QModelIndex());
     const auto lugsPerModule = rack_->getLugsPerModule();
-    for (unsigned int row = 0; row < rowCount; row += lugsPerModule) {
+    for (int row = 0; row < rowCount; row += lugsPerModule) {
         table_->setSpan(
             row,
             static_cast<std::underlying_type_t<EnrRackModel::Column>>(EnrRackModel::Column::Module),

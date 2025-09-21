@@ -511,14 +511,14 @@ void D192Rack::fromByteArray(QByteArrayView data)
 
 QByteArray D192Rack::toByteArray() const
 {
-    QByteArray data(512, 0xFF);
-    for (auto lug = 0; lug < lugAddresses_.size(); ++lug) {
+    QByteArray data(512, -1);
+    for (uint8_t lug = 0; lug < lugAddresses_.size(); ++lug) {
         const auto address = lugAddresses_.at(lug);
         if (address == 0) {
             continue;
         }
 
-        data[address - 1] = lug;
+        data[address - 1] = static_cast<char>(lug);
     }
 
     return data;
@@ -638,7 +638,7 @@ QByteArray D192Rom::toByteArray() const
                    "Non D192 rack stored in D192 patch rom.");
         data.push_back(d192Rack->toByteArray());
     }
-    data.resize(useSize, 0xFF);
+    data.resize(useSize, -1);
 
     return data;
 }

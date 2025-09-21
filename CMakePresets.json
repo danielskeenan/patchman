@@ -21,7 +21,7 @@
         "BUILD_APP": true,
         "BUILD_PACKAGE": false,
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Og"
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Wno-unused-parameter -Og"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
     },
@@ -40,7 +40,7 @@
         "BUILD_APP": true,
         "BUILD_PACKAGE": true,
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Werror -O3",
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Werror -Wno-unused-parameter -O3",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"

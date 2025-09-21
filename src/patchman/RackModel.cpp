@@ -23,16 +23,16 @@ RackModel::RackModel(Rack *rack, QObject *parent)
 void RackModel::updateLugCount()
 {
     beginResetModel();
-    lugCount_ = std::size(rack_->getLugAddressesView());
+    lugCount_ = static_cast<int>(std::size(rack_->getLugAddressesView()));
     endResetModel();
 }
 
-int RackModel::rowCount(const QModelIndex &parent) const
+int RackModel::rowCount(const QModelIndex &) const
 {
     return lugCount_;
 }
 
-int RackModel::columnCount(const QModelIndex &parent) const
+int RackModel::columnCount(const QModelIndex &) const
 {
     return static_cast<std::underlying_type_t<Column>>(Column::Address) + 1;
 }

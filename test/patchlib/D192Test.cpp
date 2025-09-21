@@ -1151,7 +1151,7 @@ TEST_CASE("D192 Save")
 {
     const auto actual = getTestRom()->toByteArray();
     REQUIRE(kPatchBin.size() == actual.size());
-    for (std::size_t ix = 0; ix < kPatchBin.size() && ix < actual.size(); ++ix) {
+    for (qsizetype ix = 0; ix < static_cast<qsizetype>(kPatchBin.size()) && ix < actual.size(); ++ix) {
         if (static_cast<uint8_t>(kPatchBin[ix]) != static_cast<uint8_t>(actual[ix])) {
             FAIL("Mismatch at ix " << ix << " (Got " << static_cast<int>(actual[ix]) << " expected "
                                    << static_cast<unsigned int>(kPatchBin[ix]) << ")\n"

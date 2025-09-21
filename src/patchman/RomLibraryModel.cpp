@@ -27,7 +27,7 @@ RomLibraryModel::RomLibraryModel(QObject *parent)
 
 int RomLibraryModel::rowCount(const QModelIndex &parent) const
 {
-    return romInfo_.size();
+    return static_cast<int>(romInfo_.size());
 }
 
 int RomLibraryModel::columnCount(const QModelIndex &parent) const
@@ -138,12 +138,12 @@ void RomLibraryModel::checkForFilesystemChanges()
                 beginResetModel();
                 patchTableCounts_.clear();
                 patchTableCounts_.reserve(romInfoList.size());
-                Q_EMIT(progressRangeChanged(0, romInfoList.size()));
+                Q_EMIT(progressRangeChanged(0, static_cast<int>(romInfoList.size())));
                 Q_EMIT(progressTextChanged(tr("Finding duplicate ROMs")));
                 for (int ix = 0; ix < romInfoList.size(); ++ix) {
                     const auto &romInfo = romInfoList.at(ix);
                     const auto duplicates = RomLibrary::get()->getDuplicates(romInfo).result();
-                    patchTableCounts_[romInfo.getPatchHash()] = duplicates.size();
+                    patchTableCounts_[romInfo.getPatchHash()] = static_cast<unsigned int>(duplicates.size());
                     Q_EMIT(progressValueChanged(ix + 1));
                 }
                 endResetModel();

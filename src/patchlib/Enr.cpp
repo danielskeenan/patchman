@@ -70,6 +70,7 @@ unsigned int EnrRack::getLugCount() const
 {
     switch (getRackType()) {
         case Type::Enr96:return 96;
+        default:Q_UNREACHABLE();
     }
     Q_UNREACHABLE();
 }

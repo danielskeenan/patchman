@@ -45,7 +45,7 @@ protected:
 
 private:
     Rack *rack_;
-    unsigned int lugCount_;
+    int lugCount_;
 
     void updateLugCount();
 

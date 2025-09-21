@@ -52,7 +52,7 @@ void D192RackEditor::setModuleRowSpans()
 {
     const auto rowCount = model_->rowCount(QModelIndex());
     const auto lugsPerModule = rack_->getLugsPerModule();
-    for (unsigned int row = 0; row < rowCount; row += lugsPerModule) {
+    for (int row = 0; row < rowCount; row += lugsPerModule) {
         table_->setSpan(
             row,
             static_cast<std::underlying_type_t<D192RackModel::Column>>(D192RackModel::Column::Module),

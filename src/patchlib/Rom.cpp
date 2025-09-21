@@ -58,7 +58,6 @@ QString Rom::getTitle() const
 
 Rom *Rom::create(Rom::Type romType, QObject *parent)
 {
-    Rom *rom;
     switch (romType) {
         case Rom::Type::D192:
             return new D192Rom(parent);
@@ -144,9 +143,9 @@ void Rom::sortRacks()
 
 unsigned int Rom::countPatchedRacks() const
 {
-    return std::count_if(racks_.cbegin(), racks_.cend(),
-                         [](const Rack *rack)
-                         { return rack->isPatched(); });
+    return static_cast<unsigned int>(std::count_if(racks_.cbegin(), racks_.cend(),
+                                                   [](const Rack* rack)
+                                                   { return rack->isPatched(); }));
 }
 
 QByteArray Rom::getChecksum() const

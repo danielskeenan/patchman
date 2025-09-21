@@ -55,7 +55,7 @@ QByteArray BinLoader::readIntelHex(QFile &file)
         }
 
         // Track the sum of read values; used for calculating the checksum at the end.
-        uint8_t sum = 0;
+        unsigned int sum = 0;
         // Found start of record. Read the record header.
         const auto length = file.read(2).toUShort(nullptr, 16);
         sum += length;
@@ -74,8 +74,8 @@ QByteArray BinLoader::readIntelHex(QFile &file)
             }
             chunk = QByteArray::fromHex(file.read(length * 2));
             sum = std::accumulate(chunk.cbegin(), chunk.cend(), sum);
-            const uint8_t checksum = -std::uintmax_t(sum);
-            const uint8_t file_checksum = file.read(2).toUShort(nullptr, 16);
+            const uint8_t checksum = -static_cast<uint8_t>(sum & 0xFF);
+            const uint8_t file_checksum = static_cast<uint8_t>(file.read(2).toUShort(nullptr, 16));
             if (checksum != file_checksum) {
                 throw std::runtime_error("Bad checksum");
             }
