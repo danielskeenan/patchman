@@ -38,6 +38,8 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         enr/EnrRackEditor.h
         enr/EnrRackModel.cpp
         enr/EnrRackModel.h
+        enr/EnrRackPreview.cpp
+        enr/EnrRackPreview.h
         enr/EnrReportBuilder.cpp
         enr/EnrReportBuilder.h
 )

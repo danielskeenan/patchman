@@ -9,11 +9,11 @@
 #ifndef ENRRACKEDITOR_H
 #define ENRRACKEDITOR_H
 
-
-#include <QTableView>
 #include "../RackEditor.h"
-#include "patchlib/Enr.h"
 #include "EnrRackModel.h"
+#include "EnrRackPreview.h"
+#include "patchlib/Enr.h"
+#include <QTableView>
 
 namespace patchman
 {
@@ -33,6 +33,7 @@ private:
     EnrRack *rack_;
     QTableView *table_;
     EnrRackModel *model_;
+    EnrRackPreview* preview_;
 
 private Q_SLOTS:
     void setModuleRowSpans();
