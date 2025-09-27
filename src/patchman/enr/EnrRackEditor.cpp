@@ -8,6 +8,7 @@
 
 #include "EnrRackEditor.h"
 #include <QHBoxLayout>
+#include <QItemSelectionModel>
 
 namespace patchman {
 
@@ -26,6 +27,10 @@ EnrRackEditor::EnrRackEditor(EnrRack *rack, QWidget *parent)
 
   // Preview
   layout->addWidget(preview_);
+  connect(preview_->selectionModel(), &QItemSelectionModel::currentChanged,
+          this, &EnrRackEditor::previewSelectionChanged);
+  connect(table_->selectionModel(), &QItemSelectionModel::currentChanged, this,
+          &EnrRackEditor::tableSelectionChanged);
 }
 
 QList<unsigned int> EnrRackEditor::getSelectedCircuits() const {
@@ -56,6 +61,28 @@ void EnrRackEditor::setModuleRowSpans() {
                     static_cast<std::underlying_type_t<EnrRackModel::Column>>(
                         EnrRackModel::Column::Module),
                     lugsPerModule, 1);
+  }
+}
+
+void EnrRackEditor::tableSelectionChanged() {
+  const auto current = table_->selectionModel()->currentIndex();
+  if (current.isValid()) {
+    preview_->selectLug(current.row());
+  } else {
+    preview_->clearSelection();
+  }
+}
+
+void EnrRackEditor::previewSelectionChanged() {
+  const auto current = preview_->selectionModel()->currentIndex();
+  if (current.isValid()) {
+    table_->selectionModel()->setCurrentIndex(
+        model_->index(current.row() * 2,
+                      static_cast<int>(EnrRackModel::Column::Address)),
+        QItemSelectionModel::Clear | QItemSelectionModel::Select |
+            QItemSelectionModel::Current);
+  } else {
+    table_->clearSelection();
   }
 }
 

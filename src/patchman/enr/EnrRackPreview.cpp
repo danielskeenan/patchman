@@ -7,6 +7,7 @@
  */
 
 #include "EnrRackPreview.h"
+#include <QItemSelectionModel>
 
 namespace patchman {
 
@@ -77,6 +78,14 @@ QListView::item:selected {
 }
 )");
   QListView::setModel(model_);
+}
+
+void EnrRackPreview::selectLug(int lug) {
+  const auto slot = lug / 2;
+  selectionModel()->setCurrentIndex(model_->index(slot),
+                                    QItemSelectionModel::Clear |
+                                        QItemSelectionModel::Select |
+                                        QItemSelectionModel::Current);
 }
 
 } // namespace patchman

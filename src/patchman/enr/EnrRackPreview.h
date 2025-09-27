@@ -37,6 +37,9 @@ class EnrRackPreview : public QListView {
 public:
   explicit EnrRackPreview(EnrRack *rack, QWidget *parent = nullptr);
 
+public Q_SLOTS:
+  void selectLug(int lug);
+
 private:
   detail::EnrRackPreviewModel *model_;
 };
