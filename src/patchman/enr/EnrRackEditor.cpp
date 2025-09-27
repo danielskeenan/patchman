@@ -27,10 +27,10 @@ EnrRackEditor::EnrRackEditor(EnrRack *rack, QWidget *parent)
 
   // Preview
   layout->addWidget(preview_);
-  connect(preview_->selectionModel(), &QItemSelectionModel::currentChanged,
+  connect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
           this, &EnrRackEditor::previewSelectionChanged);
-  connect(table_->selectionModel(), &QItemSelectionModel::currentChanged, this,
-          &EnrRackEditor::tableSelectionChanged);
+  connect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &EnrRackEditor::tableSelectionChanged);
 }
 
 QList<unsigned int> EnrRackEditor::getSelectedCircuits() const {
@@ -65,25 +65,39 @@ void EnrRackEditor::setModuleRowSpans() {
 }
 
 void EnrRackEditor::tableSelectionChanged() {
-  const auto current = table_->selectionModel()->currentIndex();
-  if (current.isValid()) {
-    preview_->selectLug(current.row());
-  } else {
-    preview_->clearSelection();
+  const auto selection = table_->selectionModel()->selection();
+  std::set<int> lugs;
+  for (const auto &range : selection) {
+    for (int lug = range.top(); lug <= range.bottom(); ++lug) {
+      lugs.insert(lug);
+    }
   }
+  // Avoid signal loops.
+  disconnect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
+             this, &EnrRackEditor::previewSelectionChanged);
+  preview_->selectLugs(lugs);
+  connect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &EnrRackEditor::previewSelectionChanged);
 }
 
 void EnrRackEditor::previewSelectionChanged() {
-  const auto current = preview_->selectionModel()->currentIndex();
-  if (current.isValid()) {
-    table_->selectionModel()->setCurrentIndex(
-        model_->index(current.row() * 2,
-                      static_cast<int>(EnrRackModel::Column::Address)),
-        QItemSelectionModel::Clear | QItemSelectionModel::Select |
-            QItemSelectionModel::Current);
-  } else {
-    table_->clearSelection();
+  const auto selection = preview_->selectionModel()->selection();
+  QItemSelection s;
+  for (const auto &range : selection) {
+    for (int slot = range.top(); slot <= range.bottom(); ++slot) {
+      const auto lugA = slot * 2;
+      const auto lugB = lugA + 1;
+      s.select(model_->index(lugA, 0),
+               model_->index(lugB, model_->columnCount({}) - 1));
+    }
   }
+  disconnect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+             this, &EnrRackEditor::tableSelectionChanged);
+  table_->selectionModel()->select(s, QItemSelectionModel::ClearAndSelect);
+  table_->selectionModel()->setCurrentIndex(s.first().topLeft(),
+                                            QItemSelectionModel::Current);
+  connect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &EnrRackEditor::tableSelectionChanged);
 }
 
 } // namespace patchman

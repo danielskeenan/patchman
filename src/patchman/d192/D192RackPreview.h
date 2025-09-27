@@ -40,7 +40,7 @@ public:
   explicit D192RackPreview(D192Rack *rack, QWidget *parent = nullptr);
 
 public Q_SLOTS:
-  void selectLug(int lug);
+  void selectCircuits(const std::set<int> &circuits);
 
 private:
   detail::D192RackPreviewModel *model_;

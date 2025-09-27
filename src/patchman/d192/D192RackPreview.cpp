@@ -94,7 +94,7 @@ D192RackPreview::D192RackPreview(D192Rack *rack, QWidget *parent)
     setColumnWidth(col, 75);
   }
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-  setSelectionMode(QTableView::SingleSelection);
+  setSelectionMode(QTableView::ExtendedSelection);
   setStyleSheet(R"(
 QTableView::item {
   background: white;
@@ -106,10 +106,16 @@ QTableView::item:selected {
 )");
 }
 
-void D192RackPreview::selectLug(const int lug) {
-  selectionModel()->setCurrentIndex(model_->lugIndex(lug),
-                                    QItemSelectionModel::Clear |
-                                        QItemSelectionModel::Select |
-                                        QItemSelectionModel::Current);
+void D192RackPreview::selectCircuits(const std::set<int> &circuits) {
+  QItemSelection s;
+  for (const int circuit : circuits) {
+    const auto ix = model_->lugIndex(circuit);
+    s.select(ix, ix);
+  }
+  selectionModel()->select(s, QItemSelectionModel::ClearAndSelect);
+  if (!s.empty()) {
+    selectionModel()->setCurrentIndex(s.first().topLeft(),
+                                      QItemSelectionModel::Current);
+  }
 }
 } // namespace patchman

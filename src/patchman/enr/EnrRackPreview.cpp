@@ -66,9 +66,11 @@ Qt::ItemFlags EnrRackPreviewModel::flags(const QModelIndex &index) const {
 
 EnrRackPreview::EnrRackPreview(EnrRack *rack, QWidget *parent)
     : QListView(parent), model_(new detail::EnrRackPreviewModel(rack, this)) {
+  QListView::setModel(model_);
   setFixedWidth(100);
   setFrameStyle(QFrame::Panel | QFrame::Raised);
   setLineWidth(1);
+  setSelectionMode(QListView::ExtendedSelection);
   setStyleSheet(R"(
 QListView::item {
   background: white;
@@ -79,15 +81,20 @@ QListView::item:selected {
   background-color: lightgrey;
 }
 )");
-  QListView::setModel(model_);
 }
 
-void EnrRackPreview::selectLug(int lug) {
-  const auto slot = lug / 2;
-  selectionModel()->setCurrentIndex(model_->index(slot),
-                                    QItemSelectionModel::Clear |
-                                        QItemSelectionModel::Select |
-                                        QItemSelectionModel::Current);
+void EnrRackPreview::selectLugs(const std::set<int> &lugs) {
+  QItemSelection s;
+  for (const int lug : lugs) {
+    const auto slot = lug / 2;
+    const auto ix = model_->index(slot);
+    s.select(ix, ix);
+  }
+  selectionModel()->select(s, QItemSelectionModel::ClearAndSelect);
+  if (!s.empty()) {
+    selectionModel()->setCurrentIndex(s.first().topLeft(),
+                                      QItemSelectionModel::Current);
+  }
 }
 
 } // namespace patchman

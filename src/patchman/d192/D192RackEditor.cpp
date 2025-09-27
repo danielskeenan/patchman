@@ -27,10 +27,10 @@ D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
 
   // Preview
   layout->addWidget(preview_);
-  connect(preview_->selectionModel(), &QItemSelectionModel::currentChanged,
+  connect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
           this, &D192RackEditor::previewSelectionChanged);
-  connect(table_->selectionModel(), &QItemSelectionModel::currentChanged, this,
-          &D192RackEditor::tableSelectionChanged);
+  connect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &D192RackEditor::tableSelectionChanged);
 }
 
 QList<unsigned int> D192RackEditor::getSelectedCircuits() const {
@@ -65,29 +65,39 @@ void D192RackEditor::setModuleRowSpans() {
 }
 
 void D192RackEditor::tableSelectionChanged() {
-  const auto current = table_->selectionModel()->currentIndex();
-  if (current.isValid()) {
-    const auto circuit = current.row();
-    preview_->selectLug(rack_->getLugForCircuit(circuit));
-  } else {
-    preview_->clearSelection();
+  const auto selection = table_->selectionModel()->selection();
+  std::set<int> circuits;
+  for (const auto &range : selection) {
+    for (int circuit = range.top(); circuit <= range.bottom(); ++circuit) {
+      circuits.insert(circuit);
+    }
   }
+  // Avoid signal loops.
+  disconnect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
+             this, &D192RackEditor::previewSelectionChanged);
+  preview_->selectCircuits(circuits);
+  connect(preview_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &D192RackEditor::previewSelectionChanged);
 }
 
 void D192RackEditor::previewSelectionChanged() {
-  const auto current = preview_->selectionModel()->currentIndex();
-  if (current.isValid()) {
-    const auto slot = (current.column() * 32) + current.row();
+  const auto selection = preview_->selectionModel()->selection();
+  QItemSelection s;
+  for (const auto &lugIndex : selection.indexes()) {
+    const auto slot = (lugIndex.column() * 32) + lugIndex.row();
     const auto lug = slot * 2;
-    const auto circuit = rack_->getCircuitForLug(lug);
-    table_->selectionModel()->setCurrentIndex(
-        model_->index(circuit,
-                      static_cast<int>(D192RackModel::Column::Address)),
-        QItemSelectionModel::Clear | QItemSelectionModel::Select |
-            QItemSelectionModel::Current);
-  } else {
-    table_->clearSelection();
+    const auto circuitA = rack_->getCircuitForLug(lug);
+    const auto circuitB = circuitA + 1;
+    s.select(model_->index(circuitA, 0),
+             model_->index(circuitB, model_->columnCount({}) - 1));
   }
+  disconnect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+             this, &D192RackEditor::tableSelectionChanged);
+  table_->selectionModel()->select(s, QItemSelectionModel::ClearAndSelect);
+  table_->selectionModel()->setCurrentIndex(s.first().topLeft(),
+                                            QItemSelectionModel::Current);
+  connect(table_->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, &D192RackEditor::tableSelectionChanged);
 }
 
 } // namespace patchman

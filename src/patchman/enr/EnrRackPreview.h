@@ -38,7 +38,7 @@ public:
   explicit EnrRackPreview(EnrRack *rack, QWidget *parent = nullptr);
 
 public Q_SLOTS:
-  void selectLug(int lug);
+  void selectLugs(const std::set<int> &lugs);
 
 private:
   detail::EnrRackPreviewModel *model_;
