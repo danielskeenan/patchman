@@ -32,6 +32,8 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         d192/D192RackEditor.h
         d192/D192RackModel.cpp
         d192/D192RackModel.h
+        d192/D192RackPreview.cpp
+        d192/D192RackPreview.h
         d192/D192ReportBuilder.cpp
         d192/D192ReportBuilder.h
         enr/EnrRackEditor.cpp

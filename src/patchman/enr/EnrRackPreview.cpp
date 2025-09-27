@@ -13,7 +13,9 @@ namespace patchman {
 
 namespace detail {
 EnrRackPreviewModel::EnrRackPreviewModel(EnrRack *rack, QObject *parent)
-    : QAbstractListModel(parent), rack_(rack) {}
+    : QAbstractListModel(parent), rack_(rack) {
+  connect(rack_, &EnrRack::lugChanged, this, &EnrRackPreviewModel::lugChanged);
+}
 
 int EnrRackPreviewModel::rowCount(const QModelIndex &parent) const {
   return static_cast<int>(rack_->getLugCount() / rack_->getLugsPerModule());
@@ -53,8 +55,8 @@ QVariant EnrRackPreviewModel::data(const QModelIndex &index, int role) const {
 }
 
 void EnrRackPreviewModel::lugChanged(unsigned int lug) {
-  const int slot = static_cast<int>(lug) / 2;
-  Q_EMIT(dataChanged(createIndex(slot, 0), createIndex(slot, 0)));
+  const auto ix = index(static_cast<int>(lug) / 2, 0);
+  Q_EMIT(dataChanged(ix, ix));
 }
 
 Qt::ItemFlags EnrRackPreviewModel::flags(const QModelIndex &index) const {
