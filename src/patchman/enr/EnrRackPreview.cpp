@@ -78,7 +78,7 @@ QListView::item {
   border-bottom: 1px solid black;
 }
 QListView::item:selected {
-  background-color: lightgrey;
+  background-color: palette(highlight);
 }
 )");
 }

@@ -95,13 +95,14 @@ D192RackPreview::D192RackPreview(D192Rack *rack, QWidget *parent)
   }
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
   setSelectionMode(QTableView::ExtendedSelection);
+
   setStyleSheet(R"(
 QTableView::item {
   background: white;
   border: 1px solid black;
 }
 QTableView::item:selected {
-  background-color: lightgrey;
+  background-color: palette(highlight);
 }
 )");
 }
