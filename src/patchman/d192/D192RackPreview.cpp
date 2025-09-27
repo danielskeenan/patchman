@@ -94,6 +94,7 @@ D192RackPreview::D192RackPreview(D192Rack *rack, QWidget *parent)
     setColumnWidth(col, 75);
   }
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+  setSelectionMode(QTableView::SingleSelection);
   setStyleSheet(R"(
 QTableView::item {
   background: white;

@@ -27,6 +27,10 @@ D192RackEditor::D192RackEditor(D192Rack *rack, QWidget *parent)
 
   // Preview
   layout->addWidget(preview_);
+  connect(preview_->selectionModel(), &QItemSelectionModel::currentChanged,
+          this, &D192RackEditor::previewSelectionChanged);
+  connect(table_->selectionModel(), &QItemSelectionModel::currentChanged, this,
+          &D192RackEditor::tableSelectionChanged);
 }
 
 QList<unsigned int> D192RackEditor::getSelectedCircuits() const {
@@ -57,6 +61,32 @@ void D192RackEditor::setModuleRowSpans() {
                     static_cast<std::underlying_type_t<D192RackModel::Column>>(
                         D192RackModel::Column::Module),
                     lugsPerModule, 1);
+  }
+}
+
+void D192RackEditor::tableSelectionChanged() {
+  const auto current = table_->selectionModel()->currentIndex();
+  if (current.isValid()) {
+    const auto circuit = current.row();
+    preview_->selectLug(rack_->getLugForCircuit(circuit));
+  } else {
+    preview_->clearSelection();
+  }
+}
+
+void D192RackEditor::previewSelectionChanged() {
+  const auto current = preview_->selectionModel()->currentIndex();
+  if (current.isValid()) {
+    const auto slot = (current.column() * 32) + current.row();
+    const auto lug = slot * 2;
+    const auto circuit = rack_->getCircuitForLug(lug);
+    table_->selectionModel()->setCurrentIndex(
+        model_->index(circuit,
+                      static_cast<int>(D192RackModel::Column::Address)),
+        QItemSelectionModel::Clear | QItemSelectionModel::Select |
+            QItemSelectionModel::Current);
+  } else {
+    table_->clearSelection();
   }
 }
 

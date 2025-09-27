@@ -38,6 +38,8 @@ private:
 
 private Q_SLOTS:
   void setModuleRowSpans();
+  void tableSelectionChanged();
+  void previewSelectionChanged();
 };
 
 } // namespace patchman
