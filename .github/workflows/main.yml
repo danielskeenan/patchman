@@ -6,63 +6,59 @@ on:
   workflow_dispatch: ~
 
 env:
-  BUILD_TYPE: Release
-  SOURCE_DIR: ${{github.workspace}}
-  BUILD_DIR: ${{github.workspace}}/build
-  QT_VERSION: 6.6.*
-  # Increment when the cache must be invalidated.
-  CACHE_IX: 0
+  BUILD_DIR: "${{github.workspace}}/build-release"
+  QT_VERSION: 6.8
 
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - windows-2022
+        system:
+          - os: ubuntu-latest
+            cmake_preset: linux-release
+          - os: windows-latest
+            cmake_preset: windows-release
+            qt_arch: win64_msvc2022_64
     runs-on: ${{matrix.os}}
-    env:
-      # See https://learn.microsoft.com/en-us/vcpkg/consume/binary-caching-github-actions-cache
-      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     steps:
-      - name: Get number of CPU cores
-        uses: SimenB/github-actions-cpu-cores@v2
-        id: cpu-cores
-      - name: Set CMake Parallel level
-        run: |
-          echo "CMAKE_BUILD_PARALLEL_LEVEL=${{ steps.cpu-cores.outputs.count }}" >> ${GITHUB_ENV}
-          echo "CTEST_PARALLEL_LEVEL=1" >> ${GITHUB_ENV}
-      # See https://learn.microsoft.com/en-us/vcpkg/consume/binary-caching-github-actions-cache
-      - name: Export GitHub Actions cache environment variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       #######################
-      # BUILD
+      # SETUP
       #######################
       - uses: actions/checkout@v4
-      - name: Create Build Environment
-        # Use a bash shell so we can use the same syntax for environment variable
-        # access regardless of the host operating system
-        shell: bash
-        # Telling cmake to make the directory adapts the different syntax for each platform
-        run: cmake -E make_directory "${BUILD_DIR}"
+
+      - name: Install System Packages (Linux)
+        if: ${{runner.os == 'Linux'}}
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install qt6-base-dev libqt6svg6-dev qt6-tools-dev libglx-dev libgl1-mesa-dev
+
       - name: Install Qt
         # Don't need this on Linux, as Qt will come from the system package manager above
         if: ${{runner.os != 'Linux'}}
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           dir: ${{github.workspace}}/.qt
           version: ${{env.QT_VERSION}}
+          arch: ${{matrix.system.qt_arch}}
           cache: true
+
+      #######################
+      # BUILD
+      #######################
       - name: Configure CMake
-        shell: bash
-        run: cmake -S "${SOURCE_DIR}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TESTING=On -DBUILD_PACKAGE=On -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        run: >
+          cmake
+          -G Ninja
+          -S "${{github.workspace}}"
+          -B "${BUILD_DIR}"
+          --preset=${{matrix.system.cmake_preset}}
+          -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install_root"
+          -DBUILD_TESTING=On
+          -DBUILD_PACKAGE=On
       - name: Build
         shell: bash
-        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
+        run: cmake --build "${BUILD_DIR}"
 
       #######################
       # TEST
@@ -70,9 +66,9 @@ jobs:
       - name: Test
         working-directory: ${{env.BUILD_DIR}}
         shell: bash
-        run: ctest -C ${BUILD_TYPE}
+        run: ctest
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: test_results_${{runner.os}}
@@ -86,7 +82,7 @@ jobs:
         shell: bash
         run: cpack -B "${BUILD_DIR}/packages"
       - name: Upload failed package artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: failed_package_${{runner.os}}
@@ -107,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref_type == 'tag' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: repo
       - name: Get built packages
