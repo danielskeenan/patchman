@@ -36,6 +36,18 @@ bool reallyClearSettings(QApplication &app)
     return dialog->exec() == QMessageBox::Yes;
 }
 
+bool isDarkMode() {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto scheme = qApp->styleHints()->colorScheme();
+    return scheme == Qt::ColorScheme::Dark;
+#else
+    const auto defaultPalette = qApp->palette();
+    const auto text = defaultPalette.color(QPalette::WindowText);
+    const auto window = defaultPalette.color(QPalette::Window);
+    return text.lightness() > window.lightness();
+#endif
+}
+
 void updateIconTheme()
 {
     if (qApp == nullptr) {
@@ -43,7 +55,7 @@ void updateIconTheme()
         return;
     }
 
-    if (qApp->styleHints()->colorScheme() == Qt::ColorScheme::Dark) {
+    if (isDarkMode()) {
         QIcon::setFallbackThemeName("patchman-dark");
     }
     else {
