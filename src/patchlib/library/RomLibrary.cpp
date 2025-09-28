@@ -152,9 +152,10 @@ QFuture<QList<RomInfo>> RomLibrary::getAllRoms(const QStringList &searchPaths)
         promise.setProgressValue(0);
         int fileCount = 0;
         for (const auto &searchPath : searchPaths) {
-            auto it = getRomDirIterator(searchPath);
-            while (!it.next().isEmpty()) {
-                if (it.fileInfo().isFile()) {
+            for (auto it = getRomDirIterator(searchPath); it.hasNext();) {
+                const auto fileInfo = it.nextFileInfo();
+                qDebug() << "Checking" << fileInfo.absoluteFilePath();
+                if (fileInfo.isFile()) {
                     ++fileCount;
                 }
             }
