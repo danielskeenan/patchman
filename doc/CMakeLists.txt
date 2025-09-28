@@ -3,11 +3,12 @@ find_package(Python3 COMPONENTS Interpreter REQUIRED)
 # Create venv
 message(STATUS "Creating Sphinx venv")
 execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv .venv
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         COMMAND_ERROR_IS_FATAL ANY
 )
+set(SPHINX_VENV "${CMAKE_CURRENT_BINARY_DIR}/.venv")
 find_program(SPHINX_PIP pip
-        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/.venv"
+        PATHS "${SPHINX_VENV}"
         PATH_SUFFIXES bin Scripts
         NO_DEFAULT_PATH
         REQUIRED
@@ -27,7 +28,7 @@ file(WRITE "${CMAKE_CURRENT_LIST_DIR}/build_info.json" "${SPHINX_BUILD_INFO}")
 
 # Generate doc
 find_program(SPHINX_BUILD sphinx-build
-        PATHS "${CMAKE_CURRENT_SOURCE_DIR}/.venv"
+        PATHS "${SPHINX_VENV}"
         PATH_SUFFIXES bin Scripts
         NO_DEFAULT_PATH
         REQUIRED
