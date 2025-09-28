@@ -58,7 +58,6 @@ jobs:
       - name: Configure CMake
         run: >
           cmake
-          -G Ninja
           -S "${{github.workspace}}"
           -B "${BUILD_DIR}"
           --preset=${{matrix.system.cmake_preset}}
