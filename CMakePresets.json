@@ -11,6 +11,7 @@
       "displayName": "Debug (Generic Base)",
       "description": "Debug build",
       "binaryDir": "${sourceDir}/build-debug",
+      "generator": "Ninja",
       "cacheVariables": {
         "BUILD_APP": true,
         "BUILD_PACKAGE": false,
@@ -23,6 +24,7 @@
       "displayName": "Release (Generic Base)",
       "description": "Release build",
       "binaryDir": "${sourceDir}/build-release",
+      "generator": "Ninja",
       "cacheVariables": {
         "BUILD_APP": true,
         "BUILD_PACKAGE": true,
@@ -34,7 +36,6 @@
       "name": "linux-debug",
       "displayName": "Debug (Linux)",
       "inherits": "debug",
-      "generator": "Ninja",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
@@ -48,7 +49,6 @@
       "name": "linux-release",
       "displayName": "Release (Linux)",
       "inherits": "release",
-      "generator": "Ninja",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
