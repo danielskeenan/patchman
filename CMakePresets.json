@@ -7,43 +7,84 @@
   },
   "configurePresets": [
     {
-      "name": "linux-debug",
-      "displayName": "Debug (Linux)",
+      "name": "debug",
+      "displayName": "Debug (Generic Base)",
       "description": "Debug build, Linux",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build-debug",
       "cacheVariables": {
         "BUILD_APP": true,
         "BUILD_PACKAGE": false,
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Wno-unused-parameter -Og"
+        "CMAKE_BUILD_TYPE": "Debug"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
     },
     {
-      "name": "linux-release",
-      "displayName": "Release (Linux)",
+      "name": "release",
+      "displayName": "Release (Generic Base)",
       "description": "Release build, Linux",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build-release",
       "cacheVariables": {
         "BUILD_APP": true,
         "BUILD_PACKAGE": true,
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Werror -Wno-unused-parameter -O3",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+        "CMAKE_BUILD_TYPE": "Release"
       },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "Debug (Linux)",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Wno-unused-parameter -Og"
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Release (Linux)",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_INIT": "-Wall -Wextra -Wpedantic -Wconversion -Werror -Wno-unused-parameter -O3",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Debug (Windows)",
+      "inherits": "debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_INIT": "/W3 /wd4101 /Od"
+      }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Release (Windows)",
+      "inherits": "release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_INIT": "/W3 /wd4101 /WX /O2",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+      }
     }
   ]
 }
