@@ -102,7 +102,7 @@ jobs:
       - name: Upload packages
         uses: actions/upload-artifact@v4
         with:
-          name: packages
+          name: packages_${{runner.os}}_${{runner.arch}}
           path: ${{env.BUILD_DIR}}/packages/*.*
           if-no-files-found: error
 
@@ -122,8 +122,9 @@ jobs:
         uses: actions/download-artifact@v4
         id: download
         with:
-          name: packages
+          pattern: packages_*
           path: packages
+          merge-multiple: true
       - name: Determine channel
         id: channel
         uses: dkershner6/switch-case-action@v1
