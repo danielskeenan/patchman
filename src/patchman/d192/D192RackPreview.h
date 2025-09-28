@@ -11,6 +11,7 @@
 
 #include "patchlib/D192.h"
 
+#include <set>
 #include <QTableView>
 
 namespace patchman {

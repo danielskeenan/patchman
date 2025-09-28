@@ -11,6 +11,7 @@
 
 #include "patchlib/Enr.h"
 
+#include <set>
 #include <QListView>
 
 namespace patchman {

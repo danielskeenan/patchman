@@ -526,7 +526,7 @@ QByteArray D192Rack::toByteArray() const
 
 unsigned int D192Rack::getLugCount() const
 {
-    return kLugToCircuitMap.size();
+    return static_cast<unsigned int>(kLugToCircuitMap.size());
 }
 
 unsigned int D192Rack::getLugsPerModule() const
