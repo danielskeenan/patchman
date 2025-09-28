@@ -9,6 +9,10 @@ env:
   BUILD_DIR: "${{github.workspace}}/build-release"
   QT_VERSION: 6.8
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     strategy:
@@ -20,7 +24,7 @@ jobs:
           - os: windows-latest
             cmake_preset: windows-release
             qt_arch: win64_msvc2022_64
-    runs-on: ${{matrix.os}}
+    runs-on: ${{matrix.system.os}}
     steps:
       #######################
       # SETUP
