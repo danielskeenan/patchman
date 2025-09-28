@@ -17,8 +17,6 @@
 #include <QLibraryInfo>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QStyleFactory>
-#include <QStyleHints>
 #include <QTranslator>
 
 /**

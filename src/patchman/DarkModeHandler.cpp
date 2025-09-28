@@ -10,6 +10,8 @@
 #include <QApplication>
 #include <QIcon>
 #include <QPalette>
+#include <QStyle>
+#include <QStyleFactory>
 #include <QStyleHints>
 
 namespace patchman {
@@ -36,7 +38,7 @@ DarkModeHandler::DarkModeHandler(QObject *parent)
     if (qApp->style()->name() != "windows11") {
         auto *style = QStyleFactory::create("fusion");
         if (style != nullptr) {
-            app.setStyle(style);
+            qApp->setStyle(style);
         }
     }
 #endif
