@@ -28,6 +28,8 @@ namespace patchman
 EditorWindow::EditorWindow(Rom *rom, const QString &path, QWidget *parent)
     : QMainWindow(parent), rom_(rom)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+
     setWindowFilePath(path);
     rom_->setParent(this);
     initMenus();
