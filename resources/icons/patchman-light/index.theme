@@ -2,7 +2,7 @@
 Name=patchman-light
 Comment=Patchman Light
 
-Directories=24
+Directories=24,scalable
 ScaledDirectories=24@2x
 
 [24]
@@ -16,3 +16,9 @@ Size=24
 Scale=2
 Type=Threshold
 Threshold=2
+
+[scalable]
+Size=24
+Type=Scalable
+MinSize=1
+MaxSize=256
