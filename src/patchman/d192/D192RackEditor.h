@@ -23,23 +23,22 @@ namespace patchman {
 /**
  * D192 rack editor widget.
  */
-class D192RackEditor : public RackEditor {
-  Q_OBJECT
+class D192RackEditor : public RackEditor
+{
+    Q_OBJECT
 public:
-  explicit D192RackEditor(D192Rack *rack, QWidget *parent);
+    explicit D192RackEditor(D192Rack *rack, QWidget *parent);
 
-  [[nodiscard]] QList<unsigned int> getSelectedCircuits() const override;
+    [[nodiscard]] QList<unsigned int> getSelectedCircuits() const override;
+    void selectCircuits(const QList<unsigned int> &circuits) override;
 
 private:
-  D192Rack *rack_;
-  QTableView *table_;
-  D192RackModel *model_;
-  D192RackPreview *preview_;
+    D192Rack *rack_;
+    QTableView *table_;
+    D192RackModel *model_;
 
 private Q_SLOTS:
-  void setModuleRowSpans();
-  void tableSelectionChanged();
-  void previewSelectionChanged();
+    void setModuleRowSpans();
 };
 
 } // namespace patchman

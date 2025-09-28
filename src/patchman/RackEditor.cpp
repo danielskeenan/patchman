@@ -6,36 +6,47 @@
  * @copyright GNU GPLv3
  */
 
-#include <QVBoxLayout>
-#include <QPushButton>
 #include "RackEditor.h"
-#include "d192/D192RackEditor.h"
 #include "AutoNumberDialog.h"
+#include "d192/D192RackEditor.h"
 #include "enr/EnrRackEditor.h"
+#include <QPushButton>
+#include <QVBoxLayout>
 
-namespace patchman
-{
+namespace patchman {
 
 RackEditor *RackEditor::create(Rack *rack, QWidget *parent)
 {
     switch (rack->getRackType()) {
-        case Rack::Type::D192Rack:
-            return new D192RackEditor(dynamic_cast<D192Rack *>(rack), parent);
-        case Rack::Type::Enr96:
-            return new EnrRackEditor(dynamic_cast<EnrRack *>(rack), parent);
+    case Rack::Type::D192Rack:
+        return new D192RackEditor(dynamic_cast<D192Rack *>(rack), parent);
+    case Rack::Type::Enr96:
+        return new EnrRackEditor(dynamic_cast<EnrRack *>(rack), parent);
     }
     Q_UNREACHABLE();
 }
 
+RackEditor::RackEditor(Rack *rack, QWidget *parent)
+    : QWidget(parent)
+{
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+}
+
 RackEditorContainer::RackEditorContainer(Rack *rack, QWidget *parent)
-    : QWidget(parent), rack_(rack), editor_(RackEditor::create(rack_, this))
+    : QWidget(parent)
+    , rack_(rack)
+    , editor_(RackEditor::create(rack_, this))
+    , preview_(RackPreview::create(rack, this))
 {
     connect(editor_, &RackEditor::dataChanged, this, &RackEditorContainer::dataChanged);
 
-    auto *layout = new QVBoxLayout(this);
+    auto *layout = new QHBoxLayout(this);
+
+    auto *editorLayout = new QVBoxLayout;
+    layout->addLayout(editorLayout);
 
     auto *buttonsLayout = new QHBoxLayout;
-    layout->addLayout(buttonsLayout);
+    editorLayout->addLayout(buttonsLayout);
 
     auto *autonumber = new QPushButton(tr("Autonumber"), this);
     connect(autonumber, &QPushButton::clicked, this, &RackEditorContainer::autonumber);
@@ -46,19 +57,40 @@ RackEditorContainer::RackEditorContainer(Rack *rack, QWidget *parent)
     buttonsLayout->addWidget(unpatch);
     buttonsLayout->addStretch();
 
-    layout->addWidget(editor_);
+    // Editor
+    editorLayout->addWidget(editor_);
+
+    // Preview
+    if (preview_ != nullptr) {
+        layout->addWidget(preview_);
+        connect(
+            editor_,
+            &RackEditor::selectionChanged,
+            this,
+            &RackEditorContainer::tableSelectionChanged);
+        connect(
+            preview_,
+            &RackPreview::selectionChanged,
+            this,
+            &RackEditorContainer::previewSelectionChanged);
+    }
 }
 
 void RackEditorContainer::autonumber()
 {
-    const auto circuits = editor_->getSelectedCircuits();
+    auto circuits = editor_->getSelectedCircuits();
+    if (circuits.empty()) {
+        circuits.resize(rack_->getLugCount());
+        std::iota(circuits.begin(), circuits.end(), 0);
+    }
     AutoNumberDialog dialog(this);
     if (dialog.exec() != AutoNumberDialog::Accepted) {
         return;
     }
     const auto options = dialog.getOptions();
     unsigned int nextAddress = options.start;
-    for (auto circuitIt = circuits.begin(); circuitIt != circuits.end(); circuitIt += options.offset) {
+    for (auto circuitIt = circuits.begin(); circuitIt != circuits.end();
+         circuitIt += options.offset) {
         const auto circuit = *circuitIt;
         const auto lug = rack_->getLugForCircuit(circuit);
         rack_->setLugAddress(lug, nextAddress);
@@ -68,11 +100,25 @@ void RackEditorContainer::autonumber()
 
 void RackEditorContainer::unpatch()
 {
-    const auto circuits = editor_->getSelectedCircuits();
-    for (const auto circuit: circuits) {
+    auto circuits = editor_->getSelectedCircuits();
+    if (circuits.empty()) {
+        circuits.resize(rack_->getLugCount());
+        std::iota(circuits.begin(), circuits.end(), 0);
+    }
+    for (const auto circuit : circuits) {
         const auto lug = rack_->getLugForCircuit(circuit);
         rack_->setLugAddress(lug, 0);
     }
 }
 
-} // patchman
+void RackEditorContainer::tableSelectionChanged()
+{
+    preview_->selectCircuits(editor_->getSelectedCircuits());
+}
+
+void RackEditorContainer::previewSelectionChanged()
+{
+    editor_->selectCircuits(preview_->getSelectedCircuits());
+}
+
+} // namespace patchman

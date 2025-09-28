@@ -10,41 +10,45 @@
 #define SRC_PATCHMAN_D192_D192RACKPREVIEW_H
 
 #include "patchlib/D192.h"
-
-#include <set>
 #include <QTableView>
+#include "../RackPreview.h"
 
 namespace patchman {
 
 namespace detail {
-class D192RackPreviewModel : public QAbstractTableModel {
-  Q_OBJECT
+class D192RackPreviewModel : public QAbstractTableModel
+{
+    Q_OBJECT
 public:
-  explicit D192RackPreviewModel(D192Rack *rack, QObject *parent = nullptr);
-  int rowCount(const QModelIndex &parent) const override;
-  int columnCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
-  [[nodiscard]] QModelIndex lugIndex(int lug) const;
+    explicit D192RackPreviewModel(D192Rack *rack, QObject *parent = nullptr);
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    [[nodiscard]] QModelIndex lugIndex(unsigned int lug) const;
 
 private:
-  D192Rack *rack_;
+    D192Rack *rack_;
 
 private Q_SLOTS:
-  void lugChanged(unsigned int lug);
+    void lugChanged(unsigned int lug);
 };
 } // namespace detail
 
-class D192RackPreview : public QTableView {
-  Q_OBJECT
+class D192RackPreview : public RackPreview
+{
+    Q_OBJECT
 public:
-  explicit D192RackPreview(D192Rack *rack, QWidget *parent = nullptr);
+    explicit D192RackPreview(D192Rack *rack, QWidget *parent = nullptr);
+    QList<unsigned int> getSelectedCircuits() const override;
 
 public Q_SLOTS:
-  void selectCircuits(const std::set<int> &circuits);
+    void selectCircuits(const QList<unsigned int> &circuits) override;
 
 private:
-  detail::D192RackPreviewModel *model_;
+    D192Rack* rack_;
+    detail::D192RackPreviewModel *model_;
+    QTableView *table_;
 };
 
 } // namespace patchman

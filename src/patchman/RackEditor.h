@@ -10,21 +10,20 @@
 #define RACKEDITOR_H
 
 #include <QWidget>
+
+#include "RackPreview.h"
 #include "patchlib/Rack.h"
 
-namespace patchman
-{
+namespace patchman {
 
 /**
  * Base class for rack editor widgets.
  */
-class RackEditor: public QWidget
+class RackEditor : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    explicit RackEditor(Rack *rack, QWidget *parent = nullptr)
-        : QWidget(parent)
-    {}
+    explicit RackEditor(Rack *rack, QWidget *parent = nullptr);
 
     static RackEditor *create(Rack *rack, QWidget *parent = nullptr);
 
@@ -32,14 +31,18 @@ public:
 
 Q_SIGNALS:
     void dataChanged();
+    void selectionChanged();
+
+public Q_SLOTS:
+    virtual void selectCircuits(const QList<unsigned int> &circuits) = 0;
 };
 
 /**
  * Contains a RackEditor widget, adding tool buttons around the widget.
  */
-class RackEditorContainer: public QWidget
+class RackEditorContainer : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit RackEditorContainer(Rack *rack, QWidget *parent = nullptr);
 
@@ -49,12 +52,15 @@ Q_SIGNALS:
 private:
     Rack *rack_;
     RackEditor *editor_;
+    RackPreview *preview_;
 
 private Q_SLOTS:
     void autonumber();
     void unpatch();
+    void tableSelectionChanged();
+    void previewSelectionChanged();
 };
 
-} // patchman
+} // namespace patchman
 
 #endif //RACKEDITOR_H

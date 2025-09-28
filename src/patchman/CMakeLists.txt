@@ -16,6 +16,8 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         RackEditor.h
         RackModel.cpp
         RackModel.h
+        RackPreview.cpp
+        RackPreview.h
         ReportBuilder.cpp
         ReportBuilder.h
         RomEditor.cpp

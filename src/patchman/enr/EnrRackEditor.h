@@ -28,17 +28,15 @@ public:
     explicit EnrRackEditor(EnrRack *rack, QWidget *parent);
 
     [[nodiscard]] QList<unsigned int> getSelectedCircuits() const override;
+    void selectCircuits(const QList<unsigned int> &circuits) override;
 
 private:
     EnrRack *rack_;
     QTableView *table_;
     EnrRackModel *model_;
-    EnrRackPreview* preview_;
 
 private Q_SLOTS:
     void setModuleRowSpans();
-    void tableSelectionChanged();
-    void previewSelectionChanged();
 };
 
 } // patchman

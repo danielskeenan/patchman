@@ -11,38 +11,43 @@
 
 #include "patchlib/Enr.h"
 
-#include <set>
+#include "../RackPreview.h"
 #include <QListView>
 
 namespace patchman {
 
 namespace detail {
-class EnrRackPreviewModel : public QAbstractListModel {
-  Q_OBJECT
+class EnrRackPreviewModel : public QAbstractListModel
+{
+    Q_OBJECT
 public:
-  explicit EnrRackPreviewModel(EnrRack *rack, QObject *parent = nullptr);
-  int rowCount(const QModelIndex &parent) const override;
-  QVariant data(const QModelIndex &index, int role) const override;
-  Qt::ItemFlags flags(const QModelIndex &index) const override;
+    explicit EnrRackPreviewModel(EnrRack *rack, QObject *parent = nullptr);
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
-  EnrRack *rack_;
+    EnrRack *rack_;
 
 private Q_SLOTS:
-  void lugChanged(unsigned int lug);
+    void lugChanged(unsigned int lug);
 };
 } // namespace detail
 
-class EnrRackPreview : public QListView {
-  Q_OBJECT
+class EnrRackPreview : public RackPreview
+{
+    Q_OBJECT
 public:
-  explicit EnrRackPreview(EnrRack *rack, QWidget *parent = nullptr);
+    explicit EnrRackPreview(EnrRack *rack, QWidget *parent = nullptr);
+    QList<unsigned int> getSelectedCircuits() const override;
 
 public Q_SLOTS:
-  void selectLugs(const std::set<int> &lugs);
+    void selectCircuits(const QList<unsigned int> &circuits) override;
 
 private:
-  detail::EnrRackPreviewModel *model_;
+    EnrRack *rack_;
+    QListView *list_;
+    detail::EnrRackPreviewModel *model_;
 };
 
 } // namespace patchman
