@@ -76,7 +76,11 @@ int main(int argc, char *argv[])
     const QIcon defaultWindowIcon(":/icons/patchman.svg");
     app.setWindowIcon(defaultWindowIcon);
     updateIconTheme();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     app.connect(app.styleHints(), &QStyleHints::colorSchemeChanged, &updateIconTheme);
+#else
+    app.connect(qApp, &QApplication::paletteChanged, &updateIconTheme);
+#endif
 
     Q_INIT_RESOURCE(bin);
 
