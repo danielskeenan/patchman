@@ -6,14 +6,15 @@
  * @copyright GNU GPLv3
  */
 
-#include <QVBoxLayout>
-#include <QFormLayout>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QFileDialog>
-#include <ranges>
 #include "SettingsDialog.h"
 #include "Settings.h"
+#include "qiconFromTheme.h"
+#include <ranges>
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QFormLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 namespace patchman
 {
@@ -32,11 +33,11 @@ SearchPathsWidget::SearchPathsWidget(QWidget *parent)
     connect(listWidget_, &QListWidget::itemSelectionChanged, this, &SearchPathsWidget::selectionChanged);
 
     // Add action
-    actions_.addPath = new QAction(QIcon::fromTheme("list-add"), tr("Add"), this);
+    actions_.addPath = new QAction(qiconFromTheme(ThemeIcon::ListAdd), tr("Add"), this);
     connect(actions_.addPath, &QAction::triggered, this, &SearchPathsWidget::addSearchPath);
     listWidget_->addAction(actions_.addPath);
     // Remove action
-    actions_.removePath = new QAction(QIcon::fromTheme("list-remove"), tr("Remove"), this);
+    actions_.removePath = new QAction(qiconFromTheme(ThemeIcon::ListRemove), tr("Remove"), this);
     connect(actions_.removePath, &QAction::triggered, this, &SearchPathsWidget::removeSearchPath);
     listWidget_->addAction(actions_.removePath);
 

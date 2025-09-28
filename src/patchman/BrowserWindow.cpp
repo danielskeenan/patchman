@@ -29,6 +29,8 @@
 #include <QStatusBar>
 #include <QClipboard>
 
+#include "qiconFromTheme.h"
+
 namespace patchman
 {
 
@@ -53,7 +55,7 @@ void BrowserWindow::initMenus()
     QMenu *menuFile = menuBar()->addMenu(tr("&File"));
     // New
     actions_.fileNew = new QMenu(tr("&New"), this);
-    actions_.fileNew->setIcon(QIcon::fromTheme("document-new"));
+    actions_.fileNew->setIcon(qiconFromTheme(ThemeIcon::DocumentNew));
     for (const auto romType : Rom::allTypes()) {
         auto newAction = new QAction(Rom::typeName(romType), actions_.fileNew);
         connect(newAction, &QAction::triggered, [romType, this]()
@@ -65,13 +67,13 @@ void BrowserWindow::initMenus()
     menuFile->addMenu(actions_.fileNew);
     // Open
     actions_.fileOpen = new QAction(tr("&Open"), this);
-    actions_.fileOpen->setIcon(QIcon::fromTheme("document-open"));
+    actions_.fileOpen->setIcon(qiconFromTheme(ThemeIcon::DocumentOpen));
     actions_.fileOpen->setShortcut(QKeySequence::StandardKey::Open);
     connect(actions_.fileOpen, &QAction::triggered, this, &BrowserWindow::open);
     menuFile->addAction(actions_.fileOpen);
     // Recent
     actions_.fileRecent = new QMenu(tr("&Recent"), this);
-    actions_.fileRecent->setIcon(QIcon::fromTheme("folder-open-recent"));
+    actions_.fileRecent->setIcon(qiconFromTheme(ThemeIcon::DocumentOpenRecent));
     menuFile->addMenu(actions_.fileRecent);
     // Create Report
     actions_.fileCreateReport = new QAction(tr("&Create Report"), this);
@@ -89,7 +91,7 @@ void BrowserWindow::initMenus()
     menuFile->addSeparator();
     // Exit
     actions_.fileExit = new QAction(tr("E&xit"), this);
-    actions_.fileExit->setIcon(QIcon::fromTheme("application-exit"));
+    actions_.fileExit->setIcon(qiconFromTheme(ThemeIcon::ApplicationExit));
     actions_.fileExit->setShortcut(QKeySequence::StandardKey::Quit);
     connect(actions_.fileExit, &QAction::triggered, this, &BrowserWindow::close);
     menuFile->addAction(actions_.fileExit);
@@ -121,12 +123,12 @@ void BrowserWindow::initMenus()
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
     // Help
     actions_.helpHelp = new QAction(tr("&Help"), this);
-    actions_.helpHelp->setIcon(QIcon::fromTheme("help-contents"));
+    actions_.helpHelp->setIcon(qiconFromTheme(ThemeIcon::HelpFaq));
     connect(actions_.helpHelp, &QAction::triggered, this, &BrowserWindow::help);
     menuHelp->addAction(actions_.helpHelp);
     // About
     actions_.helpAbout = new QAction(tr("&About"), this);
-    actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
+    actions_.helpAbout->setIcon(qiconFromTheme(ThemeIcon::HelpAbout));
     connect(actions_.helpAbout, &QAction::triggered, this, &BrowserWindow::about);
     menuHelp->addAction(actions_.helpAbout);
     // Homepage
@@ -136,7 +138,7 @@ void BrowserWindow::initMenus()
     menuHelp->addAction(actions_.helpHomepage);
     // Check for updates
     actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
-    actions_.helpUpdate->setIcon(QIcon::fromTheme("download"));
+    actions_.helpUpdate->setIcon(qiconFromTheme(ThemeIcon::SoftwareUpdateAvailable));
     connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
     menuHelp->addAction(actions_.helpUpdate);
 

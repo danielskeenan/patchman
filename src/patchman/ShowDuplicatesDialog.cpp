@@ -11,7 +11,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include "ShowDuplicatesDialog.h"
+
 #include "patchlib/library/RomLibrary.h"
+#include "qiconFromTheme.h"
 #include "showPathInFileBrowser.h"
 
 namespace patchman
@@ -41,7 +43,7 @@ ShowDuplicatesDialog::ShowDuplicatesDialog(const RomInfo &romInfo, QWidget *pare
 
     // Buttons
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
-    auto refreshButton = new QPushButton(QIcon::fromTheme("view-refresh"), tr("Refresh"), this);
+    auto refreshButton = new QPushButton(qiconFromTheme(ThemeIcon::ViewRefresh), tr("Refresh"), this);
     connect(refreshButton, &QPushButton::clicked, this, &ShowDuplicatesDialog::refreshDuplicates);
     buttonBox->addButton(refreshButton, QDialogButtonBox::ActionRole);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &ShowDuplicatesDialog::close);

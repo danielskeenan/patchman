@@ -22,6 +22,8 @@
 #include <QStatusBar>
 #include <QDesktopServices>
 
+#include "qiconFromTheme.h"
+
 namespace patchman
 {
 
@@ -42,24 +44,24 @@ void EditorWindow::initMenus()
     QMenu *menuFile = menuBar()->addMenu(tr("&File"));
     // Save
     actions_.fileSave = new QAction(tr("&Save"), this);
-    actions_.fileSave->setIcon(QIcon::fromTheme("document-save"));
+    actions_.fileSave->setIcon(qiconFromTheme(ThemeIcon::DocumentSave));
     actions_.fileSave->setShortcut(QKeySequence::StandardKey::Save);
     connect(actions_.fileSave, &QAction::triggered, this, &EditorWindow::save);
     menuFile->addAction(actions_.fileSave);
     // Save As
     actions_.fileSaveAs = new QAction(tr("Save &As"), this);
-    actions_.fileSaveAs->setIcon(QIcon::fromTheme("document-save-as"));
+    actions_.fileSaveAs->setIcon(qiconFromTheme(ThemeIcon::DocumentSaveAs));
     actions_.fileSaveAs->setShortcut(QKeySequence::StandardKey::SaveAs);
     connect(actions_.fileSaveAs, &QAction::triggered, this, &EditorWindow::saveAs);
     menuFile->addAction(actions_.fileSaveAs);
     // Create Report
-    actions_.fileCreateReport = new QAction(tr("&Create Report"), this);
+    actions_.fileCreateReport = new QAction(tr("Create &Report"), this);
     actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
     connect(actions_.fileCreateReport, &QAction::triggered, this, &EditorWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
-    // Exit
-    actions_.fileClose = new QAction(tr("E&xit"), this);
-    actions_.fileClose->setIcon(QIcon::fromTheme("application-exit"));
+    // Close
+    actions_.fileClose = new QAction(tr("&Close"), this);
+    actions_.fileClose->setIcon(qiconFromTheme(ThemeIcon::WindowClose));
     actions_.fileClose->setShortcut(QKeySequence::StandardKey::Close);
     connect(actions_.fileClose, &QAction::triggered, this, &EditorWindow::close);
     menuFile->addAction(actions_.fileClose);
@@ -68,12 +70,12 @@ void EditorWindow::initMenus()
     QMenu *menuHelp = menuBar()->addMenu(tr("&Help"));
     // Help
     actions_.helpHelp = new QAction(tr("&Help"), this);
-    actions_.helpHelp->setIcon(QIcon::fromTheme("help-contents"));
+    actions_.helpHelp->setIcon(qiconFromTheme(ThemeIcon::HelpFaq));
     connect(actions_.helpHelp, &QAction::triggered, this, &EditorWindow::help);
     menuHelp->addAction(actions_.helpHelp);
     // About
     actions_.helpAbout = new QAction(tr("&About"), this);
-    actions_.helpAbout->setIcon(QIcon::fromTheme("help-about"));
+    actions_.helpAbout->setIcon(qiconFromTheme(ThemeIcon::HelpAbout));
     connect(actions_.helpAbout, &QAction::triggered, this, &EditorWindow::about);
     menuHelp->addAction(actions_.helpAbout);
     // Homepage
@@ -83,7 +85,7 @@ void EditorWindow::initMenus()
     menuHelp->addAction(actions_.helpHomepage);
     // Check for updates
     actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
-    actions_.helpUpdate->setIcon(QIcon::fromTheme("download"));
+    actions_.helpUpdate->setIcon(qiconFromTheme(ThemeIcon::SoftwareUpdateAvailable));
     connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
     menuHelp->addAction(actions_.helpUpdate);
 
