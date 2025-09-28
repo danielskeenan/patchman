@@ -64,28 +64,6 @@ qt_add_resources(${PROJECT_NAME} icons
         BASE "${PROJECT_SOURCE_DIR}/resources/icons"
         FILES ${ICON_RESOURCES}
 )
-#include(FetchContent)
-#fetchcontent_declare(qiconthemebuilder
-#        GIT_REPOSITORY "https://github.com/danielskeenan/qiconthemebuilder.git"
-#        GIT_TAG "main"
-#)
-#fetchcontent_makeavailable(qiconthemebuilder)
-#build_breeze()
-#set(ICON_PATTERNS
-#        "application-exit"
-#        "configure"
-#        "document-(duplicate|edit|new|open|save|save-as)"
-#        "edit-copy-path"
-#        "folder-open-recent"
-#        "help-(about|contents)"
-#        "internet-web-browser"
-#        "list-(add|remove)"
-#        "office-report"
-#        "system-file-manager"
-#        "view-refresh"
-#)
-#create_icon_theme(patchman-light TARGET ${PROJECT_NAME} SOURCE "${breeze_icons_DIR}/breeze" ICON_PATTERNS ${ICON_PATTERNS})
-#create_icon_theme(patchman-dark TARGET ${PROJECT_NAME} SOURCE "${breeze_icons_DIR}/breeze-dark" ICON_PATTERNS ${ICON_PATTERNS})
 
 qt_add_translations(${PROJECT_NAME}
         TS_FILES ${PROJECT_SOURCE_DIR}/translations/patchman_en.ts
@@ -124,25 +102,6 @@ else ()
 endif ()
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_html)
-#set(ASSISTANT_PATH "")
-#if (TARGET "${PROJECT_NAME}_doc_qthelp")
-#    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_doc_qthelp_qhc)
-#    # Help installation
-#    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-#        # This is installed as part of the main executable build.
-#    else ()
-#        install(FILES
-#                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qhc"
-#                "${PROJECT_BINARY_DIR}/doc/qthelp/${PROJECT_NAME}.qch"
-#                DESTINATION "${PROJECT_HELP_PATH}"
-#        )
-#        if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#            # Install assistant.
-#            set(ASSISTANT_PATH "$<TARGET_FILE_DIR:Qt::qhelpgenerator>/assistant${CMAKE_EXECUTABLE_SUFFIX}")
-#            install(FILES "${ASSISTANT_PATH}" TYPE BIN)
-#        endif ()
-#    endif ()
-#endif ()
 
 install(TARGETS ${PROJECT_NAME}
         BUNDLE DESTINATION .
