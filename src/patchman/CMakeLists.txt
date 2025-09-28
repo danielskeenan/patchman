@@ -7,6 +7,8 @@ qt_add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
         AutoNumberDialog.h
         BrowserWindow.cpp
         BrowserWindow.h
+        DarkModeHandler.cpp
+        DarkModeHandler.h
         EditorWindow.cpp
         EditorWindow.h
         help.h

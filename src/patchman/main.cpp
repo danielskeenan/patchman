@@ -7,18 +7,19 @@
  */
 
 
-#include <QApplication>
-#include <QPushButton>
-#include <QMessageBox>
-#include <QStyleFactory>
-#include <QTranslator>
-#include <QLibraryInfo>
-#include <QStyleHints>
-#include "patchman_config.h"
-#include "Settings.h"
 #include "BrowserWindow.h"
+#include "DarkModeHandler.h"
+#include "Settings.h"
 #include "patchlib/library/RomLibrary.h"
+#include "patchman_config.h"
 #include "updater.h"
+#include <QApplication>
+#include <QLibraryInfo>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QStyleFactory>
+#include <QStyleHints>
+#include <QTranslator>
 
 /**
  * Ask the user about resetting settings
@@ -36,33 +37,6 @@ bool reallyClearSettings(QApplication &app)
     return dialog->exec() == QMessageBox::Yes;
 }
 
-bool isDarkMode() {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-    const auto scheme = qApp->styleHints()->colorScheme();
-    return scheme == Qt::ColorScheme::Dark;
-#else
-    const auto defaultPalette = qApp->palette();
-    const auto text = defaultPalette.color(QPalette::WindowText);
-    const auto window = defaultPalette.color(QPalette::Window);
-    return text.lightness() > window.lightness();
-#endif
-}
-
-void updateIconTheme()
-{
-    if (qApp == nullptr) {
-        QIcon::setFallbackThemeName("patchman-light");
-        return;
-    }
-
-    if (isDarkMode()) {
-        QIcon::setFallbackThemeName("patchman-dark");
-    }
-    else {
-        QIcon::setFallbackThemeName("patchman-light");
-    }
-}
-
 int main(int argc, char *argv[])
 {
     QIcon::setFallbackSearchPaths({":/icons"});
@@ -75,12 +49,6 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(patchman::config::kProjectVersion);
     const QIcon defaultWindowIcon(":/icons/patchman.svg");
     app.setWindowIcon(defaultWindowIcon);
-    updateIconTheme();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-    app.connect(app.styleHints(), &QStyleHints::colorSchemeChanged, &updateIconTheme);
-#else
-    app.connect(qApp, &QApplication::paletteChanged, &updateIconTheme);
-#endif
 
     Q_INIT_RESOURCE(bin);
 
@@ -93,16 +61,8 @@ int main(int argc, char *argv[])
         app.installTranslator(&translator);
     }
 
-#ifdef Q_OS_WINDOWS
-    // Using fusion style enables dark-mode detection on Windows < 11.
-    if (app.style()->name() != "windows11")
-    {
-        auto *style = QStyleFactory::create("fusion");
-        if (style != nullptr) {
-            app.setStyle(style);
-        }
-    }
-#endif
+    patchman::DarkModeHandler darkModeHandler;
+    darkModeHandler.updateIconTheme();
 
     // Clear all settings if program is launched while holding [Shift].
     if (app.queryKeyboardModifiers() == Qt::ShiftModifier) {

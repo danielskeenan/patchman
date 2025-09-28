@@ -60,7 +60,14 @@ if (BUILD_APP)
 
     set(APPCAST_URL "https://danielskeenan.github.io/patchman/_static/appcast.xml" CACHE STRING "appcast.xml URL")
 
-    find_package(Qt6 COMPONENTS
+    if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        # Ubuntu LTS
+        set(_MIN_QT 6.4)
+    else ()
+        # Qt LTS
+        set(_MIN_QT 6.8)
+    endif ()
+    find_package(Qt6 ${_MIN_QT} COMPONENTS
             Concurrent
             Core
             Gui
