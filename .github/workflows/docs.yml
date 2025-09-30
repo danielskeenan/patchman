@@ -50,7 +50,7 @@ jobs:
         run: cmake --build "${BUILD_DIR}" --target patchman_doc_html
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref_type == 'tag' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.BUILD_DIR }}/doc/html
