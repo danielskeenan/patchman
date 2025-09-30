@@ -13,6 +13,13 @@ the addressing of individual circuits.
 Each rack available in the ROM is shown as a tab across the top. Each circuit's
 phase, circuit number, module type, and DMX address is shown in the table. Only
 the address is editable. Click on a column header to sort the table by that column.
+
+To the right of the table is a graphical preview of the selected rack's layout.
+Click on a slot to select those circuits in the table. Click and drag to select
+multiple circuits in a group. Click once, hold :kbd:`Shift`, then click again to
+select contiguous circuits. Hold :kbd:`Ctrl` and click to select multiple
+non-contiguous circuits.
+
 The status bar at the bottom of the window shows the ROM type, number of racks
 with patch information, and ROM checksum.
 
