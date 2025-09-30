@@ -20,6 +20,7 @@ AutoNumberDialog::AutoNumberDialog(QWidget *parent)
 AutoNumberDialog::AutoNumberDialog(const AutoNumberDialog::Options &options, QWidget *parent)
     : QDialog(parent)
 {
+    setWindowTitle(tr("Autonumber"));
     auto layout = new QVBoxLayout(this);
 
     auto form = new QFormLayout;
