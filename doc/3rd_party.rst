@@ -3,6 +3,14 @@
 
 The following 3rd party software is included in Patchman.
 
+Breeze Icons
+------------
+
+https://develop.kde.org/frameworks/breeze-icons/
+
+.. include:: licenses/breeze_icons.txt
+   :literal:
+
 Frozen
 ------
 
@@ -10,11 +18,6 @@ https://github.com/serge-sans-paille/frozen
 
 .. include:: licenses/frozen.txt
    :literal:
-
-Icons8
-------
-
-https://icons8.com/
 
 Inja
 ----
