@@ -172,6 +172,10 @@ enum class ThemeIcon {
 using ThemeIcon = QIcon::ThemeIcon;
 #endif
 QIcon qiconFromTheme(ThemeIcon iconName);
+inline QIcon qiconFromTheme(const QString &iconName)
+{
+    return QIcon::fromTheme(iconName);
+}
 } // namespace patchman
 
 #endif //SRC_PATCHMAN_QICONFROMTHEME_H

@@ -8,11 +8,12 @@
 
 #include "RomLibraryModel.h"
 
+#include "Settings.h"
+#include "patchlib/Rom.h"
+#include "patchlib/library/RomLibrary.h"
+#include "qiconFromTheme.h"
 #include <utility>
 #include <QIcon>
-#include "patchlib/library/RomLibrary.h"
-#include "patchlib/Rom.h"
-#include "Settings.h"
 
 namespace patchman
 {
@@ -82,7 +83,7 @@ QVariant RomLibraryModel::data(const QModelIndex &index, int role) const
     else if (role == Qt::DecorationRole) {
         if (column == Column::Name) {
             if (patchTableCounts_[romInfo.getPatchHash()] > 1) {
-                return QIcon::fromTheme("document-duplicate");
+                return qiconFromTheme("document-duplicate");
             }
         }
     }

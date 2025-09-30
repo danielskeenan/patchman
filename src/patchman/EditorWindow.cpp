@@ -56,7 +56,7 @@ void EditorWindow::initMenus()
     menuFile->addAction(actions_.fileSaveAs);
     // Create Report
     actions_.fileCreateReport = new QAction(tr("Create &Report"), this);
-    actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
+    actions_.fileCreateReport->setIcon(qiconFromTheme("office-report"));
     connect(actions_.fileCreateReport, &QAction::triggered, this, &EditorWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
     // Close
@@ -80,12 +80,12 @@ void EditorWindow::initMenus()
     menuHelp->addAction(actions_.helpAbout);
     // Homepage
     actions_.helpHomepage = new QAction(tr("&Homepage"), this);
-    actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
+    actions_.helpHomepage->setIcon(qiconFromTheme("internet-web-browser"));
     connect(actions_.helpHomepage, &QAction::triggered, this, &EditorWindow::homepage);
     menuHelp->addAction(actions_.helpHomepage);
     // Check for updates
     actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
-    actions_.helpUpdate->setIcon(qiconFromTheme(ThemeIcon::SoftwareUpdateAvailable));
+    actions_.helpUpdate->setIcon(qiconFromTheme("system-software-update"));
     connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
     menuHelp->addAction(actions_.helpUpdate);
 

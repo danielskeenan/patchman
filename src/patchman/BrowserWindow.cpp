@@ -77,14 +77,14 @@ void BrowserWindow::initMenus()
     menuFile->addMenu(actions_.fileRecent);
     // Create Report
     actions_.fileCreateReport = new QAction(tr("&Create Report"), this);
-    actions_.fileCreateReport->setIcon(QIcon::fromTheme("office-report"));
+    actions_.fileCreateReport->setIcon(qiconFromTheme("office-report"));
     connect(actions_.fileCreateReport, &QAction::triggered, this, &BrowserWindow::createReport);
     menuFile->addAction(actions_.fileCreateReport);
     // ------
     menuFile->addSeparator();
     // Settings
     actions_.fileSettings = new QAction(tr("Se&ttings"), this);
-    actions_.fileSettings->setIcon(QIcon::fromTheme("configure"));
+    actions_.fileSettings->setIcon(qiconFromTheme("configure"));
     connect(actions_.fileSettings, &QAction::triggered, this, &BrowserWindow::settings);
     menuFile->addAction(actions_.fileSettings);
     // ------
@@ -100,22 +100,22 @@ void BrowserWindow::initMenus()
     QMenu *menuEdit = menuBar()->addMenu(tr("&Edit"));
     // Edit ROM
     actions_.editEditRom = new QAction(tr("&Edit ROM"), this);
-    actions_.editEditRom->setIcon(QIcon::fromTheme("document-edit"));
+    actions_.editEditRom->setIcon(qiconFromTheme("document-edit"));
     connect(actions_.editEditRom, &QAction::triggered, this, &BrowserWindow::editRom);
     menuEdit->addAction(actions_.editEditRom);
     // Show Duplicates
     actions_.editShowDuplicates = new QAction(tr("Show &Duplicates"), this);
-    actions_.editShowDuplicates->setIcon(QIcon::fromTheme("document-duplicate"));
+    actions_.editShowDuplicates->setIcon(qiconFromTheme("document-duplicate"));
     connect(actions_.editShowDuplicates, &QAction::triggered, this, &BrowserWindow::showDuplicates);
     menuEdit->addAction(actions_.editShowDuplicates);
     // Show In File Browser
     actions_.editShowInFileBrowser = new QAction(tr("&Show in Explorer"), this);
-    actions_.editShowInFileBrowser->setIcon(QIcon::fromTheme("system-file-manager"));
+    actions_.editShowInFileBrowser->setIcon(qiconFromTheme("system-file-manager"));
     connect(actions_.editShowInFileBrowser, &QAction::triggered, this, &BrowserWindow::showInFileBrowser);
     menuEdit->addAction(actions_.editShowInFileBrowser);
     // Copy Checksum
     actions_.editCopyChecksum = new QAction(tr("&Copy Checksum"), this);
-    actions_.editCopyChecksum->setIcon(QIcon::fromTheme("checksum"));
+    actions_.editCopyChecksum->setIcon(qiconFromTheme("checksum"));
     connect(actions_.editCopyChecksum, &QAction::triggered, this, &BrowserWindow::copyChecksum);
     menuEdit->addAction(actions_.editCopyChecksum);
 
@@ -133,12 +133,12 @@ void BrowserWindow::initMenus()
     menuHelp->addAction(actions_.helpAbout);
     // Homepage
     actions_.helpHomepage = new QAction(tr("&Homepage"), this);
-    actions_.helpHomepage->setIcon(QIcon::fromTheme("internet-web-browser"));
+    actions_.helpHomepage->setIcon(qiconFromTheme("internet-web-browser"));
     connect(actions_.helpHomepage, &QAction::triggered, this, &BrowserWindow::homepage);
     menuHelp->addAction(actions_.helpHomepage);
     // Check for updates
     actions_.helpUpdate = new QAction(tr("Check for &Updates"), this);
-    actions_.helpUpdate->setIcon(qiconFromTheme(ThemeIcon::SoftwareUpdateAvailable));
+    actions_.helpUpdate->setIcon(qiconFromTheme("system-software-update"));
     connect(actions_.helpUpdate, &QAction::triggered, &checkForUpdates);
     menuHelp->addAction(actions_.helpUpdate);
 

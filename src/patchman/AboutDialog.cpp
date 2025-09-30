@@ -58,11 +58,6 @@ AboutDialog::AboutDialog(QWidget *parent)
     connect(aboutQtLabel, &QLabel::linkActivated, this, &AboutDialog::linkActivated);
     layout->addWidget(aboutQtLabel);
 
-    auto *icons8Label = new QLabel(tr("Icons by <a href=\"https://icons8.com/\">Icons8</a>"));
-    icons8Label->setAlignment(Qt::AlignCenter);
-    icons8Label->setOpenExternalLinks(true);
-    layout->addWidget(icons8Label);
-
     auto *about3rdPartyLabel = new QLabel(
         QString("<a href=\"file:///%1/../%2/3rd_party.html\">%3</a>")
             .arg(qApp->applicationDirPath(), config::kHelpPath, tr("3rd Party Software")), this);

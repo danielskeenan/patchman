@@ -22,7 +22,7 @@ namespace patchman
 ShowDuplicatesDialog::ShowDuplicatesDialog(const RomInfo &romInfo, QWidget *parent)
     : QDialog(parent), romInfo_(romInfo)
 {
-    actions_.showInFileBrowser = new QAction(QIcon::fromTheme("system-file-manager"), tr("&Show in Explorer"), this);
+    actions_.showInFileBrowser = new QAction(qiconFromTheme("system-file-manager"), tr("&Show in Explorer"), this);
     connect(actions_.showInFileBrowser, &QAction::triggered, this, &ShowDuplicatesDialog::showInFileBrowser);
 
     resize(600, 320);
