@@ -146,7 +146,7 @@ void D192RackPreview::selectCircuits(const QList<unsigned int> &circuits)
 {
     QItemSelection s;
     for (const auto circuit : circuits) {
-        const auto ix = model_->lugIndex(circuit);
+        const auto ix = model_->lugIndex(rack_->getLugForCircuit(circuit));
         s.select(ix, ix);
     }
     // Avoid signal loops.
